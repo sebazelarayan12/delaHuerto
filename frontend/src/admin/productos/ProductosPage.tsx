@@ -30,7 +30,7 @@ export default function ProductosPage() {
     fd.append('nombre', data.nombre)
     if (data.descripcion) fd.append('descripcion', data.descripcion)
     fd.append('precio', String(data.precio))
-    if (data.precioUnidad && data.precioUnidad !== '') fd.append('precioUnidad', String(data.precioUnidad))
+    if (data.precioUnidad) fd.append('precioUnidad', String(data.precioUnidad))
     fd.append('disponible', String(data.disponible))
     fd.append('orden', String(data.orden))
     if (foto) fd.append('foto', foto)

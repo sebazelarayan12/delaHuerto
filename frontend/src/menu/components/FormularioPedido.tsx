@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
+import type { UseFormRegister } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { ItemCarrito } from '../hooks/useCarrito'
@@ -287,8 +288,8 @@ function RadioPill({
   value: string
   label: string
   icon: string
-  register: ReturnType<typeof useForm>['register']
-  name: string
+  register: UseFormRegister<FormData>
+  name: keyof FormData
 }) {
   return (
     <div style={{ flex: 1, position: 'relative' }}>
