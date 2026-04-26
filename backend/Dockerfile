@@ -2,6 +2,7 @@ FROM node:20-alpine
 
 WORKDIR /app
 
+ARG CACHEBUST=1
 COPY backend/package*.json ./
 RUN npm ci
 
