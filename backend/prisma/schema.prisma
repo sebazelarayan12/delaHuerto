@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Categoria {
+  id        Int        @id @default(autoincrement())
+  nombre    String
+  orden     Int        @default(0)
+  activa    Boolean    @default(true)
+  productos Producto[]
+  creadaEn  DateTime   @default(now()) @map("creada_en")
+
+  @@map("categorias")
+}
+
+model Producto {
+  id           Int       @id @default(autoincrement())
+  categoriaId  Int       @map("categoria_id")
+  categoria    Categoria @relation(fields: [categoriaId], references: [id])
+  nombre       String
+  descripcion  String?
+  precio       Decimal   @db.Decimal(10, 2)
+  precioUnidad Decimal?  @db.Decimal(10, 2) @map("precio_unidad")
+  fotoUrl      String?   @map("foto_url")
+  fotoPublicId String?   @map("foto_public_id")
+  disponible   Boolean   @default(true)
+  orden        Int       @default(0)
+  creadoEn     DateTime  @default(now()) @map("creado_en")
+
+  @@map("productos")
+}

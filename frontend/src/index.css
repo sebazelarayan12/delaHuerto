@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Manrope', sans-serif;
+  --font-display: 'Playfair Display', serif;
+
+  --color-cream: #FDF6EC;
+  --color-sand: #F3E8D8;
+  --color-sand-deep: #E2CFB5;
+  --color-terra: #C4522A;
+  --color-terra-dark: #A0401E;
+  --color-terra-light: #F5DDD4;
+  --color-gold: #D4920A;
+  --color-gold-light: #FBF1D8;
+  --color-espresso: #2C1208;
+  --color-brown: #7A4020;
+  --color-muted: #9A7A66;
+  --color-ivory: #FFFDF9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-sans);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #2C1208;
+  -webkit-font-smoothing: antialiased;
+}
+
+.icon {
+  font-family: 'Material Symbols Outlined';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 20px;
+  line-height: 1;
+  display: inline-block;
+  user-select: none;
+  vertical-align: middle;
+}
+
+.icon-fill {
+  font-variation-settings: 'FILL' 1;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E2CFB5;
+  border-radius: 99px;
+}
