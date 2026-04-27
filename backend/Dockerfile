@@ -2,12 +2,14 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-ARG CACHEBUST=2
 COPY backend/package*.json ./
 RUN npm ci
 
 COPY backend/prisma ./prisma/
 RUN npx prisma generate
+
+ARG CACHEBUST=3
+RUN echo "Cache bust: $CACHEBUST"
 
 COPY backend/ .
 RUN npm run build
