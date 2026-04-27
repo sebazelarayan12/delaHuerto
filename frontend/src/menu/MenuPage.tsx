@@ -56,7 +56,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: 430, minHeight: '100vh', background: '#FDF6EC', position: 'relative', overflow: 'hidden', margin: '0 auto' }}>
+    <div style={{ width: '100%', maxWidth: 430, minHeight: '100vh', background: '#FDF6EC', position: 'relative', overflow: 'hidden', margin: '0 auto', display: 'flex', flexDirection: 'column' }}>
 
       <MenuHeader
         cantidadTotal={cantidadTotal}
@@ -79,7 +79,7 @@ export default function MenuPage() {
         <div style={{ marginLeft: 'auto', fontSize: 44, flexShrink: 0 }}>🫔</div>
       </div>
 
-      <main style={{ paddingBottom: cantidadTotal > 0 ? 90 : 32 }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {isLoading && (
           <div style={{ textAlign: 'center', padding: '60px 24px', color: '#9A7A66' }}>
             <div style={{ fontSize: 32, marginBottom: 8 }}>🫔</div>
@@ -111,7 +111,7 @@ export default function MenuPage() {
           />
         ))}
 
-        <div style={{ padding: '28px 16px', textAlign: 'center', background: '#2C1208' }}>
+        <div style={{ marginTop: 'auto', paddingTop: 40, paddingBottom: cantidadTotal > 0 ? 118 : 60, paddingLeft: 16, paddingRight: 16, textAlign: 'center', background: '#2C1208' }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#FBF1D8', marginBottom: 6 }}>
             Huerto Empanadas
           </div>
