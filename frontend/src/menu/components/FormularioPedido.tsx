@@ -109,13 +109,22 @@ export default function FormularioPedido({ open, onClose, items, total, subtotal
 
         {!sent ? (
           <div style={{ padding: '16px 20px 0' }}>
-            <div style={{ marginBottom: 20 }}>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 800, color: '#2C1208' }}>
-                Datos del pedido
-              </h2>
-              <p style={{ fontSize: 13, color: '#9A7A66', marginTop: 4 }}>
-                Completá tus datos y te contactamos por WhatsApp
-              </p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+              <div>
+                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 800, color: '#2C1208' }}>
+                  Datos del pedido
+                </h2>
+                <p style={{ fontSize: 13, color: '#9A7A66', marginTop: 4 }}>
+                  Completá tus datos y te contactamos por WhatsApp
+                </p>
+              </div>
+              <button 
+                type="button"
+                onClick={handleClose} 
+                style={{ background: '#F3E8D8', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#7A4020', flexShrink: 0 }}
+              >
+                <span className="icon" style={{ fontSize: 20 }}>close</span>
+              </button>
             </div>
 
             <div style={{ background: '#F3E8D8', borderRadius: 14, padding: '12px 14px', marginBottom: 20 }}>
@@ -212,6 +221,7 @@ const inputStyle: React.CSSProperties = {
   background: '#FDF6EC',
   outline: 'none',
   WebkitAppearance: 'none',
+  boxSizing: 'border-box',
 }
 
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
