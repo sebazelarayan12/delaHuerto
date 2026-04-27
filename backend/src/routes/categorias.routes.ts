@@ -26,8 +26,7 @@ app.get('/', async (c) => {
     })
     return c.json(categorias)
   } catch (e) {
-    console.error('[GET /api/categorias] ERROR:', e)
-    return c.json({ error: 'Error al obtener categorías', details: String(e) }, 500)
+    return c.json({ error: 'Error al obtener categorías' }, 500)
   }
 })
 
