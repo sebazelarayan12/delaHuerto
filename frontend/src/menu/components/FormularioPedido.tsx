@@ -80,7 +80,7 @@ export default function FormularioPedido({ open, onClose, items, total, subtotal
         position: 'fixed',
         inset: 0,
         background: 'rgba(44,18,8,0.6)',
-        zIndex: 20,
+        zIndex: 50,
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
