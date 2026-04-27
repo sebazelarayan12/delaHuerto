@@ -52,6 +52,10 @@ app.onError((err, c) => {
 
 const port = env.PORT
 
+console.log('NODE_ENV:', process.env.NODE_ENV)
+console.log('ALLOWED_ORIGIN:', JSON.stringify(env.ALLOWED_ORIGIN))
+console.log('allowedOrigins:', allowedOrigins)
+
 serve({ fetch: app.fetch, port }, () => {
   console.log(`Server running on http://localhost:${port}`)
 })
