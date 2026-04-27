@@ -54,7 +54,7 @@ export default function DashboardPage() {
     <AdminLayout>
       <div>
         <div className="px-4 lg:px-8 pt-6 lg:pt-8" style={{ borderBottom: '1px solid #E2CFB5', paddingBottom: 20 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: '#2C1208' }}>Buen día, Carmen 👋</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: '#2C1208' }}>Buen día 👋</h1>
           <p style={{ fontSize: 14, color: '#9A7A66', marginTop: 4 }}>
             Esto es lo que está pasando hoy con tu menú.
           </p>

@@ -71,14 +71,13 @@ admin.put('/:id', zValidator('json', categoriaSchema.partial()), async (c) => {
 admin.delete('/:id', async (c) => {
   const id = parseInt(c.req.param('id'))
   try {
-    const categoria = await prisma.categoria.update({
-      where: { id },
-      data: { activa: false },
-    })
-    return c.json(categoria)
+    const count = await prisma.producto.count({ where: { categoriaId: id } })
+    if (count > 0) return c.json({ error: 'La categoría tiene productos. Eliminá los productos primero.' }, 409)
+    await prisma.categoria.delete({ where: { id } })
+    return c.json({ ok: true })
   } catch (e: unknown) {
     if ((e as { code?: string }).code === 'P2025') return c.json({ error: 'Categoría no encontrada' }, 404)
-    return c.json({ error: 'Error al desactivar categoría' }, 500)
+    return c.json({ error: 'Error al eliminar categoría' }, 500)
   }
 })
 

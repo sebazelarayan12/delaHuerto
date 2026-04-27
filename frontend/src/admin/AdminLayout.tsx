@@ -92,8 +92,7 @@ export default function AdminLayout({ children }: Props) {
             C
           </div>
           <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'white', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Carmen</div>
-            <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)' }}>Propietaria</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'white' }}>Admin</div>
           </div>
         </div>
         <button

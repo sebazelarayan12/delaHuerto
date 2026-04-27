@@ -107,12 +107,12 @@ export default function CategoriasPage() {
                           </button>
                           <button
                             onClick={() => {
-                              if (confirm(`¿Desactivar la categoría "${cat.nombre}"?`)) {
+                              if (confirm(`¿Eliminar definitivamente la categoría "${cat.nombre}"? Esta acción no se puede deshacer.`)) {
                                 eliminar.mutate(cat.id)
                               }
                             }}
                             style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #fecaca', background: 'transparent', cursor: 'pointer', color: '#dc2626', transition: 'all 0.15s' }}
-                            title="Desactivar"
+                            title="Eliminar"
                           >
                             <span className="icon" style={{ fontSize: 17 }}>delete</span>
                           </button>

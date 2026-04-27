@@ -115,15 +115,17 @@ admin.put('/:id', async (c) => {
 admin.delete('/:id', async (c) => {
   const id = parseInt(c.req.param('id'))
   try {
-    const producto = await prisma.producto.update({
-      where: { id },
-      data: { disponible: false },
-      include: { categoria: true },
-    })
-    return c.json(producto)
+    const existing = await prisma.producto.findUnique({ where: { id } })
+    if (!existing) return c.json({ error: 'Producto no encontrado' }, 404)
+    if (existing.fotoPublicId) {
+      const { deleteImage } = await import('../lib/cloudinary.js')
+      await deleteImage(existing.fotoPublicId).catch(() => {})
+    }
+    await prisma.producto.delete({ where: { id } })
+    return c.json({ ok: true })
   } catch (e: unknown) {
     if ((e as { code?: string }).code === 'P2025') return c.json({ error: 'Producto no encontrado' }, 404)
-    return c.json({ error: 'Error al desactivar producto' }, 500)
+    return c.json({ error: 'Error al eliminar producto' }, 500)
   }
 })
 
