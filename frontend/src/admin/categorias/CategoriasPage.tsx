@@ -99,13 +99,13 @@ export default function CategoriasPage() {
                         </span>
                       </td>
                       <td style={{ padding: '14px 16px' }}>
-                        <Toggle checked={cat.activa} onChange={() => handleToggle(cat)} />
+                        <Toggle checked={cat.activa} onChange={() => handleToggle(cat)} label={cat.activa ? 'Desactivar categoría' : 'Activar categoría'} />
                       </td>
                       <td style={{ padding: '14px 16px' }}>
                         <div style={{ display: 'flex', gap: 6 }}>
                           <button
                             onClick={() => openEdit(cat)}
-                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020', transition: 'all 0.15s' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020', transition: 'background 0.15s, color 0.15s' }}
                             title="Editar"
                           >
                             <span className="icon" style={{ fontSize: 17 }}>edit</span>
@@ -122,7 +122,7 @@ export default function CategoriasPage() {
                                 }
                               }
                             }}
-                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #fecaca', background: 'transparent', cursor: 'pointer', color: '#dc2626', transition: 'all 0.15s' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #fecaca', background: 'transparent', cursor: 'pointer', color: '#dc2626', transition: 'background 0.15s, color 0.15s' }}
                             title="Eliminar"
                           >
                             <span className="icon" style={{ fontSize: 17 }}>delete</span>
@@ -156,9 +156,9 @@ export default function CategoriasPage() {
   )
 }
 
-function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () => void; label?: string }) {
   return (
-    <label style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
+    <label aria-label={label} style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
       <input type="checkbox" checked={checked} onChange={onChange} style={{ opacity: 0, width: 0, height: 0 }} />
       <span style={{ position: 'absolute', inset: 0, borderRadius: 99, background: checked ? '#C4522A' : '#E2CFB5', transition: 'background 0.2s' }} />
       <span style={{ position: 'absolute', top: 3, left: checked ? 22 : 3, width: 18, height: 18, borderRadius: '50%', background: 'white', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', transition: 'left 0.2s' }} />

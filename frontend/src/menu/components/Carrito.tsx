@@ -16,7 +16,9 @@ interface Props {
 export default function Carrito({ open, onClose, items, total, cantidadTotal, onIncrementar, onDecrementar, onConfirmar }: Props) {
   return (
     <div
+      role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
       style={{
         position: 'fixed',
         inset: 0,

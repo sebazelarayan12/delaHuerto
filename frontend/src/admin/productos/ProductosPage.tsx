@@ -153,7 +153,7 @@ export default function ProductosPage() {
                         </span>
                       </td>
                       <td style={{ padding: '12px 16px' }}>
-                        <Toggle checked={prod.disponible} onChange={() => handleToggle(prod)} />
+                        <Toggle checked={prod.disponible} onChange={() => handleToggle(prod)} label={prod.disponible ? 'Marcar no disponible' : 'Marcar disponible'} />
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <div style={{ display: 'flex', gap: 6 }}>
@@ -228,9 +228,9 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
 }
 
-function Toggle({ checked, onChange }: { checked: boolean; onChange: () => void }) {
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () => void; label?: string }) {
   return (
-    <label style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
+    <label aria-label={label} style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
       <input type="checkbox" checked={checked} onChange={onChange} style={{ opacity: 0, width: 0, height: 0 }} />
       <span style={{ position: 'absolute', inset: 0, borderRadius: 99, background: checked ? '#C4522A' : '#E2CFB5', transition: 'background 0.2s' }} />
       <span style={{ position: 'absolute', top: 3, left: checked ? 22 : 3, width: 18, height: 18, borderRadius: '50%', background: 'white', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', transition: 'left 0.2s' }} />

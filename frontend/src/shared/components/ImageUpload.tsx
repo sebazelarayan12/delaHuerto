@@ -23,7 +23,8 @@ export default function ImageUpload({ currentUrl, onFileChange }: Props) {
   const displayed = preview ?? currentUrl
 
   return (
-    <div
+    <button
+      type="button"
       onClick={() => inputRef.current?.click()}
       style={{
         border: '2px dashed #E2CFB5',
@@ -33,9 +34,10 @@ export default function ImageUpload({ currentUrl, onFileChange }: Props) {
         textAlign: 'center',
         background: '#FDF6EC',
         transition: 'border-color 0.2s',
+        width: '100%',
       }}
-      onMouseEnter={(e) => ((e.currentTarget as HTMLDivElement).style.borderColor = '#C4522A')}
-      onMouseLeave={(e) => ((e.currentTarget as HTMLDivElement).style.borderColor = '#E2CFB5')}
+      onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#C4522A')}
+      onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#E2CFB5')}
     >
       <input ref={inputRef} type="file" accept="image/*" onChange={handleChange} style={{ display: 'none' }} />
       {displayed ? (
@@ -55,6 +57,6 @@ export default function ImageUpload({ currentUrl, onFileChange }: Props) {
           <span style={{ fontSize: 13, color: '#9A7A66', fontWeight: 600 }}>Subir foto del producto</span>
         </div>
       )}
-    </div>
+    </button>
   )
 }

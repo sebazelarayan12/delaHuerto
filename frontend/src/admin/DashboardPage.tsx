@@ -99,7 +99,7 @@ export default function DashboardPage() {
                   <button
                     key={l.path}
                     onClick={() => navigate(l.path)}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderRadius: 10, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', width: '100%', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, color: '#7A4020', transition: 'all 0.15s' }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderRadius: 10, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', width: '100%', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, color: '#7A4020', transition: 'background 0.15s, color 0.15s' }}
                   >
                     <span className="icon" style={{ color: '#C4522A' }}>{l.icon}</span>
                     {l.label}

@@ -127,6 +127,7 @@ Invocar el skill correspondiente antes de trabajar en cada área:
 
 ## Git
 
+- **NUNCA hacer `git push` a menos que el usuario lo pida explicitamente.** Hacer commits locales esta permitido, pero no pushear sin instruccion directa.
 - Usar **conventional commits**: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`
 - Describir el *por qué* del cambio, no solo el *qué*
 - No mezclar cambios no relacionados en un mismo commit

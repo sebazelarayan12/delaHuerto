@@ -70,7 +70,9 @@ export default function FormularioPedido({ open, onClose, items, total }: Props)
 
   return (
     <div
+      role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
+      onKeyDown={(e) => { if (e.key === 'Escape') handleClose() }}
       style={{
         position: 'fixed',
         inset: 0,
@@ -242,7 +244,7 @@ function RadioPill({ id, value, label, icon, register, name, checked }: {
           fontWeight: 600,
           color: checked ? '#C4522A' : '#9A7A66',
           background: checked ? '#FDF0EB' : '#FDF6EC',
-          transition: 'all 0.15s',
+          transition: 'background 0.15s, border-color 0.15s, color 0.15s',
         }}
       >
         <span className="icon" style={{ fontSize: 18 }}>{icon}</span>

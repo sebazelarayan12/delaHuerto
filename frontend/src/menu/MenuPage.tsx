@@ -203,7 +203,7 @@ export default function MenuPage() {
                   background: activeCat === c.id ? '#C4522A' : '#FFFDF9',
                   color: activeCat === c.id ? 'white' : '#7A4020',
                   borderColor: activeCat === c.id ? '#C4522A' : '#E2CFB5',
-                  transition: 'all 0.2s',
+                  transition: 'background 0.2s, color 0.2s',
                 }}
               >
                 {c.nombre}

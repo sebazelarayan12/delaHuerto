@@ -76,7 +76,7 @@ export default function AdminLayout({ children }: Props) {
                 fontWeight: 600,
                 background: active ? 'rgba(196,82,42,0.25)' : 'transparent',
                 color: active ? '#FBF1D8' : 'rgba(255,255,255,0.55)',
-                transition: 'all 0.15s',
+                transition: 'background 0.15s, color 0.15s',
               }}
             >
               <span className={`icon${active ? ' icon-fill' : ''}`}>{n.icon}</span>
@@ -97,7 +97,7 @@ export default function AdminLayout({ children }: Props) {
         </div>
         <button
           onClick={logout}
-          style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '10px 12px', borderRadius: 10, border: 'none', cursor: 'pointer', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, background: 'transparent', color: 'rgba(255,100,80,0.7)', transition: 'all 0.15s' }}
+          style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '10px 12px', borderRadius: 10, border: 'none', cursor: 'pointer', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, background: 'transparent', color: 'rgba(255,100,80,0.7)', transition: 'background 0.15s, color 0.15s' }}
         >
           <span className="icon">logout</span>
           Cerrar sesión
@@ -117,8 +117,10 @@ export default function AdminLayout({ children }: Props) {
       {/* Backdrop mobile */}
       {sidebarOpen && (
         <div
+          role="presentation"
           className="lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          onKeyDown={(e) => { if (e.key === 'Escape') setSidebarOpen(false) }}
           style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40 }}
         />
       )}
