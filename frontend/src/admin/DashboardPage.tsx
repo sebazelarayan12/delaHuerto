@@ -53,11 +53,33 @@ export default function DashboardPage() {
   return (
     <AdminLayout>
       <div>
-        <div className="px-4 lg:px-8 pt-6 lg:pt-8" style={{ borderBottom: '1px solid #E2CFB5', paddingBottom: 20 }}>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: '#2C1208' }}>Buen día 👋</h1>
-          <p style={{ fontSize: 14, color: '#9A7A66', marginTop: 4 }}>
-            Esto es lo que está pasando hoy con tu menú.
-          </p>
+        <div className="px-4 lg:px-8 pt-6 lg:pt-8 flex justify-between items-start" style={{ borderBottom: '1px solid #E2CFB5', paddingBottom: 20 }}>
+          <div>
+            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#2C1208' }}>Buen día 👋</h1>
+            <p style={{ fontSize: 14, color: '#9A7A66', marginTop: 4 }}>
+              Esto es lo que está pasando hoy con tu menú.
+            </p>
+          </div>
+          <a
+            href="https://delahuerto.pages.dev/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 8,
+              background: '#C4522A',
+              color: 'white',
+              padding: '8px 16px',
+              borderRadius: 8,
+              textDecoration: 'none',
+              fontSize: 14,
+              fontWeight: 600,
+            }}
+          >
+            <span className="icon" style={{ fontSize: 18 }}>storefront</span>
+            Ver Tienda
+          </a>
         </div>
 
         <div className="px-4 lg:px-8 py-6 lg:py-7">
