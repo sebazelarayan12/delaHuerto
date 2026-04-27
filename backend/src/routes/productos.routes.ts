@@ -41,6 +41,9 @@ admin.post('/', async (c) => {
     if (!parsed.success) return c.json({ error: 'Datos inválidos', details: parsed.error.issues }, 400)
 
     const data = parsed.data
+    const dup = await prisma.producto.findFirst({ where: { orden: data.orden, categoriaId: data.categoriaId } })
+    if (dup) return c.json({ error: `Ya existe un producto con el orden ${data.orden} en esa categoría` }, 409)
+
     let fotoUrl: string | undefined
     let fotoPublicId: string | undefined
 
@@ -85,6 +88,10 @@ admin.put('/:id', async (c) => {
     if (!parsed.success) return c.json({ error: 'Datos inválidos', details: parsed.error.issues }, 400)
 
     const data = parsed.data
+    if (data.orden !== undefined && data.categoriaId !== undefined) {
+      const dup = await prisma.producto.findFirst({ where: { orden: data.orden, categoriaId: data.categoriaId, NOT: { id } } })
+      if (dup) return c.json({ error: `Ya existe un producto con el orden ${data.orden} en esa categoría` }, 409)
+    }
     const updateData: Record<string, unknown> = { ...data }
 
     const file = formData.get('foto')

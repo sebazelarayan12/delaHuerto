@@ -8,23 +8,28 @@ export default function CategoriasPage() {
   const { query, crear, editar, toggleActiva, eliminar } = useCategorias()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<CategoriaAdmin | null>(null)
-  const [toast, setToast] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null)
 
-  const showToast = (msg: string) => {
-    setToast(msg)
+  const showToast = (msg: string, error = false) => {
+    setToast({ msg, error })
     setTimeout(() => setToast(null), 3000)
   }
 
   const handleSave = async (data: { nombre: string; orden: number; activa: boolean }) => {
-    if (editing) {
-      await editar.mutateAsync({ id: editing.id, ...data })
-      showToast('Categoría actualizada')
-    } else {
-      await crear.mutateAsync(data)
-      showToast('Categoría creada')
+    try {
+      if (editing) {
+        await editar.mutateAsync({ id: editing.id, ...data })
+        showToast('Categoría actualizada')
+      } else {
+        await crear.mutateAsync(data)
+        showToast('Categoría creada')
+      }
+      setModalOpen(false)
+      setEditing(null)
+    } catch (e: unknown) {
+      const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al guardar'
+      showToast(msg, true)
     }
-    setModalOpen(false)
-    setEditing(null)
   }
 
   const handleToggle = async (cat: CategoriaAdmin) => {
@@ -136,9 +141,9 @@ export default function CategoriasPage() {
       />
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'white', borderRadius: 12, padding: '12px 18px', boxShadow: '0 8px 24px rgba(44,18,8,0.15)', display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, zIndex: 1000, borderLeft: '3px solid #15803d' }}>
-          <span className="icon icon-fill" style={{ fontSize: 18, color: '#15803d' }}>check_circle</span>
-          {toast}
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'white', borderRadius: 12, padding: '12px 18px', boxShadow: '0 8px 24px rgba(44,18,8,0.15)', display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, zIndex: 1000, borderLeft: `3px solid ${toast.error ? '#dc2626' : '#15803d'}` }}>
+          <span className="icon icon-fill" style={{ fontSize: 18, color: toast.error ? '#dc2626' : '#15803d' }}>{toast.error ? 'error' : 'check_circle'}</span>
+          {toast.msg}
         </div>
       )}
     </AdminLayout>

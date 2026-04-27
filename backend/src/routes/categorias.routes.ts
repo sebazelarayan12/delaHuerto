@@ -49,6 +49,8 @@ admin.get('/', async (c) => {
 admin.post('/', zValidator('json', categoriaSchema), async (c) => {
   try {
     const data = c.req.valid('json')
+    const dup = await prisma.categoria.findFirst({ where: { orden: data.orden } })
+    if (dup) return c.json({ error: `Ya existe una categoría con el orden ${data.orden}` }, 409)
     const categoria = await prisma.categoria.create({ data })
     return c.json(categoria, 201)
   } catch (e) {
@@ -60,6 +62,10 @@ admin.put('/:id', zValidator('json', categoriaSchema.partial()), async (c) => {
   const id = parseInt(c.req.param('id'))
   try {
     const data = c.req.valid('json')
+    if (data.orden !== undefined) {
+      const dup = await prisma.categoria.findFirst({ where: { orden: data.orden, NOT: { id } } })
+      if (dup) return c.json({ error: `Ya existe una categoría con el orden ${data.orden}` }, 409)
+    }
     const categoria = await prisma.categoria.update({ where: { id }, data })
     return c.json(categoria)
   } catch (e: unknown) {
