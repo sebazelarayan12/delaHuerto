@@ -5,7 +5,7 @@ import type { CategoriaAdmin } from './hooks/useCategorias'
 import CategoriaForm from './CategoriaForm'
 
 export default function CategoriasPage() {
-  const { query, crear, editar, toggleActiva } = useCategorias()
+  const { query, crear, editar, toggleActiva, eliminar } = useCategorias()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<CategoriaAdmin | null>(null)
   const [toast, setToast] = useState<string | null>(null)
@@ -97,13 +97,26 @@ export default function CategoriasPage() {
                         <Toggle checked={cat.activa} onChange={() => handleToggle(cat)} />
                       </td>
                       <td style={{ padding: '14px 16px' }}>
-                        <button
-                          onClick={() => openEdit(cat)}
-                          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020', transition: 'all 0.15s' }}
-                          title="Editar"
-                        >
-                          <span className="icon" style={{ fontSize: 17 }}>edit</span>
-                        </button>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button
+                            onClick={() => openEdit(cat)}
+                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020', transition: 'all 0.15s' }}
+                            title="Editar"
+                          >
+                            <span className="icon" style={{ fontSize: 17 }}>edit</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`¿Desactivar la categoría "${cat.nombre}"?`)) {
+                                eliminar.mutate(cat.id)
+                              }
+                            }}
+                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #fecaca', background: 'transparent', cursor: 'pointer', color: '#dc2626', transition: 'all 0.15s' }}
+                            title="Desactivar"
+                          >
+                            <span className="icon" style={{ fontSize: 17 }}>delete</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

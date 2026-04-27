@@ -8,7 +8,7 @@ import { useCategorias } from '../categorias/hooks/useCategorias'
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
 export default function ProductosPage() {
-  const { query, crear, editar, toggleDisponible } = useProductos()
+  const { query, crear, editar, toggleDisponible, eliminar } = useProductos()
   const { query: catQuery } = useCategorias()
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState<ProductoAdmin | null>(null)
@@ -151,13 +151,26 @@ export default function ProductosPage() {
                         <Toggle checked={prod.disponible} onChange={() => handleToggle(prod)} />
                       </td>
                       <td style={{ padding: '12px 16px' }}>
-                        <button
-                          onClick={() => openEdit(prod)}
-                          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020' }}
-                          title="Editar"
-                        >
-                          <span className="icon" style={{ fontSize: 17 }}>edit</span>
-                        </button>
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button
+                            onClick={() => openEdit(prod)}
+                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020' }}
+                            title="Editar"
+                          >
+                            <span className="icon" style={{ fontSize: 17 }}>edit</span>
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirm(`¿Desactivar el producto "${prod.nombre}"?`)) {
+                                eliminar.mutate(prod.id)
+                              }
+                            }}
+                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #fecaca', background: 'transparent', cursor: 'pointer', color: '#dc2626' }}
+                            title="Desactivar"
+                          >
+                            <span className="icon" style={{ fontSize: 17 }}>delete</span>
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}

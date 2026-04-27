@@ -38,5 +38,10 @@ export function useCategorias() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categorias'] }),
   })
 
-  return { query, crear, editar, toggleActiva }
+  const eliminar = useMutation({
+    mutationFn: (id: number) => api.delete(`/api/admin/categorias/${id}`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categorias'] }),
+  })
+
+  return { query, crear, editar, toggleActiva, eliminar }
 }

@@ -69,5 +69,13 @@ export function useProductos() {
     },
   })
 
-  return { query, crear, editar, toggleDisponible }
+  const eliminar = useMutation({
+    mutationFn: (id: number) => api.delete(`/api/admin/productos/${id}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['productos'] })
+      qc.invalidateQueries({ queryKey: ['categorias'] })
+    },
+  })
+
+  return { query, crear, editar, toggleDisponible, eliminar }
 }
