@@ -23,7 +23,7 @@ export default function Carrito({ open, onClose, items, total, cantidadTotal, on
         position: 'fixed',
         inset: 0,
         background: 'rgba(44,18,8,0.55)',
-        zIndex: 100,
+        zIndex: 20,
         opacity: open ? 1 : 0,
         pointerEvents: open ? 'all' : 'none',
         transition: 'opacity 0.3s ease',

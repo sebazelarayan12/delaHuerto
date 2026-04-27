@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -21,18 +20,14 @@ interface Props {
 }
 
 export default function CategoriaForm({ open, onClose, onSave, initial, loading }: Props) {
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { nombre: '', orden: 0, activa: true },
+    defaultValues: initial
+      ? { nombre: initial.nombre, orden: initial.orden, activa: initial.activa }
+      : { nombre: '', orden: 0, activa: true },
   })
 
   const activa = watch('activa')
-
-  useEffect(() => {
-    if (open) {
-      reset(initial ? { nombre: initial.nombre, orden: initial.orden, activa: initial.activa } : { nombre: '', orden: 0, activa: true })
-    }
-  }, [open, initial, reset])
 
   if (!open) return null
 
@@ -42,14 +37,16 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
         position: 'fixed',
         inset: 0,
         background: 'rgba(44,18,8,0.5)',
-        zIndex: 500,
+        zIndex: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
         fontFamily: "'Manrope', sans-serif",
       }}
+      role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
     >
       <div
         style={{
@@ -83,20 +80,20 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
 
         <form onSubmit={handleSubmit(onSave)} style={{ padding: 24 }}>
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>Nombre de la categoría</label>
-            <input type="text" placeholder="Ej: Empanadas Fritas" {...register('nombre')} style={inputStyle} />
+            <label htmlFor="cat-nombre" style={labelStyle}>Nombre de la categoría</label>
+            <input id="cat-nombre" type="text" placeholder="Ej: Empanadas Fritas" {...register('nombre')} style={inputStyle} />
             {errors.nombre && <span style={errStyle}>{errors.nombre.message}</span>}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
             <div>
-              <label style={labelStyle}>Orden</label>
-              <input type="number" min="0" {...register('orden')} style={inputStyle} />
+              <label htmlFor="cat-orden" style={labelStyle}>Orden</label>
+              <input id="cat-orden" type="number" min="0" {...register('orden')} style={inputStyle} />
             </div>
             <div>
-              <label style={labelStyle}>Estado</label>
+              <label htmlFor="cat-activa" style={labelStyle}>Estado</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4 }}>
-                <label style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
+                <label aria-label={activa ? 'Desactivar categoría' : 'Activar categoría'} style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={activa}

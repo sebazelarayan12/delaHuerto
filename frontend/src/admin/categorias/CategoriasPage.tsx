@@ -139,6 +139,7 @@ export default function CategoriasPage() {
       </div>
 
       <CategoriaForm
+        key={`${modalOpen}-${editing?.id ?? 'new'}`}
         open={modalOpen}
         onClose={() => { setModalOpen(false); setEditing(null) }}
         onSave={handleSave}
@@ -147,7 +148,7 @@ export default function CategoriasPage() {
       />
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'white', borderRadius: 12, padding: '12px 18px', boxShadow: '0 8px 24px rgba(44,18,8,0.15)', display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, zIndex: 1000, borderLeft: `3px solid ${toast.error ? '#dc2626' : '#15803d'}` }}>
+        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'white', borderRadius: 12, padding: '12px 18px', boxShadow: '0 8px 24px rgba(44,18,8,0.15)', display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, zIndex: 50, borderLeft: `3px solid ${toast.error ? '#dc2626' : '#15803d'}` }}>
           <span className="icon icon-fill" style={{ fontSize: 18, color: toast.error ? '#dc2626' : '#15803d' }}>{toast.error ? 'error' : 'check_circle'}</span>
           {toast.msg}
         </div>

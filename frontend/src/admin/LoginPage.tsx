@@ -75,10 +75,11 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7A4020' }}>
+            <label htmlFor="login-username" style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7A4020' }}>
               Usuario
             </label>
             <input
+              id="login-username"
               type="text"
               placeholder="admin"
               value={username}
@@ -88,10 +89,11 @@ export default function LoginPage() {
             />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-            <label style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7A4020' }}>
+            <label htmlFor="login-password" style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7A4020' }}>
               Contraseña
             </label>
             <input
+              id="login-password"
               type="password"
               placeholder="••••••••"
               value={password}

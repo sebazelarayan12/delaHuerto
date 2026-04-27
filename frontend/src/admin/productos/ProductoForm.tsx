@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -29,31 +29,22 @@ interface Props {
 
 export default function ProductoForm({ open, onClose, onSave, initial, categorias, loading }: Props) {
   const [foto, setFoto] = useState<File | null>(null)
-  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { nombre: '', orden: 0, disponible: true },
+    defaultValues: initial
+      ? {
+          categoriaId: initial.categoriaId,
+          nombre: initial.nombre,
+          descripcion: initial.descripcion ?? '',
+          precio: parseFloat(initial.precio),
+          precioUnidad: initial.precioUnidad ? parseFloat(initial.precioUnidad) : undefined,
+          disponible: initial.disponible,
+          orden: initial.orden,
+        }
+      : { nombre: '', orden: 0, disponible: true, descripcion: '', precio: undefined },
   })
 
   const disponible = watch('disponible')
-
-  useEffect(() => {
-    if (open) {
-      setFoto(null)
-      reset(
-        initial
-          ? {
-              categoriaId: initial.categoriaId,
-              nombre: initial.nombre,
-              descripcion: initial.descripcion ?? '',
-              precio: parseFloat(initial.precio),
-              precioUnidad: initial.precioUnidad ? parseFloat(initial.precioUnidad) : undefined,
-              disponible: initial.disponible,
-              orden: initial.orden,
-            }
-          : { nombre: '', orden: 0, disponible: true, descripcion: '', precio: undefined }
-      )
-    }
-  }, [open, initial, reset])
 
   if (!open) return null
 
@@ -63,14 +54,16 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
         position: 'fixed',
         inset: 0,
         background: 'rgba(44,18,8,0.5)',
-        zIndex: 500,
+        zIndex: 50,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
         fontFamily: "'Manrope', sans-serif",
       }}
+      role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
+      onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
     >
       <div
         style={{
@@ -108,8 +101,8 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
           style={{ padding: 24, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0 }}
         >
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>Categoría</label>
-            <select {...register('categoriaId')} style={inputStyle}>
+            <label htmlFor="prod-categoria" style={labelStyle}>Categoría</label>
+            <select id="prod-categoria" {...register('categoriaId')} style={inputStyle}>
               <option value="">Seleccioná una categoría</option>
               {categorias.filter((c) => c.activa).map((c) => (
                 <option key={c.id} value={c.id}>{c.nombre}</option>
@@ -119,14 +112,15 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>Nombre</label>
-            <input type="text" placeholder="Carne cortada a cuchillo" {...register('nombre')} style={inputStyle} />
+            <label htmlFor="prod-nombre" style={labelStyle}>Nombre</label>
+            <input id="prod-nombre" type="text" placeholder="Carne cortada a cuchillo" {...register('nombre')} style={inputStyle} />
             {errors.nombre && <span style={errStyle}>{errors.nombre.message}</span>}
           </div>
 
           <div style={{ marginBottom: 16 }}>
-            <label style={labelStyle}>Descripción (opcional)</label>
+            <label htmlFor="prod-descripcion" style={labelStyle}>Descripción (opcional)</label>
             <textarea
+              id="prod-descripcion"
               placeholder="Descripción del producto…"
               {...register('descripcion')}
               style={{ ...inputStyle, resize: 'none', height: 72 }}
@@ -135,25 +129,25 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
             <div>
-              <label style={labelStyle}>Precio por docena</label>
-              <input type="number" step="0.01" placeholder="5500" {...register('precio')} style={inputStyle} />
+              <label htmlFor="prod-precio" style={labelStyle}>Precio por docena</label>
+              <input id="prod-precio" type="number" step="0.01" placeholder="5500" {...register('precio')} style={inputStyle} />
               {errors.precio && <span style={errStyle}>{errors.precio.message}</span>}
             </div>
             <div>
-              <label style={labelStyle}>Precio por unidad (opcional)</label>
-              <input type="number" step="0.01" placeholder="500" {...register('precioUnidad')} style={inputStyle} />
+              <label htmlFor="prod-precio-unidad" style={labelStyle}>Precio por unidad (opcional)</label>
+              <input id="prod-precio-unidad" type="number" step="0.01" placeholder="500" {...register('precioUnidad')} style={inputStyle} />
             </div>
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
             <div>
-              <label style={labelStyle}>Orden</label>
-              <input type="number" min="0" {...register('orden')} style={inputStyle} />
+              <label htmlFor="prod-orden" style={labelStyle}>Orden</label>
+              <input id="prod-orden" type="number" min="0" {...register('orden')} style={inputStyle} />
             </div>
             <div>
-              <label style={labelStyle}>Disponible</label>
+              <label htmlFor="prod-disponible" style={labelStyle}>Disponible</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4 }}>
-                <label style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
+                <label aria-label={disponible ? 'Marcar no disponible' : 'Marcar disponible'} style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
                   <input
                     type="checkbox"
                     checked={disponible}
@@ -171,7 +165,7 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
           </div>
 
           <div style={{ marginBottom: 20 }}>
-            <label style={labelStyle}>Foto del producto</label>
+            <label htmlFor="prod-foto" style={labelStyle}>Foto del producto</label>
             <ImageUpload currentUrl={initial?.fotoUrl} onFileChange={setFoto} />
           </div>
 

@@ -77,7 +77,7 @@ export default function FormularioPedido({ open, onClose, items, total }: Props)
         position: 'fixed',
         inset: 0,
         background: 'rgba(44,18,8,0.6)',
-        zIndex: 200,
+        zIndex: 20,
         display: 'flex',
         alignItems: 'flex-end',
         justifyContent: 'center',
