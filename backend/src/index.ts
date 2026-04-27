@@ -10,9 +10,10 @@ import { productosAdminRoutes } from './routes/productos.routes.js'
 
 const isProd = process.env.NODE_ENV === 'production'
 
-const allowedOrigins = isProd
-  ? [env.ALLOWED_ORIGIN]
-  : [env.ALLOWED_ORIGIN, 'http://localhost:5173']
+const allowedOrigins = env.ALLOWED_ORIGIN.split(',').map(o => o.trim())
+if (!isProd && !allowedOrigins.includes('http://localhost:5173')) {
+  allowedOrigins.push('http://localhost:5173')
+}
 
 const app = new Hono()
 
