@@ -61,7 +61,7 @@ export default function DashboardPage() {
             </p>
           </div>
           <a
-            href="https://delahuerto.pages.dev/"
+            href="/"
             target="_blank"
             rel="noopener noreferrer"
             style={{
