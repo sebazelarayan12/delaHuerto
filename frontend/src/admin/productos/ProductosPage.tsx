@@ -70,38 +70,25 @@ export default function ProductosPage() {
 
   return (
     <AdminLayout>
-      <div style={{ padding: '32px 32px 0', borderBottom: '1px solid #E2CFB5', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+      <div className="px-4 lg:px-8 pt-6 lg:pt-8 pb-5" style={{ borderBottom: '1px solid #E2CFB5', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
         <div>
-          <h1 style={{ fontSize: 24, fontWeight: 800, color: '#2C1208' }}>Productos</h1>
-          <p style={{ fontSize: 14, color: '#9A7A66', marginTop: 4, paddingBottom: 20 }}>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: '#2C1208' }}>Productos</h1>
+          <p style={{ fontSize: 14, color: '#9A7A66', marginTop: 4 }}>
             {query.data?.length ?? 0} productos en total
           </p>
         </div>
         <button
           onClick={openNew}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 6,
-            padding: '9px 16px',
-            borderRadius: 10,
-            border: 'none',
-            background: '#C4522A',
-            color: 'white',
-            fontFamily: "'Manrope', sans-serif",
-            fontSize: 13.5,
-            fontWeight: 600,
-            cursor: 'pointer',
-            boxShadow: '0 2px 8px rgba(196,82,42,0.3)',
-            marginTop: 4,
-          }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 10, border: 'none', background: '#C4522A', color: 'white', fontFamily: "'Manrope', sans-serif", fontSize: 13.5, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(196,82,42,0.3)', flexShrink: 0 }}
         >
           <span className="icon icon-fill" style={{ fontSize: 18 }}>add_circle</span>
-          Nuevo producto
+          <span className="hidden sm:inline">Nuevo producto</span>
+          <span className="sm:hidden">Nuevo</span>
         </button>
       </div>
 
-      <div style={{ padding: '20px 32px 8px', display: 'flex', gap: 12 }}>
+      {/* Filtros: stack en mobile, fila en sm+ */}
+      <div className="px-4 lg:px-8 pt-5 pb-2 flex flex-col sm:flex-row gap-3">
         <div style={{ position: 'relative', flex: 1 }}>
           <span className="icon" style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#9A7A66', fontSize: 18 }}>search</span>
           <input
@@ -115,7 +102,8 @@ export default function ProductosPage() {
         <select
           value={filterCat}
           onChange={(e) => setFilterCat(e.target.value === '' ? '' : Number(e.target.value))}
-          style={{ ...inputStyle, width: 220 }}
+          style={{ ...inputStyle, width: '100%' }}
+          className="sm:w-56"
         >
           <option value="">Todas las categorías</option>
           {categorias.map((c) => (
@@ -124,60 +112,58 @@ export default function ProductosPage() {
         </select>
       </div>
 
-      <div style={{ padding: '8px 32px 32px' }}>
+      <div className="px-4 lg:px-8 pb-8 pt-2">
         {query.isLoading ? (
           <div style={{ textAlign: 'center', padding: 40, color: '#9A7A66' }}>Cargando…</div>
         ) : (
           <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 8px rgba(44,18,8,0.06)', overflow: 'hidden' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Manrope', sans-serif" }}>
-              <thead>
-                <tr style={{ background: '#FDF6EC' }}>
-                  {['Foto', 'Nombre', 'Categoría', 'Precio', 'Estado', 'Disponible', 'Acciones'].map((h) => (
-                    <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9A7A66', borderBottom: '1px solid #E2CFB5' }}>
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {productos.map((prod, i) => (
-                  <tr key={prod.id} style={{ borderBottom: i < productos.length - 1 ? '1px solid #F3E8D8' : 'none' }}>
-                    <td style={{ padding: '12px 16px' }}>
-                      <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', background: '#F3E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
-                        {prod.fotoUrl ? (
-                          <img src={prod.fotoUrl} alt={prod.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                        ) : '🫔'}
-                      </div>
-                    </td>
-                    <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 700, color: '#2C1208' }}>{prod.nombre}</td>
-                    <td style={{ padding: '12px 16px', fontSize: 13, color: '#9A7A66' }}>{prod.categoria.nombre}</td>
-                    <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 700, color: '#C4522A' }}>{fmt(parseFloat(prod.precio))}</td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <span style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 99, fontSize: 12, fontWeight: 700,
-                        background: prod.disponible ? '#f0fdf4' : '#fef2f2',
-                        color: prod.disponible ? '#15803d' : '#dc2626',
-                      }}>
-                        <span className="icon" style={{ fontSize: 13 }}>{prod.disponible ? 'check_circle' : 'cancel'}</span>
-                        {prod.disponible ? 'Disponible' : 'No disponible'}
-                      </span>
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <Toggle checked={prod.disponible} onChange={() => handleToggle(prod)} />
-                    </td>
-                    <td style={{ padding: '12px 16px' }}>
-                      <button
-                        onClick={() => openEdit(prod)}
-                        style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020' }}
-                        title="Editar"
-                      >
-                        <span className="icon" style={{ fontSize: 17 }}>edit</span>
-                      </button>
-                    </td>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Manrope', sans-serif", minWidth: 640 }}>
+                <thead>
+                  <tr style={{ background: '#FDF6EC' }}>
+                    {['Foto', 'Nombre', 'Categoría', 'Precio', 'Estado', 'Disponible', 'Acciones'].map((h) => (
+                      <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9A7A66', borderBottom: '1px solid #E2CFB5', whiteSpace: 'nowrap' }}>
+                        {h}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {productos.map((prod, i) => (
+                    <tr key={prod.id} style={{ borderBottom: i < productos.length - 1 ? '1px solid #F3E8D8' : 'none' }}>
+                      <td style={{ padding: '12px 16px' }}>
+                        <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', background: '#F3E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
+                          {prod.fotoUrl ? (
+                            <img src={prod.fotoUrl} alt={prod.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                          ) : '🫔'}
+                        </div>
+                      </td>
+                      <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 700, color: '#2C1208', whiteSpace: 'nowrap' }}>{prod.nombre}</td>
+                      <td style={{ padding: '12px 16px', fontSize: 13, color: '#9A7A66', whiteSpace: 'nowrap' }}>{prod.categoria.nombre}</td>
+                      <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 700, color: '#C4522A', whiteSpace: 'nowrap' }}>{fmt(parseFloat(prod.precio))}</td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 99, fontSize: 12, fontWeight: 700, background: prod.disponible ? '#f0fdf4' : '#fef2f2', color: prod.disponible ? '#15803d' : '#dc2626', whiteSpace: 'nowrap' }}>
+                          <span className="icon" style={{ fontSize: 13 }}>{prod.disponible ? 'check_circle' : 'cancel'}</span>
+                          {prod.disponible ? 'Disponible' : 'No disponible'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <Toggle checked={prod.disponible} onChange={() => handleToggle(prod)} />
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <button
+                          onClick={() => openEdit(prod)}
+                          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020' }}
+                          title="Editar"
+                        >
+                          <span className="icon" style={{ fontSize: 17 }}>edit</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
             {productos.length === 0 && (
               <div style={{ padding: '40px 24px', textAlign: 'center', color: '#9A7A66', fontSize: 14 }}>
                 No se encontraron productos
