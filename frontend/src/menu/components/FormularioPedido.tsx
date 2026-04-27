@@ -6,9 +6,9 @@ import type { ItemCarrito } from '../hooks/useCarrito'
 import { enviarPedidoWhatsApp } from '../helpers/whatsapp.helper'
 
 const schema = z.object({
-  nombre: z.string().min(2, 'Mínimo 2 caracteres'),
-  telefono: z.string().min(8, 'Mínimo 8 caracteres'),
-  direccion: z.string().min(5, 'Mínimo 5 caracteres'),
+  nombre: z.string().min(2, 'El nombre es muy corto').max(50, 'El nombre es muy largo').regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras'),
+  telefono: z.string().refine(val => val.replace(/\D/g, '').length >= 10, 'Debe tener al menos 10 números (ej: 11 1234 5678)'),
+  direccion: z.string().min(6, 'Ingresá calle y altura (ej: San Martín 123)'),
   metodoPago: z.enum(['efectivo', 'transferencia']),
   notas: z.string().optional(),
 })
@@ -96,26 +96,26 @@ export default function FormularioPedido({ open, onClose, items, total, subtotal
           width: '100%',
           background: '#FFFDF9',
           borderRadius: '24px 24px 0 0',
-          paddingBottom: 32,
-          maxHeight: '92vh',
-          overflowY: 'auto',
+          maxHeight: 'calc(100dvh - 40px)',
+          display: 'flex',
+          flexDirection: 'column',
           transform: open ? 'translateY(0)' : 'translateY(100%)',
           transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 0' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 8px', flexShrink: 0 }}>
           <div style={{ width: 40, height: 4, borderRadius: 99, background: '#E2CFB5' }} />
         </div>
 
         {!sent ? (
-          <div style={{ padding: '16px 20px 0' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 }}>
+          <>
+            <div style={{ padding: '8px 20px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2CFB5', flexShrink: 0 }}>
               <div>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 800, color: '#2C1208' }}>
+                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#2C1208' }}>
                   Datos del pedido
                 </h2>
-                <p style={{ fontSize: 13, color: '#9A7A66', marginTop: 4 }}>
-                  Completá tus datos y te contactamos por WhatsApp
+                <p style={{ fontSize: 13, color: '#9A7A66', marginTop: 2 }}>
+                  Completá tus datos para WhatsApp
                 </p>
               </div>
               <button 
@@ -127,7 +127,8 @@ export default function FormularioPedido({ open, onClose, items, total, subtotal
               </button>
             </div>
 
-            <div style={{ background: '#F3E8D8', borderRadius: 14, padding: '12px 14px', marginBottom: 20 }}>
+            <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
+              <div style={{ background: '#F3E8D8', borderRadius: 14, padding: '12px 14px', marginBottom: 20 }}>
               {items.map((item) => (
                 <div key={item.productoId} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#7A4020', marginBottom: 4 }}>
                   <span style={{ fontWeight: 600 }}>{item.nombre} × {item.cantidad}</span>
@@ -188,8 +189,9 @@ export default function FormularioPedido({ open, onClose, items, total, subtotal
               </button>
             </form>
           </div>
+          </>
         ) : (
-          <div style={{ padding: '40px 28px 20px', textAlign: 'center' }}>
+          <div style={{ padding: '40px 28px 32px', textAlign: 'center', flex: 1, overflowY: 'auto' }}>
             <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
             <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 800, color: '#2C1208', marginBottom: 8 }}>
               ¡Pedido enviado!
