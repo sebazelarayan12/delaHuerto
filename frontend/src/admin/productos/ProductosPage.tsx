@@ -165,9 +165,15 @@ export default function ProductosPage() {
                             <span className="icon" style={{ fontSize: 17 }}>edit</span>
                           </button>
                           <button
-                            onClick={() => {
+                            onClick={async () => {
                               if (confirm(`¿Eliminar definitivamente el producto "${prod.nombre}"? Esta acción no se puede deshacer.`)) {
-                                eliminar.mutate(prod.id)
+                                try {
+                                  await eliminar.mutateAsync(prod.id)
+                                  showToast('Producto eliminado')
+                                } catch (e: unknown) {
+                                  const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al eliminar'
+                                  showToast(msg, true)
+                                }
                               }
                             }}
                             style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #fecaca', background: 'transparent', cursor: 'pointer', color: '#dc2626' }}
