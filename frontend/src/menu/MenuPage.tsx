@@ -144,6 +144,7 @@ export default function MenuPage() {
         subtotal={subtotal}
         montoDescuento={montoDescuento}
         porcentajeDescuento={porcentajeDescuento}
+        onSuccess={vaciar}
       />
     </div>
   )

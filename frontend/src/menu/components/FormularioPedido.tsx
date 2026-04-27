@@ -40,9 +40,10 @@ interface Props {
   subtotal: number
   montoDescuento: number
   porcentajeDescuento: number
+  onSuccess: () => void
 }
 
-export default function FormularioPedido({ open, onClose, items, total, subtotal, montoDescuento, porcentajeDescuento }: Props) {
+export default function FormularioPedido({ open, onClose, onSuccess, items, total, subtotal, montoDescuento, porcentajeDescuento }: Props) {
   const [sent, setSent] = useState(false)
   const [dupError, setDupError] = useState(false)
 
@@ -63,6 +64,7 @@ export default function FormularioPedido({ open, onClose, items, total, subtotal
     enviarPedidoWhatsApp(items, data)
     registrarPedido(data.telefono)
     setSent(true)
+    onSuccess()
   }
 
   const handleClose = () => {
