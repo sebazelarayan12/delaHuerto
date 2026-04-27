@@ -9,7 +9,7 @@ import CartFab from './components/CartFab'
 
 export default function MenuPage() {
   const { data: categorias, isLoading, isError, refetch } = useMenu()
-  const { items, agregar, incrementar, decrementar, total, cantidadTotal, subtotal, montoDescuento, porcentajeDescuento } = useCarrito()
+  const { items, agregar, incrementar, decrementar, total, cantidadTotal, subtotal, montoDescuento, porcentajeDescuento, vaciar } = useCarrito()
   const [carritoOpen, setCarritoOpen] = useState(false)
   const [formularioOpen, setFormularioOpen] = useState(false)
   const [activeCat, setActiveCat] = useState<number | null>(null)
