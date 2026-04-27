@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
 import { env } from './env.js'
-import { db } from './db.js'
+import { prisma } from './db.js'
 import authRoutes from './routes/auth.routes.js'
 import { categoriasPublicRoutes, categoriasAdminRoutes } from './routes/categorias.routes.js'
 import { productosAdminRoutes } from './routes/productos.routes.js'
@@ -33,7 +33,7 @@ app.route('/api/admin/productos', productosAdminRoutes)
 
 app.get('/health', async (c) => {
   try {
-    await db.$queryRaw`SELECT 1`
+    await prisma.$queryRaw`SELECT 1`
     return c.json({ ok: true, db: 'connected' })
   } catch {
     return c.json({ ok: false, db: 'unreachable' }, 503)
