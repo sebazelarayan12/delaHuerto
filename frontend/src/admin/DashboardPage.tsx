@@ -126,7 +126,7 @@ export default function DashboardPage() {
                     <div style={{ width: 36, height: 36, borderRadius: 8, background: '#F3E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
                       {p.fotoUrl ? (
                         <img src={p.fotoUrl} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
-                      ) : '🫔'}
+                      ) : '🥟'}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.nombre}</div>

@@ -20,7 +20,6 @@ app.get('/', async (c) => {
       orderBy: { orden: 'asc' },
       include: {
         productos: {
-          where: { disponible: true },
           orderBy: { orden: 'asc' },
         },
       },
@@ -84,6 +83,18 @@ admin.delete('/:id', async (c) => {
   } catch (e: unknown) {
     if ((e as { code?: string }).code === 'P2025') return c.json({ error: 'Categoría no encontrada' }, 404)
     return c.json({ error: 'Error al eliminar categoría' }, 500)
+  }
+})
+
+admin.post('/reorder', zValidator('json', z.object({ ordenes: z.array(z.object({ id: z.number(), orden: z.number() })) })), async (c) => {
+  try {
+    const { ordenes } = c.req.valid('json')
+    await prisma.$transaction(
+      ordenes.map((o) => prisma.categoria.update({ where: { id: o.id }, data: { orden: o.orden } }))
+    )
+    return c.json({ ok: true })
+  } catch (e) {
+    return c.json({ error: 'Error al reordenar categorías' }, 500)
   }
 })
 

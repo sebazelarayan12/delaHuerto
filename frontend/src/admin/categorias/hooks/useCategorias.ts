@@ -43,5 +43,10 @@ export function useCategorias() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categorias'] }),
   })
 
-  return { query, crear, editar, toggleActiva, eliminar }
+  const reordenar = useMutation({
+    mutationFn: (ordenes: { id: number; orden: number }[]) => api.post('/api/admin/categorias/reorder', { ordenes }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categorias'] }),
+  })
+
+  return { query, crear, editar, toggleActiva, eliminar, reordenar }
 }

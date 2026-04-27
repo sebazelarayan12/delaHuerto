@@ -36,7 +36,11 @@ export default function CategoriaSection({ categoria, items, onAgregar, onIncrem
         </div>
       </div>
       <div>
-        {categoria.productos.map((p) => (
+        {categoria.productos.length === 0 ? (
+          <div style={{ padding: '24px 16px', textAlign: 'center', color: '#9A7A66', fontSize: 14, background: '#FFFDF9', borderBottom: '1px solid #F3E8D8' }}>
+            No hay productos disponibles para esta categoría en este momento.
+          </div>
+        ) : categoria.productos.map((p) => (
           <ProductoCard
             key={p.id}
             producto={p}

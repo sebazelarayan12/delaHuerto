@@ -7,13 +7,16 @@ interface Props {
   onClose: () => void
   items: ItemCarrito[]
   total: number
+  subtotal: number
+  montoDescuento: number
+  porcentajeDescuento: number
   cantidadTotal: number
   onIncrementar: (id: number) => void
   onDecrementar: (id: number) => void
   onConfirmar: () => void
 }
 
-export default function Carrito({ open, onClose, items, total, cantidadTotal, onIncrementar, onDecrementar, onConfirmar }: Props) {
+export default function Carrito({ open, onClose, items, total, subtotal, montoDescuento, porcentajeDescuento, cantidadTotal, onIncrementar, onDecrementar, onConfirmar }: Props) {
   return (
     <div
       role="presentation"
@@ -198,6 +201,18 @@ export default function Carrito({ open, onClose, items, total, cantidadTotal, on
               background: '#FDF6EC',
             }}
           >
+            {montoDescuento > 0 && (
+              <>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#9A7A66', marginBottom: 6 }}>
+                  <span>Subtotal</span>
+                  <span>{fmt(subtotal)}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#15803d', fontWeight: 600, marginBottom: 12 }}>
+                  <span>Descuento ({porcentajeDescuento * 100}%)</span>
+                  <span>-{fmt(montoDescuento)}</span>
+                </div>
+              </>
+            )}
             <div
               style={{
                 display: 'flex',

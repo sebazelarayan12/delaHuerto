@@ -12,9 +12,15 @@ interface DatosPedido {
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
 export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido) {
-  const total = items.reduce((s, i) => s + i.precio * i.cantidad, 0)
+  const subtotalLocal = items.reduce((s, i) => s + i.precio * i.cantidad, 0)
+  const cantidadTotal = items.reduce((s, i) => s + i.cantidad, 0)
+  let porc = 0
+  if (cantidadTotal >= 10) porc = 0.25
+  else if (cantidadTotal >= 5) porc = 0.05
+  const desc = subtotalLocal * porc
+  const total = subtotalLocal - desc
   const lines: string[] = [
-    '🫔 *Pedido de Empanadas*',
+    '🥟 *Pedido de Empanadas*',
     '',
     '📋 *Detalle del pedido:*',
   ]
@@ -24,6 +30,10 @@ export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido) {
   }
 
   lines.push('')
+  if (desc > 0) {
+    lines.push(`Subtotal: ${fmt(subtotalLocal)}`)
+    lines.push(`Descuento (${porc * 100}%): -${fmt(desc)}`)
+  }
   lines.push(`💰 *Total: ${fmt(total)}*`)
   lines.push('')
   lines.push('👤 *Datos del cliente:*')

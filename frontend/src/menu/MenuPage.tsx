@@ -9,7 +9,7 @@ import CartFab from './components/CartFab'
 
 export default function MenuPage() {
   const { data: categorias, isLoading, isError, refetch } = useMenu()
-  const { items, agregar, incrementar, decrementar, total, cantidadTotal } = useCarrito()
+  const { items, agregar, incrementar, decrementar, total, cantidadTotal, subtotal, montoDescuento, porcentajeDescuento } = useCarrito()
   const [carritoOpen, setCarritoOpen] = useState(false)
   const [formularioOpen, setFormularioOpen] = useState(false)
   const [activeCat, setActiveCat] = useState<number | null>(null)
@@ -70,19 +70,19 @@ export default function MenuPage() {
       <div style={{ background: 'linear-gradient(135deg, #3D1A0A 0%, #6B2D15 100%)', padding: '20px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
         <div>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#FBF1D8', lineHeight: 1.3 }}>
-            Hechas con amor,<br />desde 1987
+            Hechas con amor
           </div>
           <div style={{ fontSize: 12, color: '#C49060', marginTop: 4, fontWeight: 500 }}>
-            Masa casera · Sin conservantes · Estilo sanjuanino
+            Masa casera · Estilo tucumanas
           </div>
         </div>
-        <div style={{ marginLeft: 'auto', fontSize: 44, flexShrink: 0 }}>🫔</div>
+        <div style={{ marginLeft: 'auto', fontSize: 44, flexShrink: 0 }}>🥟</div>
       </div>
 
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
         {isLoading && (
           <div style={{ textAlign: 'center', padding: '60px 24px', color: '#9A7A66' }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>🫔</div>
+            <div style={{ fontSize: 32, marginBottom: 8 }}>🥟</div>
             <div style={{ fontWeight: 600 }}>Cargando menú…</div>
           </div>
         )}
@@ -115,8 +115,8 @@ export default function MenuPage() {
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#FBF1D8', marginBottom: 6 }}>
             Huerto Empanadas
           </div>
-          <div style={{ fontSize: 12, color: '#C49060', marginBottom: 4 }}>📍 Av. San Martín 4521, Villa del Parque</div>
-          <div style={{ fontSize: 12, color: '#C49060' }}>⏰ Lun a Sab · 12 a 21hs</div>
+          <div style={{ fontSize: 12, color: '#C49060', marginBottom: 4 }}>📍 Don bosco, San Miguel de Tucuman</div>
+          <div style={{ fontSize: 12, color: '#C49060' }}>⏰ Lun a Sab · 10 a 21hs</div>
         </div>
       </main>
 
@@ -127,6 +127,9 @@ export default function MenuPage() {
         onClose={() => setCarritoOpen(false)}
         items={items}
         total={total}
+        subtotal={subtotal}
+        montoDescuento={montoDescuento}
+        porcentajeDescuento={porcentajeDescuento}
         cantidadTotal={cantidadTotal}
         onIncrementar={incrementar}
         onDecrementar={decrementar}
@@ -138,6 +141,9 @@ export default function MenuPage() {
         onClose={() => setFormularioOpen(false)}
         items={items}
         total={total}
+        subtotal={subtotal}
+        montoDescuento={montoDescuento}
+        porcentajeDescuento={porcentajeDescuento}
       />
     </div>
   )

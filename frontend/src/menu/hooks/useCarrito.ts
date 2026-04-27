@@ -37,8 +37,15 @@ export function useCarrito() {
 
   const vaciar = () => setItems([])
 
-  const total = items.reduce((sum, i) => sum + i.precio * i.cantidad, 0)
+  const subtotal = items.reduce((sum, i) => sum + i.precio * i.cantidad, 0)
   const cantidadTotal = items.reduce((sum, i) => sum + i.cantidad, 0)
 
-  return { items, agregar, incrementar, decrementar, eliminar, vaciar, total, cantidadTotal }
+  let porcentajeDescuento = 0
+  if (cantidadTotal >= 10) porcentajeDescuento = 0.25
+  else if (cantidadTotal >= 5) porcentajeDescuento = 0.05
+
+  const montoDescuento = subtotal * porcentajeDescuento
+  const total = subtotal - montoDescuento
+
+  return { items, agregar, incrementar, decrementar, eliminar, vaciar, subtotal, montoDescuento, porcentajeDescuento, total, cantidadTotal }
 }

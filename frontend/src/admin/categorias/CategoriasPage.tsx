@@ -1,12 +1,53 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import AdminLayout from '../AdminLayout'
 import { useCategorias } from './hooks/useCategorias'
 import type { CategoriaAdmin } from './hooks/useCategorias'
 import CategoriaForm from './CategoriaForm'
 
 export default function CategoriasPage() {
-  const { query, crear, editar, toggleActiva, eliminar } = useCategorias()
+  const { query, crear, editar, toggleActiva, eliminar, reordenar } = useCategorias()
   const [modalOpen, setModalOpen] = useState(false)
+  const [localCats, setLocalCats] = useState<CategoriaAdmin[]>([])
+  const [draggedId, setDraggedId] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (query.data) {
+      setLocalCats([...query.data].sort((a, b) => a.orden - b.orden))
+    }
+  }, [query.data])
+
+  const handleDragStart = (e: React.DragEvent, id: number) => {
+    setDraggedId(id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleDragOver = (e: React.DragEvent, targetId: number) => {
+    e.preventDefault()
+    if (draggedId === null || draggedId === targetId) return
+    const draggedIdx = localCats.findIndex((c) => c.id === draggedId)
+    const targetIdx = localCats.findIndex((c) => c.id === targetId)
+    const newCats = [...localCats]
+    const [draggedCat] = newCats.splice(draggedIdx, 1)
+    newCats.splice(targetIdx, 0, draggedCat)
+    setLocalCats(newCats)
+  }
+
+  const handleDragEnd = async () => {
+    if (draggedId === null) return
+    setDraggedId(null)
+    const originalOrder = [...(query.data ?? [])].sort((a, b) => a.orden - b.orden)
+    const changed = localCats.some((c, i) => c.id !== originalOrder[i]?.id)
+    if (!changed) return
+
+    const ordenes = localCats.map((c, i) => ({ id: c.id, orden: i }))
+    try {
+      await reordenar.mutateAsync(ordenes)
+      showToast('Orden actualizado')
+    } catch (e) {
+      showToast('Error al reordenar', true)
+      setLocalCats([...originalOrder])
+    }
+  }
   const [editing, setEditing] = useState<CategoriaAdmin | null>(null)
   const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null)
 
@@ -76,16 +117,32 @@ export default function CategoriasPage() {
               <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Manrope', sans-serif", minWidth: 520 }}>
                 <thead>
                   <tr style={{ background: '#FDF6EC' }}>
-                    {['Nombre', 'Orden', 'Estado', 'Activar / Desactivar', 'Acciones'].map((h) => (
-                      <th key={h} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9A7A66', borderBottom: '1px solid #E2CFB5', whiteSpace: 'nowrap' }}>
+                    {['', 'Nombre', 'Orden', 'Estado', 'Activar / Desactivar', 'Acciones'].map((h, idx) => (
+                      <th key={idx} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9A7A66', borderBottom: '1px solid #E2CFB5', whiteSpace: 'nowrap', width: h === '' ? 40 : 'auto' }}>
                         {h}
                       </th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  {[...categorias].sort((a, b) => a.orden - b.orden).map((cat, i) => (
-                    <tr key={cat.id} style={{ borderBottom: i < categorias.length - 1 ? '1px solid #F3E8D8' : 'none' }}>
+                  {localCats.map((cat, i) => (
+                    <tr
+                      key={cat.id}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, cat.id)}
+                      onDragOver={(e) => handleDragOver(e, cat.id)}
+                      onDragEnd={handleDragEnd}
+                      style={{
+                        borderBottom: i < localCats.length - 1 ? '1px solid #F3E8D8' : 'none',
+                        cursor: 'grab',
+                        background: draggedId === cat.id ? '#FFFDF9' : 'transparent',
+                        opacity: draggedId === cat.id ? 0.6 : 1,
+                        transition: 'background 0.2s, opacity 0.2s'
+                      }}
+                    >
+                      <td style={{ padding: '14px 16px', width: 40 }}>
+                        <span className="icon" style={{ color: '#E2CFB5', fontSize: 20 }}>drag_indicator</span>
+                      </td>
                       <td style={{ padding: '14px 16px', fontSize: 14, fontWeight: 700, color: '#2C1208', whiteSpace: 'nowrap' }}>
                         {cat.nombre}
                       </td>

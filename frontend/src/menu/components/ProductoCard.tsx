@@ -51,7 +51,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
               fontSize: 32,
             }}
           >
-            🫔
+            🥟
           </div>
         )}
       </div>
@@ -99,7 +99,11 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
             <div style={{ fontSize: 10.5, color: '#9A7A66', fontWeight: 500 }}>la docena</div>
           </div>
 
-          {cantidad === 0 ? (
+          {!producto.disponible ? (
+            <div style={{ background: '#F3E8D8', color: '#9A7A66', padding: '6px 12px', borderRadius: 99, fontSize: 12, fontWeight: 700 }}>
+              Sin stock
+            </div>
+          ) : cantidad === 0 ? (
             <button
               onClick={onAgregar}
               style={{

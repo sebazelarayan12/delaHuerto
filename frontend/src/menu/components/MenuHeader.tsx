@@ -47,7 +47,7 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
       </div>
 
       <div style={{ background: '#E8A838', margin: '0 -16px', padding: '7px 16px', fontSize: 12, fontWeight: 700, color: '#2C1208', textAlign: 'center', letterSpacing: '0.02em' }}>
-        🕐 Pedidos hasta las 19hs · Entrega el mismo día
+        Descuento en compras por mayor!
       </div>
 
       <nav style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '12px 0', scrollbarWidth: 'none' }}>

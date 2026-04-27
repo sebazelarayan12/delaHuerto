@@ -37,9 +37,12 @@ interface Props {
   onClose: () => void
   items: ItemCarrito[]
   total: number
+  subtotal: number
+  montoDescuento: number
+  porcentajeDescuento: number
 }
 
-export default function FormularioPedido({ open, onClose, items, total }: Props) {
+export default function FormularioPedido({ open, onClose, items, total, subtotal, montoDescuento, porcentajeDescuento }: Props) {
   const [sent, setSent] = useState(false)
   const [dupError, setDupError] = useState(false)
 
@@ -122,7 +125,19 @@ export default function FormularioPedido({ open, onClose, items, total }: Props)
                   <span>{fmt(item.precio * item.cantidad)}</span>
                 </div>
               ))}
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid #E2CFB5', marginTop: 4 }}>
+              {montoDescuento > 0 && (
+                <>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid #E2CFB5', marginTop: 4 }}>
+                    <span style={{ color: '#9A7A66', fontSize: 13 }}>Subtotal</span>
+                    <span style={{ color: '#9A7A66', fontSize: 13 }}>{fmt(subtotal)}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
+                    <span style={{ color: '#15803d', fontSize: 13, fontWeight: 600 }}>Descuento ({porcentajeDescuento * 100}%)</span>
+                    <span style={{ color: '#15803d', fontSize: 13, fontWeight: 600 }}>-{fmt(montoDescuento)}</span>
+                  </div>
+                </>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: montoDescuento > 0 ? 'none' : '1px solid #E2CFB5', marginTop: 4 }}>
                 <span style={{ fontWeight: 800, color: '#2C1208', fontSize: 14 }}>Total</span>
                 <span style={{ fontWeight: 800, color: '#C4522A', fontSize: 14 }}>{fmt(total)}</span>
               </div>

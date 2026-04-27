@@ -161,7 +161,7 @@ export default function ProductosPage() {
                         <div style={{ width: 44, height: 44, borderRadius: 8, overflow: 'hidden', background: '#F3E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
                           {prod.fotoUrl ? (
                             <img src={prod.fotoUrl} alt={prod.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                          ) : '🫔'}
+                          ) : '🥟'}
                         </div>
                       </td>
                       <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 700, color: '#2C1208', whiteSpace: 'nowrap' }}>{prod.nombre}</td>
