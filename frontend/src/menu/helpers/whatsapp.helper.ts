@@ -39,5 +39,6 @@ export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido) {
   }
 
   const mensaje = encodeURIComponent(lines.join('\n'))
-  window.open(`https://wa.me/${config.whatsappNumber}?text=${mensaje}`, '_blank')
+  const phone = config.whatsappNumber.replace('+', '')
+  window.open(`https://wa.me/${phone}?text=${mensaje}`, '_blank')
 }
