@@ -122,6 +122,49 @@ Invocar el skill correspondiente antes de trabajar en cada área:
 
 **PROHIBIDO usar emojis en cualquier parte del proyecto:** codigo, componentes, textos del UI, commits, comentarios, documentacion. Sin excepciones.
 
+## Migraciones de base de datos — CRITICO
+
+**NUNCA usar `prisma db push` en produccion.** Solo para prototipado local inicial.
+
+### Por que
+
+`prisma db push` sincroniza el schema directamente contra la DB sin historial. Si detecta un cambio destructivo (columna eliminada, tipo cambiado, restriccion nueva) puede truncar tablas con datos reales. No hay rollback.
+
+### Regla
+
+| Ambiente | Comando correcto |
+| --- | --- |
+| Desarrollo local (primera vez) | `prisma db push` — OK solo para setup inicial |
+| Desarrollo local (cambios de schema) | `npm run db:migrate` → genera archivo de migracion |
+| Produccion | `prisma migrate deploy` — aplica solo migraciones pendientes, nunca destruye datos |
+
+### Workflow obligatorio al cambiar `schema.prisma`
+
+1. Modificar `schema.prisma` localmente
+2. Correr `npm run db:migrate` → crea archivo en `prisma/migrations/`
+3. Commitear el archivo de migracion junto con el cambio de schema
+4. El deploy en Railway corre `prisma migrate deploy` automaticamente (Dockerfile ya configurado)
+
+### Si la DB de produccion fue creada con `db push` (baseline)
+
+Antes de poder usar `migrate deploy`, hay que registrar el estado actual como migracion baseline:
+
+```bash
+# 1. Crear migracion sin aplicarla (solo genera el SQL)
+npx prisma migrate dev --create-only --name init
+
+# 2. En produccion, marcarla como ya aplicada (las tablas ya existen)
+npx prisma migrate resolve --applied 0_init
+```
+
+Esto le dice a Prisma "esta migracion ya esta aplicada, no la corras de nuevo".
+
+### Soft delete — NUNCA borrar registros fisicamente
+
+- `Categoria`: desactivar con `activa: false`
+- `Producto`: desactivar con `disponible: false`
+- `prisma.categoria.delete()` y `prisma.producto.delete()` estan prohibidos desde la API
+
 ## Seguridad y buenas prácticas
 
 - Mantener credenciales y datos sensibles fuera del repositorio — respetar `.gitignore` (`.env*`)

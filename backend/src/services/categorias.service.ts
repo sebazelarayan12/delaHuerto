@@ -40,9 +40,9 @@ export class CategoriasService {
   }
 
   static async deleteCategory(id: number) {
-    const count = await prisma.producto.count({ where: { categoriaId: id } })
-    if (count > 0) throw new ConflictError('La categoría tiene productos. Eliminá los productos primero.')
-    return prisma.categoria.delete({ where: { id } })
+    const categoria = await prisma.categoria.findUnique({ where: { id } })
+    if (!categoria) throw new NotFoundError('Categoria no encontrada')
+    return prisma.categoria.update({ where: { id }, data: { activa: false } })
   }
 
   static async reorderCategories(ordenes: { id: number; orden: number }[]) {
