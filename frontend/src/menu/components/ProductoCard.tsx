@@ -42,7 +42,6 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
         <div className="mt-auto flex items-center justify-between pt-1.5">
           <div>
             <div className="text-[17px] font-extrabold text-terra">{fmt(precio)}</div>
-            <div className="text-xs text-muted font-medium">la docena</div>
           </div>
 
           {!producto.disponible ? (
