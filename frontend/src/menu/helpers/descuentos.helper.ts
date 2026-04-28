@@ -1,4 +1,4 @@
-export interface DescuentoTier {
+interface DescuentoTier {
   id?: number
   cantidadMinima: number
   porcentaje: number
