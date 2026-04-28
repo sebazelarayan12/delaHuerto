@@ -21,11 +21,16 @@ function getNowAR(): Date {
 export function getFechasDisponibles(): readonly Date[] {
   const now = getNowAR()
   const available: Date[] = []
+  let foundViernes = false
+  let foundSabado = false
 
-  for (let i = 1; i <= 28; i++) {
+  for (let i = 1; i <= 14; i++) {
+    if (foundViernes && foundSabado) break
+
     const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i)
+    const day = candidate.getDay()
 
-    if (!(DIAS_ENTREGA as readonly number[]).includes(candidate.getDay())) continue
+    if (!(DIAS_ENTREGA as readonly number[]).includes(day)) continue
 
     const cutoff = new Date(
       candidate.getFullYear(),
@@ -34,7 +39,11 @@ export function getFechasDisponibles(): readonly Date[] {
       HORA_CORTE, 0, 0
     )
 
-    if (now < cutoff) available.push(candidate)
+    if (now < cutoff) {
+      available.push(candidate)
+      if (day === 5) foundViernes = true
+      if (day === 6) foundSabado = true
+    }
   }
 
   return available
