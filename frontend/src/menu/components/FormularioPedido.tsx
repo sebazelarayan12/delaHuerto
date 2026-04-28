@@ -4,6 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { ItemCarrito } from '../hooks/useCarrito'
 import { enviarPedidoWhatsApp } from '../helpers/whatsapp.helper'
+import { getFechasDisponibles, formatFechaLarga, formatFechaCorta } from '../helpers/fechaEntrega.helper'
+import SelectorFechaEntrega from './SelectorFechaEntrega'
+
+const FECHAS_DISPONIBLES = getFechasDisponibles()
 
 const schema = z.object({
   nombre: z.string().min(2, 'El nombre es muy corto').max(50, 'El nombre es muy largo').regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras'),
@@ -11,6 +15,7 @@ const schema = z.object({
   direccion: z.string().min(6, 'Ingresá calle y altura (ej: San Martín 123)'),
   metodoPago: z.enum(['efectivo', 'transferencia']),
   notas: z.string().optional(),
+  fechaEntrega: z.string().min(1, 'Selecciona una fecha de entrega'),
 })
 
 type FormData = z.infer<typeof schema>
@@ -45,8 +50,10 @@ interface Props {
 export default function FormularioPedido({ open, onClose, onSuccess, items, total, subtotal, montoDescuento }: Props) {
   const [sent, setSent] = useState(false)
   const [dupError, setDupError] = useState(false)
+  const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null)
+  const [calendarOpen, setCalendarOpen] = useState(false)
 
-  const { register, handleSubmit, formState: { errors }, control } = useForm<FormData>({
+  const { register, handleSubmit, setValue, formState: { errors }, control } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { metodoPago: 'efectivo' },
   })
@@ -66,9 +73,17 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
     onSuccess()
   }
 
+  function handleSelectFecha(date: Date): void {
+    setFechaSeleccionada(date)
+    setValue('fechaEntrega', formatFechaLarga(date), { shouldValidate: true })
+    setCalendarOpen(false)
+  }
+
   const handleClose = () => {
     setSent(false)
     setDupError(false)
+    setFechaSeleccionada(null)
+    setCalendarOpen(false)
     onClose()
   }
 
@@ -148,6 +163,36 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
               </Field>
               <Field label="Dirección de entrega" error={errors.direccion?.message}>
                 <input type="text" placeholder="Av. Corrientes 1234, CABA" {...register('direccion')} className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] text-espresso bg-cream outline-none focus:border-terra" />
+              </Field>
+              <Field label="Fecha de entrega" error={errors.fechaEntrega?.message}>
+                <div style={{ position: 'relative' }}>
+                  {FECHAS_DISPONIBLES.length === 0 ? (
+                    <p className="text-[13px] px-1" style={{ color: '#C4522A' }}>
+                      No hay fechas de entrega disponibles por el momento.
+                    </p>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setCalendarOpen(prev => !prev)}
+                        className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] bg-cream outline-none text-left flex items-center gap-2"
+                        style={{ color: fechaSeleccionada ? '#2C1208' : '#9E8C7E' }}
+                      >
+                        <span className="icon text-[20px]">calendar_month</span>
+                        {fechaSeleccionada ? formatFechaCorta(fechaSeleccionada) : 'Selecciona una fecha'}
+                      </button>
+                      {calendarOpen && (
+                        <SelectorFechaEntrega
+                          fechasDisponibles={FECHAS_DISPONIBLES}
+                          selected={fechaSeleccionada}
+                          onSelect={handleSelectFecha}
+                          onClose={() => setCalendarOpen(false)}
+                        />
+                      )}
+                    </>
+                  )}
+                  <input type="hidden" {...register('fechaEntrega')} />
+                </div>
               </Field>
               <Field label="Método de pago" error={errors.metodoPago?.message}>
                 <div className="flex gap-2.5">
