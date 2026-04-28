@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { Producto } from './useMenu'
 
 export interface ItemCarrito {
@@ -8,8 +8,21 @@ export interface ItemCarrito {
   cantidad: number
 }
 
+const CART_STORAGE_KEY = 'empanadas_carrito_v1'
+
 export function useCarrito() {
-  const [items, setItems] = useState<ItemCarrito[]>([])
+  const [items, setItems] = useState<ItemCarrito[]>(() => {
+    try {
+      const saved = localStorage.getItem(CART_STORAGE_KEY)
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
+
+  useEffect(() => {
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
+  }, [items])
 
   const agregar = (producto: Producto) => {
     const precio = parseFloat(producto.precio)
