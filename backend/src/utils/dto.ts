@@ -1,4 +1,4 @@
-import type { Categoria, Producto } from '@prisma/client'
+import type { Categoria, Producto, DescuentoCategoria } from '@prisma/client'
 
 export class DtoMapper {
   static toProductoDTO(producto: Producto & { categoria?: Categoria }) {
@@ -6,14 +6,19 @@ export class DtoMapper {
     return rest
   }
 
-  static toCategoriaDTO(categoria: Categoria & { productos?: Producto[] }) {
-    const { creadaEn, ...rest } = categoria
-    if (rest.productos) {
-      return {
-        ...rest,
-        productos: rest.productos.map(DtoMapper.toProductoDTO)
-      }
-    }
+  static toDescuentoDTO(descuento: DescuentoCategoria) {
+    const { categoriaId, ...rest } = descuento
     return rest
+  }
+
+  static toCategoriaDTO(
+    categoria: Categoria & { productos?: Producto[]; descuentos?: DescuentoCategoria[] }
+  ) {
+    const { creadaEn, ...rest } = categoria
+    return {
+      ...rest,
+      ...(rest.productos ? { productos: rest.productos.map(DtoMapper.toProductoDTO) } : {}),
+      descuentos: (rest.descuentos ?? []).map(DtoMapper.toDescuentoDTO),
+    }
   }
 }

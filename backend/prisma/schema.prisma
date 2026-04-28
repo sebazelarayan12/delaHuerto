@@ -8,14 +8,25 @@ datasource db {
 }
 
 model Categoria {
-  id        Int        @id @default(autoincrement())
-  nombre    String
-  orden     Int        @default(0)
-  activa    Boolean    @default(true)
-  productos Producto[]
-  creadaEn  DateTime   @default(now()) @map("creada_en")
+  id         Int                  @id @default(autoincrement())
+  nombre     String
+  orden      Int                  @default(0)
+  activa     Boolean              @default(true)
+  productos  Producto[]
+  descuentos DescuentoCategoria[]
+  creadaEn   DateTime             @default(now()) @map("creada_en")
 
   @@map("categorias")
+}
+
+model DescuentoCategoria {
+  id             Int       @id @default(autoincrement())
+  categoriaId    Int       @map("categoria_id")
+  categoria      Categoria @relation(fields: [categoriaId], references: [id], onDelete: Cascade)
+  cantidadMinima Int       @map("cantidad_minima")
+  porcentaje     Float
+
+  @@map("descuentos_categoria")
 }
 
 model Producto {

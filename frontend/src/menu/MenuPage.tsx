@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useMenu } from './hooks/useMenu'
 import { useCarrito } from './hooks/useCarrito'
+import { calcularDescuentoParaCantidad } from './helpers/descuentos.helper'
 import CategoriaSection from './components/CategoriaSection'
 import Carrito from './components/Carrito'
 import FormularioPedido from './components/FormularioPedido'
@@ -9,7 +10,29 @@ import CartFab from './components/CartFab'
 
 export default function MenuPage() {
   const { data: categorias, isLoading, isError, refetch } = useMenu()
-  const { items, agregar, incrementar, decrementar, total, cantidadTotal, subtotal, montoDescuento, porcentajeDescuento, vaciar } = useCarrito()
+  const { items, agregar, incrementar, decrementar, subtotal, cantidadTotal, vaciar } = useCarrito()
+
+  const { montoDescuento, total } = useMemo(() => {
+    if (!categorias || !items.length) return { montoDescuento: 0, total: subtotal }
+    const catMap = Object.fromEntries(categorias.map((c) => [c.id, c]))
+    const grupos: Record<number, typeof items> = {}
+    for (const item of items) {
+      if (!grupos[item.categoriaId]) grupos[item.categoriaId] = []
+      grupos[item.categoriaId].push(item)
+    }
+    let descuento = 0
+    for (const [catIdStr, grupo] of Object.entries(grupos)) {
+      const cat = catMap[Number(catIdStr)]
+      if (!cat) continue
+      const cantidadGrupo = grupo.reduce((s, i) => s + i.cantidad, 0)
+      const pct = calcularDescuentoParaCantidad(cantidadGrupo, cat.descuentos ?? [])
+      if (pct > 0) {
+        const subtotalGrupo = grupo.reduce((s, i) => s + i.precio * i.cantidad, 0)
+        descuento += subtotalGrupo * pct
+      }
+    }
+    return { montoDescuento: descuento, total: subtotal - descuento }
+  }, [items, categorias, subtotal])
   const [carritoOpen, setCarritoOpen] = useState(false)
   const [formularioOpen, setFormularioOpen] = useState(false)
   const [activeCat, setActiveCat] = useState<number | null>(null)
@@ -129,7 +152,6 @@ export default function MenuPage() {
         total={total}
         subtotal={subtotal}
         montoDescuento={montoDescuento}
-        porcentajeDescuento={porcentajeDescuento}
         cantidadTotal={cantidadTotal}
         onIncrementar={incrementar}
         onDecrementar={decrementar}
@@ -143,7 +165,6 @@ export default function MenuPage() {
         total={total}
         subtotal={subtotal}
         montoDescuento={montoDescuento}
-        porcentajeDescuento={porcentajeDescuento}
         onSuccess={vaciar}
       />
     </div>

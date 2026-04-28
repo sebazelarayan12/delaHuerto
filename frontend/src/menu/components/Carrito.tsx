@@ -9,14 +9,13 @@ interface Props {
   total: number
   subtotal: number
   montoDescuento: number
-  porcentajeDescuento: number
   cantidadTotal: number
   onIncrementar: (id: number) => void
   onDecrementar: (id: number) => void
   onConfirmar: () => void
 }
 
-export default function Carrito({ open, onClose, items, total, subtotal, montoDescuento, porcentajeDescuento, cantidadTotal, onIncrementar, onDecrementar, onConfirmar }: Props) {
+export default function Carrito({ open, onClose, items, total, subtotal, montoDescuento, cantidadTotal, onIncrementar, onDecrementar, onConfirmar }: Props) {
   return (
     <div
       role="presentation"
@@ -96,7 +95,7 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
                   <span>{fmt(subtotal)}</span>
                 </div>
                 <div className="flex justify-between text-[13px] text-green-700 font-semibold mb-3">
-                  <span>Descuento ({porcentajeDescuento * 100}%)</span>
+                  <span>Descuento</span>
                   <span>-{fmt(montoDescuento)}</span>
                 </div>
               </>

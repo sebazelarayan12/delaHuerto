@@ -1,12 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '../../../api/axios'
 
+export interface DescuentoTier {
+  id: number
+  cantidadMinima: number
+  porcentaje: number
+}
+
 export interface CategoriaAdmin {
   id: number
   nombre: string
   orden: number
   activa: boolean
   creadaEn: string
+  descuentos: DescuentoTier[]
 }
 
 export function useCategorias() {
@@ -48,5 +55,11 @@ export function useCategorias() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['categorias'] }),
   })
 
-  return { query, crear, editar, toggleActiva, eliminar, reordenar }
+  const syncDescuentos = useMutation({
+    mutationFn: ({ id, tiers }: { id: number; tiers: { cantidadMinima: number; porcentaje: number }[] }) =>
+      api.put(`/api/admin/categorias/${id}/descuentos`, tiers),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['categorias'] }),
+  })
+
+  return { query, crear, editar, toggleActiva, eliminar, reordenar, syncDescuentos }
 }

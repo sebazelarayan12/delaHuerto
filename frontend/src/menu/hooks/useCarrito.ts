@@ -3,12 +3,13 @@ import type { Producto } from './useMenu'
 
 export interface ItemCarrito {
   productoId: number
+  categoriaId: number
   nombre: string
   precio: number
   cantidad: number
 }
 
-const CART_STORAGE_KEY = 'empanadas_carrito_v1'
+const CART_STORAGE_KEY = 'empanadas_carrito_v2'
 
 export function useCarrito() {
   const [items, setItems] = useState<ItemCarrito[]>(() => {
@@ -29,7 +30,7 @@ export function useCarrito() {
     setItems((prev) => {
       const existing = prev.find((i) => i.productoId === producto.id)
       if (existing) return prev.map((i) => i.productoId === producto.id ? { ...i, cantidad: i.cantidad + 1 } : i)
-      return [...prev, { productoId: producto.id, nombre: producto.nombre, precio, cantidad: 1 }]
+      return [...prev, { productoId: producto.id, categoriaId: producto.categoriaId, nombre: producto.nombre, precio, cantidad: 1 }]
     })
   }
 
@@ -53,12 +54,5 @@ export function useCarrito() {
   const subtotal = items.reduce((sum, i) => sum + i.precio * i.cantidad, 0)
   const cantidadTotal = items.reduce((sum, i) => sum + i.cantidad, 0)
 
-  let porcentajeDescuento = 0
-  if (cantidadTotal >= 10) porcentajeDescuento = 0.25
-  else if (cantidadTotal >= 5) porcentajeDescuento = 0.05
-
-  const montoDescuento = subtotal * porcentajeDescuento
-  const total = subtotal - montoDescuento
-
-  return { items, agregar, incrementar, decrementar, eliminar, vaciar, subtotal, montoDescuento, porcentajeDescuento, total, cantidadTotal }
+  return { items, agregar, incrementar, decrementar, eliminar, vaciar, subtotal, cantidadTotal }
 }

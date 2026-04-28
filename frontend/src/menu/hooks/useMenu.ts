@@ -15,6 +15,12 @@ export interface Producto {
   creadoEn: string
 }
 
+export interface DescuentoTier {
+  id: number
+  cantidadMinima: number
+  porcentaje: number
+}
+
 export interface Categoria {
   id: number
   nombre: string
@@ -22,6 +28,7 @@ export interface Categoria {
   activa: boolean
   creadaEn: string
   productos: Producto[]
+  descuentos: DescuentoTier[]
 }
 
 export function useMenu() {

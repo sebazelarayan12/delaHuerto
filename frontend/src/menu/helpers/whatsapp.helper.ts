@@ -2,11 +2,12 @@ import { config } from '../../config/env'
 import type { ItemCarrito } from '../hooks/useCarrito'
 
 interface DatosPedido {
-  nombre: string
-  telefono: string
-  direccion: string
-  metodoPago: 'efectivo' | 'transferencia'
-  notas?: string
+  readonly nombre: string
+  readonly telefono: string
+  readonly direccion: string
+  readonly metodoPago: 'efectivo' | 'transferencia'
+  readonly notas?: string
+  readonly fechaEntrega: string
 }
 
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
@@ -40,6 +41,7 @@ export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido) {
   lines.push(`Nombre: ${datos.nombre}`)
   lines.push(`Teléfono: ${datos.telefono}`)
   lines.push(`Dirección: ${datos.direccion}`)
+  lines.push(`Fecha de entrega: ${datos.fechaEntrega}`)
   lines.push('')
   lines.push(`💳 *Forma de pago:* ${datos.metodoPago === 'efectivo' ? 'Efectivo' : 'Transferencia'}`)
 

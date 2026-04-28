@@ -25,7 +25,7 @@ export default function AdminLayout({ children }: Props) {
   }
 
   const Sidebar = (
-    <aside className="w-[240px] bg-gradient-to-b from-[#2C1208] to-[#4A1E0C] flex flex-col shrink-0 h-screen">
+    <aside className="w-[240px] bg-gradient-to-b from-[#2C1208] to-[#4A1E0C] flex flex-col shrink-0 h-dvh">
       <div className="pt-5 px-4 pb-4 border-b border-white/10">
         <div className="flex items-center gap-2.5">
           <LogoMark size={36} />
@@ -52,7 +52,7 @@ export default function AdminLayout({ children }: Props) {
         })}
       </nav>
 
-      <div className="p-2 pb-4 border-t border-white/10">
+      <div className="p-2 border-t border-white/10 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="flex items-center gap-2 px-3 py-2 pb-3">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-terra to-gold flex items-center justify-center text-white text-sm font-extrabold shrink-0">
             C

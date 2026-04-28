@@ -7,7 +7,7 @@ export class AuthService {
     if (username !== env.ADMIN_USERNAME || password !== env.ADMIN_PASSWORD) {
       throw new UnauthorizedError('Usuario o contraseña incorrectos')
     }
-    const token = jwt.sign({ sub: username, role: 'admin' }, env.JWT_SECRET, { expiresIn: '7d' })
+    const token = jwt.sign({ sub: username, role: 'admin' }, env.JWT_SECRET, { algorithm: 'HS256', expiresIn: '7d' })
     return { token }
   }
 }

@@ -6,7 +6,7 @@ import CategoriaForm from './CategoriaForm'
 import Toggle from '../../shared/components/Toggle'
 
 export default function CategoriasPage() {
-  const { query, crear, editar, toggleActiva, eliminar, reordenar } = useCategorias()
+  const { query, crear, editar, toggleActiva, eliminar, reordenar, syncDescuentos } = useCategorias()
   const [modal, setModal] = useState<{ open: boolean; editing: CategoriaAdmin | null }>({ open: false, editing: null })
   const [localCats, setLocalCats] = useState<CategoriaAdmin[]>([])
   const [draggedId, setDraggedId] = useState<number | null>(null)
@@ -56,15 +56,21 @@ export default function CategoriasPage() {
     setTimeout(() => setToast(null), 3000)
   }
 
-  const handleSave = async (data: { nombre: string; orden: number; activa: boolean }) => {
+  const handleSave = async (
+    data: { nombre: string; orden: number; activa: boolean },
+    tiers: { cantidadMinima: number; porcentaje: number }[]
+  ) => {
     try {
+      let savedId: number
       if (modal.editing) {
-        await editar.mutateAsync({ id: modal.editing.id, ...data })
-        showToast('Categoría actualizada')
+        const res = await editar.mutateAsync({ id: modal.editing.id, ...data })
+        savedId = (res.data as { id: number }).id ?? modal.editing.id
       } else {
-        await crear.mutateAsync(data)
-        showToast('Categoría creada')
+        const res = await crear.mutateAsync(data)
+        savedId = (res.data as { id: number }).id
       }
+      await syncDescuentos.mutateAsync({ id: savedId, tiers })
+      showToast(modal.editing ? 'Categoría actualizada' : 'Categoría creada')
       setModal({ open: false, editing: null })
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al guardar'
@@ -114,7 +120,7 @@ export default function CategoriasPage() {
               <table className="w-full border-collapse font-sans min-w-[520px]">
                 <thead>
                   <tr className="bg-gold-light">
-                    {['', 'Nombre', 'Orden', 'Estado', 'Activar / Desactivar', 'Acciones'].map((h) => (
+                    {['', 'Nombre', 'Orden', 'Descuentos', 'Estado', 'Activar / Desactivar', 'Acciones'].map((h) => (
                       <th key={h || 'empty'} className={`px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap ${h === '' ? 'w-10' : 'w-auto'}`}>
                         {h}
                       </th>
@@ -139,6 +145,21 @@ export default function CategoriasPage() {
                       </td>
                       <td className="px-4 py-3.5 text-sm text-muted font-semibold">
                         #{cat.orden}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        {cat.descuentos?.length ? (
+                          <div className="flex flex-col gap-0.5">
+                            {[...cat.descuentos]
+                              .sort((a, b) => a.cantidadMinima - b.cantidadMinima)
+                              .map((d) => (
+                                <span key={d.id} className="text-xs font-semibold text-brown whitespace-nowrap">
+                                  {d.cantidadMinima}+ doc: {d.porcentaje}%
+                                </span>
+                              ))}
+                          </div>
+                        ) : (
+                          <span className="text-xs text-muted">Sin descuentos</span>
+                        )}
                       </td>
                       <td className="px-4 py-3.5">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${cat.activa ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
