@@ -1,17 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router'
+import LogoMark from '../shared/components/LogoMark'
 import { useAuth } from '../shared/hooks/useAuth'
 
-function LogoMark({ size = 36 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-      <rect width="36" height="36" rx="10" fill="#C4522A" />
-      <path d="M8 22 Q12 10 18 14 Q24 18 28 10" stroke="#FBF1D8" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <ellipse cx="18" cy="22" rx="8" ry="5" fill="#E8A838" opacity="0.9" />
-      <path d="M10 22 Q14 28 18 27 Q22 28 26 22" stroke="#C4522A" strokeWidth="1.5" fill="none" />
-    </svg>
-  )
-}
+
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -36,46 +28,19 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#FDF6EC',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 24,
-        fontFamily: "'Manrope', sans-serif",
-      }}
-    >
-      <div
-        style={{
-          background: 'white',
-          borderRadius: 20,
-          padding: 36,
-          width: '100%',
-          maxWidth: 400,
-          boxShadow: '0 8px 40px rgba(44,18,8,0.12)',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+    <div className="min-h-screen bg-ivory flex items-center justify-center p-6 font-sans">
+      <div className="bg-white rounded-[20px] p-9 w-full max-w-[400px] shadow-[0_8px_40px_rgba(44,18,8,0.12)]">
+        <div className="text-center mb-7">
           <LogoMark size={48} />
-          <div
-            style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 26,
-              fontWeight: 800,
-              color: '#2C1208',
-              marginTop: 12,
-            }}
-          >
+          <div className="font-display text-[26px] font-extrabold text-espresso mt-3">
             Huerto Empanadas
           </div>
-          <div style={{ fontSize: 13, color: '#9A7A66', marginTop: 4 }}>Panel de administración</div>
+          <div className="text-[13px] text-muted mt-1">Panel de administración</div>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-            <label htmlFor="login-username" style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7A4020' }}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="login-username" className="text-xs font-bold uppercase tracking-[0.08em] text-brown">
               Usuario
             </label>
             <input
@@ -85,11 +50,11 @@ export default function LoginPage() {
               value={username}
               onChange={(e) => { setUsername(e.target.value); setError('') }}
               autoComplete="username"
-              style={inputStyle}
+              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-ivory outline-none focus:border-terra"
             />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
-            <label htmlFor="login-password" style={{ fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#7A4020' }}>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="login-password" className="text-xs font-bold uppercase tracking-[0.08em] text-brown">
               Contraseña
             </label>
             <input
@@ -99,25 +64,13 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => { setPassword(e.target.value); setError('') }}
               autoComplete="current-password"
-              style={inputStyle}
+              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-ivory outline-none focus:border-terra"
             />
           </div>
 
           {error && (
-            <div
-              style={{
-                background: '#fef2f2',
-                color: '#dc2626',
-                borderRadius: 8,
-                padding: '9px 13px',
-                fontSize: 13,
-                fontWeight: 600,
-                display: 'flex',
-                gap: 6,
-                alignItems: 'center',
-              }}
-            >
-              <span className="icon" style={{ fontSize: 16 }}>error</span>
+            <div className="bg-red-50 text-red-600 rounded-lg px-3 py-2 text-[13px] font-semibold flex items-center gap-1.5">
+              <span className="icon text-base">error</span>
               {error}
             </div>
           )}
@@ -125,42 +78,13 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 6,
-              padding: 13,
-              borderRadius: 12,
-              background: loading ? '#E2CFB5' : '#C4522A',
-              color: 'white',
-              border: 'none',
-              fontFamily: "'Manrope', sans-serif",
-              fontSize: 15,
-              fontWeight: 600,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              marginTop: 4,
-              boxShadow: '0 2px 8px rgba(196,82,42,0.3)',
-              transition: 'background 0.15s',
-            }}
+            className={`inline-flex items-center justify-center gap-1.5 p-[13px] rounded-xl font-sans text-[15px] font-semibold border-none mt-1 shadow-[0_2px_8px_rgba(196,82,42,0.3)] transition-colors duration-150 ${loading ? 'bg-sand-deep text-white cursor-not-allowed' : 'bg-terra text-white cursor-pointer hover:bg-terra-dark'}`}
           >
-            <span className="icon icon-fill" style={{ fontSize: 18 }}>lock_open</span>
+            <span className="icon icon-fill text-[18px]">lock_open</span>
             {loading ? 'Ingresando…' : 'Ingresar'}
           </button>
         </form>
       </div>
     </div>
   )
-}
-
-const inputStyle: React.CSSProperties = {
-  padding: '10px 13px',
-  border: '1.5px solid #E2CFB5',
-  borderRadius: 10,
-  fontFamily: "'Manrope', sans-serif",
-  fontSize: 14,
-  color: '#2C1208',
-  background: '#FDF6EC',
-  outline: 'none',
-  width: '100%',
 }

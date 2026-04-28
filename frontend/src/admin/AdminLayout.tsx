@@ -2,16 +2,7 @@ import { useState } from 'react'
 import type { ReactNode } from 'react'
 import { useNavigate, useLocation } from 'react-router'
 
-function LogoMark({ size = 36 }: { size?: number }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 36 36" fill="none">
-      <rect width="36" height="36" rx="10" fill="#C4522A" />
-      <path d="M8 22 Q12 10 18 14 Q24 18 28 10" stroke="#FBF1D8" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <ellipse cx="18" cy="22" rx="8" ry="5" fill="#E8A838" opacity="0.9" />
-      <path d="M10 22 Q14 28 18 27 Q22 28 26 22" stroke="#C4522A" strokeWidth="1.5" fill="none" />
-    </svg>
-  )
-}
+import LogoMark from '../shared/components/LogoMark'
 
 const NAV = [
   { path: '/admin', label: 'Inicio', icon: 'dashboard' },
@@ -34,50 +25,25 @@ export default function AdminLayout({ children }: Props) {
   }
 
   const Sidebar = (
-    <aside
-      style={{
-        width: 240,
-        background: 'linear-gradient(180deg, #2C1208 0%, #4A1E0C 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
-        height: '100vh',
-      }}
-    >
-      <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+    <aside className="w-[240px] bg-gradient-to-b from-[#2C1208] to-[#4A1E0C] flex flex-col shrink-0 h-screen">
+      <div className="pt-5 px-4 pb-4 border-b border-white/10">
+        <div className="flex items-center gap-2.5">
           <LogoMark size={36} />
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 800, color: '#FBF1D8', lineHeight: 1 }}>Huerto</div>
-            <div style={{ fontSize: 10, color: '#C49060', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', marginTop: 2 }}>Admin</div>
+            <div className="font-display text-base font-extrabold text-gold-light leading-none">Huerto</div>
+            <div className="text-[10px] text-[#C49060] font-semibold tracking-widest uppercase mt-0.5">Admin</div>
           </div>
         </div>
       </div>
 
-      <nav style={{ padding: '12px 8px', flex: 1 }}>
+      <nav className="p-3 flex-1 flex flex-col gap-0.5">
         {NAV.map((n) => {
           const active = location.pathname === n.path
           return (
             <button
               key={n.path}
               onClick={() => { navigate(n.path); setSidebarOpen(false) }}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                width: '100%',
-                padding: '10px 12px',
-                borderRadius: 10,
-                border: 'none',
-                cursor: 'pointer',
-                marginBottom: 2,
-                fontFamily: "'Manrope', sans-serif",
-                fontSize: 14,
-                fontWeight: 600,
-                background: active ? 'rgba(196,82,42,0.25)' : 'transparent',
-                color: active ? '#FBF1D8' : 'rgba(255,255,255,0.55)',
-                transition: 'background 0.15s, color 0.15s',
-              }}
+              className={`flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[10px] border-none cursor-pointer font-sans text-sm font-semibold transition-colors duration-150 ${active ? 'bg-terra/25 text-gold-light' : 'bg-transparent text-white/55 hover:text-white/80'}`}
             >
               <span className={`icon${active ? ' icon-fill' : ''}`}>{n.icon}</span>
               {n.label}
@@ -86,18 +52,18 @@ export default function AdminLayout({ children }: Props) {
         })}
       </nav>
 
-      <div style={{ padding: '8px 8px 16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 9, padding: '8px 12px 12px' }}>
-          <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg, #C4522A, #E8A838)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: 14, fontWeight: 800, flexShrink: 0 }}>
+      <div className="p-2 pb-4 border-t border-white/10">
+        <div className="flex items-center gap-2 px-3 py-2 pb-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-terra to-gold flex items-center justify-center text-white text-sm font-extrabold shrink-0">
             C
           </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div style={{ fontSize: 13, fontWeight: 700, color: 'white' }}>Admin</div>
+          <div className="overflow-hidden">
+            <div className="text-[13px] font-bold text-white">Admin</div>
           </div>
         </div>
         <button
           onClick={logout}
-          style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '10px 12px', borderRadius: 10, border: 'none', cursor: 'pointer', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, background: 'transparent', color: 'rgba(255,100,80,0.7)', transition: 'background 0.15s, color 0.15s' }}
+          className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[10px] border-none cursor-pointer font-sans text-sm font-semibold bg-transparent text-red-400/70 hover:text-red-400 transition-colors duration-150"
         >
           <span className="icon">logout</span>
           Cerrar sesión

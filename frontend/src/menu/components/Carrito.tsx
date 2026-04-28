@@ -22,168 +22,62 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(44,18,8,0.55)',
-        zIndex: 50,
-        opacity: open ? 1 : 0,
-        pointerEvents: open ? 'all' : 'none',
-        transition: 'opacity 0.3s ease',
-        display: 'flex',
-        justifyContent: 'flex-end',
-        maxWidth: 430,
-        margin: '0 auto',
-      }}
+      className={`fixed inset-0 bg-[#2C1208]/55 z-50 flex justify-end max-w-[430px] mx-auto transition-opacity duration-300 ease-in-out ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
       <div
-        style={{
-          width: '92%',
-          maxWidth: 400,
-          height: '100%',
-          background: '#FFFDF9',
-          transform: open ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.35s cubic-bezier(0.16,1,0.3,1)',
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden',
-        }}
+        className={`w-[92%] max-w-[400px] h-full bg-ivory flex flex-col overflow-hidden transition-transform duration-[350ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        <div
-          style={{
-            padding: '20px 20px 16px',
-            borderBottom: '1px solid #F3E8D8',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            background: '#2C1208',
-          }}
-        >
+        <div className="pt-5 px-5 pb-4 border-b border-sand flex items-center justify-between bg-espresso">
           <div>
-            <div
-              style={{
-                fontFamily: "'Playfair Display', serif",
-                fontSize: 20,
-                fontWeight: 800,
-                color: '#FBF1D8',
-              }}
-            >
+            <div className="font-display text-[20px] font-extrabold text-gold-light">
               Tu pedido
             </div>
-            <div style={{ fontSize: 12, color: '#E8A838', marginTop: 2, fontWeight: 600 }}>
+            <div className="text-xs text-gold mt-0.5 font-semibold">
               {cantidadTotal} docena{cantidadTotal !== 1 ? 's' : ''}
             </div>
           </div>
           <button
             onClick={onClose}
-            style={{
-              background: 'rgba(255,255,255,0.1)',
-              border: 'none',
-              borderRadius: 99,
-              width: 36,
-              height: 36,
-              cursor: 'pointer',
-              color: '#FBF1D8',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+            className="bg-white/10 border-none rounded-full w-9 h-9 cursor-pointer text-gold-light flex items-center justify-center hover:bg-white/20 transition-colors"
           >
-            <span className="icon" style={{ fontSize: 20 }}>close</span>
+            <span className="icon text-[20px]">close</span>
           </button>
         </div>
 
-        <div style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+        <div className="flex-1 overflow-y-auto py-2">
           {items.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '60px 24px', color: '#9A7A66' }}>
-              <div style={{ fontSize: 48, marginBottom: 12 }}>🫙</div>
-              <div style={{ fontWeight: 600 }}>El carrito está vacío</div>
-              <div style={{ fontSize: 13, marginTop: 4 }}>Agregá productos desde el menú</div>
+            <div className="text-center py-[60px] px-6 text-muted">
+              <div className="text-[48px] mb-3">🫙</div>
+              <div className="font-semibold">El carrito está vacío</div>
+              <div className="text-[13px] mt-1">Agregá productos desde el menú</div>
             </div>
           ) : (
             items.map((item) => (
               <div
                 key={item.productoId}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 12,
-                  padding: '12px 20px',
-                  borderBottom: '1px solid #F3E8D8',
-                }}
+                className="flex items-center gap-3 px-5 py-3 border-b border-sand"
               >
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      color: '#2C1208',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
+                <div className="flex-1 min-w-0">
+                  <div className="text-sm font-bold text-espresso overflow-hidden text-ellipsis whitespace-nowrap">
                     {item.nombre}
                   </div>
-                  <div style={{ fontSize: 12, color: '#9A7A66', marginTop: 2 }}>
+                  <div className="text-xs text-muted mt-0.5">
                     {fmt(item.precio)} c/u · Subtotal: {fmt(item.precio * item.cantidad)}
                   </div>
                 </div>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    background: '#C4522A',
-                    borderRadius: 99,
-                    overflow: 'hidden',
-                    height: 32,
-                    transform: 'scale(0.9)',
-                  }}
-                >
+                <div className="flex items-center bg-terra rounded-full overflow-hidden h-8 scale-90 origin-right">
                   <button
                     onClick={() => onDecrementar(item.productoId)}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      border: 'none',
-                      background: 'transparent',
-                      color: 'white',
-                      fontSize: 18,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
+                    className="w-8 h-8 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
                   >
                     −
                   </button>
-                  <span
-                    style={{
-                      minWidth: 22,
-                      textAlign: 'center',
-                      color: 'white',
-                      fontSize: 14,
-                      fontWeight: 700,
-                    }}
-                  >
+                  <span className="min-w-[22px] text-center text-white text-sm font-bold">
                     {item.cantidad}
                   </span>
                   <button
                     onClick={() => onIncrementar(item.productoId)}
-                    style={{
-                      width: 32,
-                      height: 32,
-                      border: 'none',
-                      background: 'transparent',
-                      color: 'white',
-                      fontSize: 18,
-                      fontWeight: 700,
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                    }}
+                    className="w-8 h-8 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
                   >
                     +
                   </button>
@@ -194,63 +88,28 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
         </div>
 
         {items.length > 0 && (
-          <div
-            style={{
-              padding: '16px 20px 28px',
-              borderTop: '2px solid #F3E8D8',
-              background: '#FDF6EC',
-            }}
-          >
+          <div className="pt-4 px-5 pb-7 border-t-2 border-sand bg-cream">
             {montoDescuento > 0 && (
               <>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#9A7A66', marginBottom: 6 }}>
+                <div className="flex justify-between text-[13px] text-muted mb-1.5">
                   <span>Subtotal</span>
                   <span>{fmt(subtotal)}</span>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#15803d', fontWeight: 600, marginBottom: 12 }}>
+                <div className="flex justify-between text-[13px] text-green-700 font-semibold mb-3">
                   <span>Descuento ({porcentajeDescuento * 100}%)</span>
                   <span>-{fmt(montoDescuento)}</span>
                 </div>
               </>
             )}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'baseline',
-                marginBottom: 16,
-              }}
-            >
-              <span style={{ fontSize: 14, fontWeight: 600, color: '#7A4020' }}>Total</span>
-              <span
-                style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontSize: 26,
-                  fontWeight: 800,
-                  color: '#C4522A',
-                }}
-              >
+            <div className="flex justify-between items-baseline mb-4">
+              <span className="text-sm font-semibold text-brown">Total</span>
+              <span className="font-display text-[26px] font-extrabold text-terra">
                 {fmt(total)}
               </span>
             </div>
             <button
               onClick={onConfirmar}
-              style={{
-                width: '100%',
-                padding: 16,
-                background: '#C4522A',
-                border: 'none',
-                borderRadius: 14,
-                color: 'white',
-                fontFamily: "'Manrope', sans-serif",
-                fontSize: 16,
-                fontWeight: 700,
-                cursor: 'pointer',
-                boxShadow: '0 4px 16px rgba(196,82,42,0.4)',
-                transition: 'background 0.2s',
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#A0401E' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#C4522A' }}
+              className="w-full p-4 bg-terra border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer shadow-[0_4px_16px_rgba(196,82,42,0.4)] transition-colors duration-200 hover:bg-terra-dark"
             >
               Confirmar pedido →
             </button>

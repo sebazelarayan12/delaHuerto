@@ -1,3 +1,5 @@
+import LogoMark from '../../shared/components/LogoMark'
+
 interface Props {
   cantidadTotal: number
   total: number
@@ -11,23 +13,15 @@ const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
 export default function MenuHeader({ cantidadTotal, total, activeCat, categorias, onOpenCarrito, onScrollToCategory }: Props) {
   return (
-    <header
-      style={{
-        background: 'linear-gradient(135deg, #2C1208 0%, #5A2010 100%)',
-        padding: '20px 16px 0',
-        position: 'sticky',
-        top: 0,
-        zIndex: 40,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+    <header className="bg-gradient-to-br from-[#2C1208] to-[#5A2010] pt-5 px-4 sticky top-0 z-40">
+      <div className="flex items-center justify-between pb-4">
+        <div className="flex items-center gap-2.5">
           <LogoMark />
           <div>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 22, fontWeight: 800, color: '#FBF1D8', lineHeight: 1.1 }}>
+            <div className="font-display text-[22px] font-extrabold text-gold-light leading-[1.1]">
               Huerto
             </div>
-            <div style={{ fontSize: 10, fontWeight: 600, color: '#E8A838', letterSpacing: '0.18em', textTransform: 'uppercase', marginTop: 1 }}>
+            <div className="text-[12px] font-semibold text-gold tracking-[0.18em] uppercase mt-0.5">
               Empanadas caseras
             </div>
           </div>
@@ -36,26 +30,26 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         {cantidadTotal > 0 && (
           <button
             onClick={onOpenCarrito}
-            style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 99, padding: '8px 14px 8px 10px', cursor: 'pointer', color: 'white', fontFamily: "'Manrope', sans-serif", transition: 'background 0.2s' }}
+            className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-2 pr-3.5 pl-2.5 cursor-pointer text-white font-sans transition-colors duration-200 hover:bg-white/20"
           >
-            <span style={{ background: '#C4522A', borderRadius: 99, width: 22, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800 }}>
+            <span className="bg-terra rounded-full w-[22px] h-[22px] flex items-center justify-center text-xs font-extrabold">
               {cantidadTotal}
             </span>
-            <span style={{ fontSize: 13, fontWeight: 600 }}>{fmt(total)}</span>
+            <span className="text-[13px] font-semibold">{fmt(total)}</span>
           </button>
         )}
       </div>
 
-      <div style={{ background: '#E8A838', margin: '0 -16px', padding: '7px 16px', fontSize: 12, fontWeight: 700, color: '#2C1208', textAlign: 'center', letterSpacing: '0.02em' }}>
+      <div className="bg-gold -mx-4 py-[7px] px-4 text-xs font-bold text-espresso text-center tracking-[0.02em]">
         Descuento en compras por mayor!
       </div>
 
-      <nav style={{ display: 'flex', gap: 8, overflowX: 'auto', padding: '12px 0', scrollbarWidth: 'none' }}>
+      <nav className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
         {categorias.map((c) => (
           <button
             key={c.id}
             onClick={() => onScrollToCategory(c.id)}
-            style={{ flexShrink: 0, padding: '7px 16px', borderRadius: 99, fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', border: '1.5px solid', background: activeCat === c.id ? '#C4522A' : '#FFFDF9', color: activeCat === c.id ? 'white' : '#7A4020', borderColor: activeCat === c.id ? '#C4522A' : '#E2CFB5', transition: 'background 0.2s, color 0.2s' }}
+            className={`shrink-0 px-4 py-[7px] rounded-full text-[13px] font-semibold cursor-pointer whitespace-nowrap border-[1.5px] transition-colors duration-200 ${activeCat === c.id ? 'bg-terra text-white border-terra' : 'bg-ivory text-brown border-sand-deep hover:bg-sand'}`}
           >
             {c.nombre}
           </button>
@@ -65,13 +59,4 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
   )
 }
 
-function LogoMark() {
-  return (
-    <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
-      <rect width="36" height="36" rx="10" fill="#C4522A" />
-      <path d="M8 22 Q12 10 18 14 Q24 18 28 10" stroke="#FBF1D8" strokeWidth="2.5" strokeLinecap="round" fill="none" />
-      <ellipse cx="18" cy="22" rx="8" ry="5" fill="#E8A838" opacity="0.9" />
-      <path d="M10 22 Q14 28 18 27 Q22 28 26 22" stroke="#C4522A" strokeWidth="1.5" fill="none" />
-    </svg>
-  )
-}
+

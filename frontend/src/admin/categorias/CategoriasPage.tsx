@@ -3,10 +3,11 @@ import AdminLayout from '../AdminLayout'
 import { useCategorias } from './hooks/useCategorias'
 import type { CategoriaAdmin } from './hooks/useCategorias'
 import CategoriaForm from './CategoriaForm'
+import Toggle from '../../shared/components/Toggle'
 
 export default function CategoriasPage() {
   const { query, crear, editar, toggleActiva, eliminar, reordenar } = useCategorias()
-  const [modalOpen, setModalOpen] = useState(false)
+  const [modal, setModal] = useState<{ open: boolean; editing: CategoriaAdmin | null }>({ open: false, editing: null })
   const [localCats, setLocalCats] = useState<CategoriaAdmin[]>([])
   const [draggedId, setDraggedId] = useState<number | null>(null)
 
@@ -48,7 +49,6 @@ export default function CategoriasPage() {
       setLocalCats([...originalOrder])
     }
   }
-  const [editing, setEditing] = useState<CategoriaAdmin | null>(null)
   const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null)
 
   const showToast = (msg: string, error = false) => {
@@ -58,15 +58,14 @@ export default function CategoriasPage() {
 
   const handleSave = async (data: { nombre: string; orden: number; activa: boolean }) => {
     try {
-      if (editing) {
-        await editar.mutateAsync({ id: editing.id, ...data })
+      if (modal.editing) {
+        await editar.mutateAsync({ id: modal.editing.id, ...data })
         showToast('Categoría actualizada')
       } else {
         await crear.mutateAsync(data)
         showToast('Categoría creada')
       }
-      setModalOpen(false)
-      setEditing(null)
+      setModal({ open: false, editing: null })
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al guardar'
       showToast(msg, true)
@@ -78,31 +77,29 @@ export default function CategoriasPage() {
   }
 
   const openEdit = (cat: CategoriaAdmin) => {
-    setEditing(cat)
-    setModalOpen(true)
+    setModal({ open: true, editing: cat })
   }
 
   const openNew = () => {
-    setEditing(null)
-    setModalOpen(true)
+    setModal({ open: true, editing: null })
   }
 
   const categorias = query.data ?? []
 
   return (
     <AdminLayout>
-      <div className="px-4 lg:px-8 pt-6 lg:pt-8 pb-5" style={{ borderBottom: '1px solid #E2CFB5', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 }}>
+      <div className="px-4 lg:px-8 pt-6 lg:pt-8 pb-5 border-b border-sand-deep flex justify-between items-start gap-3">
         <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: '#2C1208' }}>Categorías</h1>
-          <p style={{ fontSize: 14, color: '#9A7A66', marginTop: 4 }}>
+          <h1 className="text-[22px] font-extrabold text-espresso">Categorías</h1>
+          <p className="text-sm text-muted mt-1">
             {categorias.length} categorías en total
           </p>
         </div>
         <button
           onClick={openNew}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 10, border: 'none', background: '#C4522A', color: 'white', fontFamily: "'Manrope', sans-serif", fontSize: 13.5, fontWeight: 600, cursor: 'pointer', boxShadow: '0 2px 8px rgba(196,82,42,0.3)', flexShrink: 0 }}
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] border-none bg-terra text-white font-sans text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_8px_rgba(196,82,42,0.3)] shrink-0 transition-opacity hover:opacity-90"
         >
-          <span className="icon icon-fill" style={{ fontSize: 18 }}>add_circle</span>
+          <span className="icon icon-fill text-[18px]">add_circle</span>
           <span className="hidden sm:inline">Nueva categoría</span>
           <span className="sm:hidden">Nueva</span>
         </button>
@@ -110,15 +107,15 @@ export default function CategoriasPage() {
 
       <div className="px-4 lg:px-8 py-6">
         {query.isLoading ? (
-          <div style={{ textAlign: 'center', padding: 40, color: '#9A7A66' }}>Cargando…</div>
+          <div className="text-center p-10 text-muted">Cargando…</div>
         ) : (
-          <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 8px rgba(44,18,8,0.06)', overflow: 'hidden' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontFamily: "'Manrope', sans-serif", minWidth: 520 }}>
+          <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse font-sans min-w-[520px]">
                 <thead>
-                  <tr style={{ background: '#FDF6EC' }}>
-                    {['', 'Nombre', 'Orden', 'Estado', 'Activar / Desactivar', 'Acciones'].map((h, idx) => (
-                      <th key={idx} style={{ padding: '12px 16px', textAlign: 'left', fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: '#9A7A66', borderBottom: '1px solid #E2CFB5', whiteSpace: 'nowrap', width: h === '' ? 40 : 'auto' }}>
+                  <tr className="bg-gold-light">
+                    {['', 'Nombre', 'Orden', 'Estado', 'Activar / Desactivar', 'Acciones'].map((h) => (
+                      <th key={h || 'empty'} className={`px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap ${h === '' ? 'w-10' : 'w-auto'}`}>
                         {h}
                       </th>
                     ))}
@@ -132,40 +129,34 @@ export default function CategoriasPage() {
                       onDragStart={(e) => handleDragStart(e, cat.id)}
                       onDragOver={(e) => handleDragOver(e, cat.id)}
                       onDragEnd={handleDragEnd}
-                      style={{
-                        borderBottom: i < localCats.length - 1 ? '1px solid #F3E8D8' : 'none',
-                        cursor: 'grab',
-                        background: draggedId === cat.id ? '#FFFDF9' : 'transparent',
-                        opacity: draggedId === cat.id ? 0.6 : 1,
-                        transition: 'background 0.2s, opacity 0.2s'
-                      }}
+                      className={`cursor-grab transition-all duration-200 ${i < localCats.length - 1 ? 'border-b border-sand' : ''} ${draggedId === cat.id ? 'bg-ivory opacity-60' : 'bg-transparent'}`}
                     >
-                      <td style={{ padding: '14px 16px', width: 40 }}>
-                        <span className="icon" style={{ color: '#E2CFB5', fontSize: 20 }}>drag_indicator</span>
+                      <td className="px-4 py-3.5 w-10">
+                        <span className="icon text-sand-deep text-[20px]">drag_indicator</span>
                       </td>
-                      <td style={{ padding: '14px 16px', fontSize: 14, fontWeight: 700, color: '#2C1208', whiteSpace: 'nowrap' }}>
+                      <td className="px-4 py-3.5 text-sm font-bold text-espresso whitespace-nowrap">
                         {cat.nombre}
                       </td>
-                      <td style={{ padding: '14px 16px', fontSize: 14, color: '#9A7A66', fontWeight: 600 }}>
+                      <td className="px-4 py-3.5 text-sm text-muted font-semibold">
                         #{cat.orden}
                       </td>
-                      <td style={{ padding: '14px 16px' }}>
-                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '4px 10px', borderRadius: 99, fontSize: 12, fontWeight: 700, background: cat.activa ? '#f0fdf4' : '#fef2f2', color: cat.activa ? '#15803d' : '#dc2626', whiteSpace: 'nowrap' }}>
-                          <span className="icon" style={{ fontSize: 13 }}>{cat.activa ? 'check_circle' : 'cancel'}</span>
+                      <td className="px-4 py-3.5">
+                        <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${cat.activa ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
+                          <span className="icon text-[13px]">{cat.activa ? 'check_circle' : 'cancel'}</span>
                           {cat.activa ? 'Activa' : 'Inactiva'}
                         </span>
                       </td>
-                      <td style={{ padding: '14px 16px' }}>
+                      <td className="px-4 py-3.5">
                         <Toggle checked={cat.activa} onChange={() => handleToggle(cat)} label={cat.activa ? 'Desactivar categoría' : 'Activar categoría'} />
                       </td>
-                      <td style={{ padding: '14px 16px' }}>
-                        <div style={{ display: 'flex', gap: 6 }}>
+                      <td className="px-4 py-3.5">
+                        <div className="flex gap-1.5">
                           <button
                             onClick={() => openEdit(cat)}
-                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', color: '#7A4020', transition: 'background 0.15s, color 0.15s' }}
+                            className="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg border-[1.5px] border-sand-deep bg-transparent cursor-pointer text-brown transition-colors hover:bg-sand"
                             title="Editar"
                           >
-                            <span className="icon" style={{ fontSize: 17 }}>edit</span>
+                            <span className="icon text-[17px]">edit</span>
                           </button>
                           <button
                             onClick={async () => {
@@ -179,10 +170,10 @@ export default function CategoriasPage() {
                                 }
                               }
                             }}
-                            style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 34, height: 34, borderRadius: 8, border: '1.5px solid #fecaca', background: 'transparent', cursor: 'pointer', color: '#dc2626', transition: 'background 0.15s, color 0.15s' }}
+                            className="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg border-[1.5px] border-red-200 bg-transparent cursor-pointer text-red-600 transition-colors hover:bg-red-50"
                             title="Eliminar"
                           >
-                            <span className="icon" style={{ fontSize: 17 }}>delete</span>
+                            <span className="icon text-[17px]">delete</span>
                           </button>
                         </div>
                       </td>
@@ -196,30 +187,22 @@ export default function CategoriasPage() {
       </div>
 
       <CategoriaForm
-        key={`${modalOpen}-${editing?.id ?? 'new'}`}
-        open={modalOpen}
-        onClose={() => { setModalOpen(false); setEditing(null) }}
+        key={`${modal.open}-${modal.editing?.id ?? 'new'}`}
+        open={modal.open}
+        onClose={() => setModal({ open: false, editing: null })}
         onSave={handleSave}
-        initial={editing}
+        initial={modal.editing}
         loading={crear.isPending || editar.isPending}
       />
 
       {toast && (
-        <div style={{ position: 'fixed', bottom: 24, right: 24, background: 'white', borderRadius: 12, padding: '12px 18px', boxShadow: '0 8px 24px rgba(44,18,8,0.15)', display: 'flex', alignItems: 'center', gap: 8, fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, zIndex: 50, borderLeft: `3px solid ${toast.error ? '#dc2626' : '#15803d'}` }}>
-          <span className="icon icon-fill" style={{ fontSize: 18, color: toast.error ? '#dc2626' : '#15803d' }}>{toast.error ? 'error' : 'check_circle'}</span>
+        <div className={`fixed bottom-6 right-6 bg-white rounded-xl px-4 py-3 shadow-[0_8px_24px_rgba(44,18,8,0.15)] flex items-center gap-2 font-sans text-sm font-semibold z-50 border-l-[3px] ${toast.error ? 'border-red-600' : 'border-green-700'}`}>
+          <span className={`icon icon-fill text-[18px] ${toast.error ? 'text-red-600' : 'text-green-700'}`}>
+            {toast.error ? 'error' : 'check_circle'}
+          </span>
           {toast.msg}
         </div>
       )}
     </AdminLayout>
-  )
-}
-
-function Toggle({ checked, onChange, label }: { checked: boolean; onChange: () => void; label?: string }) {
-  return (
-    <label aria-label={label} style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
-      <input type="checkbox" checked={checked} onChange={onChange} style={{ opacity: 0, width: 0, height: 0 }} />
-      <span style={{ position: 'absolute', inset: 0, borderRadius: 99, background: checked ? '#C4522A' : '#E2CFB5', transition: 'background 0.2s' }} />
-      <span style={{ position: 'absolute', top: 3, left: checked ? 22 : 3, width: 18, height: 18, borderRadius: '50%', background: 'white', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', transition: 'left 0.2s' }} />
-    </label>
   )
 }
