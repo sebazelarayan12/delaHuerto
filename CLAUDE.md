@@ -134,9 +134,10 @@ Invocar el skill correspondiente antes de trabajar en cada área:
 
 | Ambiente | Comando correcto |
 | --- | --- |
-| Desarrollo local (primera vez) | `prisma db push` — OK solo para setup inicial |
 | Desarrollo local (cambios de schema) | `npm run db:migrate` → genera archivo de migracion |
 | Produccion | `prisma migrate deploy` — aplica solo migraciones pendientes, nunca destruye datos |
+
+**`prisma db push` esta PROHIBIDO en todos los ambientes** — `development` se mergea a `main` y los archivos de migracion deben existir antes del merge. Usar siempre `npm run db:migrate`.
 
 ### Workflow obligatorio al cambiar `schema.prisma`
 
