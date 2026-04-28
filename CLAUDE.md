@@ -118,6 +118,10 @@ Invocar el skill correspondiente antes de trabajar en cada área:
 2. Actualizar tipos y llamadas en frontend
 3. Verificar que `npm run build` pasa en ambos workspaces
 
+## Regla global — Sin emojis
+
+**PROHIBIDO usar emojis en cualquier parte del proyecto:** codigo, componentes, textos del UI, commits, comentarios, documentacion. Sin excepciones.
+
 ## Seguridad y buenas prácticas
 
 - Mantener credenciales y datos sensibles fuera del repositorio — respetar `.gitignore` (`.env*`)
