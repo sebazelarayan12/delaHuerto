@@ -17,8 +17,8 @@ const MESES = [
 
 export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSelect, onClose }: SelectorFechaEntregaProps) {
   const primerFecha = fechasDisponibles[0] ?? new Date()
-  const [mes, setMes] = useState(primerFecha.getMonth())
-  const [anio, setAnio] = useState(primerFecha.getFullYear())
+  const [mes, setMes] = useState(() => primerFecha.getMonth())
+  const [anio, setAnio] = useState(() => primerFecha.getFullYear())
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -57,18 +57,8 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
   return (
     <div
       ref={ref}
-      style={{
-        position: 'absolute',
-        top: 'calc(100% + 6px)',
-        left: 0,
-        right: 0,
-        background: '#FDF6EC',
-        border: '1.5px solid #E8D8C4',
-        borderRadius: 16,
-        padding: '14px 12px',
-        zIndex: 10,
-        boxShadow: '0 8px 24px rgba(44,18,8,0.12)',
-      }}
+      className="absolute left-0 right-0 bg-[#FDF6EC] border-[1.5px] border-[#E8D8C4] rounded-2xl px-3 py-3.5 z-10 shadow-[0_8px_24px_rgba(44,18,8,0.12)]"
+      style={{ top: 'calc(100% + 6px)' }}
     >
       {/* Header de navegacion */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -76,16 +66,8 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
           type="button"
           onClick={irMesAnterior}
           disabled={!hayMesAnterior}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: hayMesAnterior ? 'pointer' : 'default',
-            opacity: hayMesAnterior ? 1 : 0.3,
-            padding: '4px 8px',
-            borderRadius: 8,
-            color: '#2C1208',
-            fontSize: 18,
-          }}
+          className="bg-transparent border-0 p-[4px_8px] rounded-lg text-[#2C1208] text-[18px]"
+          style={{ cursor: hayMesAnterior ? 'pointer' : 'default', opacity: hayMesAnterior ? 1 : 0.3 }}
           aria-label="Mes anterior"
         >
           &#8249;
@@ -97,16 +79,8 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
           type="button"
           onClick={irMesSiguiente}
           disabled={!hayMesSiguiente}
-          style={{
-            background: 'none',
-            border: 'none',
-            cursor: hayMesSiguiente ? 'pointer' : 'default',
-            opacity: hayMesSiguiente ? 1 : 0.3,
-            padding: '4px 8px',
-            borderRadius: 8,
-            color: '#2C1208',
-            fontSize: 18,
-          }}
+          className="bg-transparent border-0 p-[4px_8px] rounded-lg text-[#2C1208] text-[18px]"
+          style={{ cursor: hayMesSiguiente ? 'pointer' : 'default', opacity: hayMesSiguiente ? 1 : 0.3 }}
           aria-label="Mes siguiente"
         >
           &#8250;
@@ -116,7 +90,7 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
       {/* Cabecera dias semana */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
         {DIAS_SEMANA.map(dia => (
-          <div key={dia} style={{ textAlign: 'center', fontSize: 11, fontWeight: 600, color: '#9E8C7E', padding: '2px 0' }}>
+          <div key={dia} style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#9E8C7E', padding: '2px 0' }}>
             {dia}
           </div>
         ))}
@@ -124,31 +98,25 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
 
       {/* Grilla de dias */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
-        {celdas.map((date, idx) => {
-          if (date === null) {
-            return <div key={`empty-${idx}`} />
-          }
+        {celdas.map(({ key, date }) => {
+          if (date === null) return <div key={key} />
 
           const disponible = fechasDisponibles.some(d => isSameDay(d, date))
           const isSelected = selected !== null && isSameDay(date, selected)
 
           return (
             <button
-              key={date.toISOString()}
+              key={key}
               type="button"
               disabled={!disponible}
               onClick={() => disponible && onSelect(date)}
+              className="rounded-lg text-[13px] p-[6px_2px] text-center transition-[background] duration-[150ms]"
               style={{
                 background: isSelected ? '#C4522A' : disponible ? '#FDF0EB' : 'transparent',
                 border: disponible && !isSelected ? '1.5px solid #F0C8B0' : '1.5px solid transparent',
-                borderRadius: 8,
                 color: isSelected ? '#fff' : disponible ? '#C4522A' : '#C4B5A8',
                 cursor: disponible ? 'pointer' : 'default',
                 fontWeight: disponible ? 700 : 400,
-                fontSize: 13,
-                padding: '6px 2px',
-                textAlign: 'center',
-                transition: 'background 0.15s',
               }}
               aria-label={disponible ? `Seleccionar ${date.toLocaleDateString('es-AR')}` : undefined}
               aria-pressed={isSelected}

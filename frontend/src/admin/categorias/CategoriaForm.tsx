@@ -14,6 +14,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 interface TierForm {
+  id: number
   cantidadMinima: number | ''
   porcentaje: number | ''
 }
@@ -38,13 +39,13 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
 
   const [tiers, setTiers] = useState<TierForm[]>(
     initial?.descuentos?.length
-      ? initial.descuentos.map((d: DescuentoTier) => ({ cantidadMinima: d.cantidadMinima, porcentaje: d.porcentaje }))
+      ? initial.descuentos.map((d: DescuentoTier) => ({ id: d.id, cantidadMinima: d.cantidadMinima, porcentaje: d.porcentaje }))
       : []
   )
 
   const [tierErrors, setTierErrors] = useState<string[]>([])
 
-  const addTier = () => setTiers((prev) => [...prev, { cantidadMinima: '', porcentaje: '' }])
+  const addTier = () => setTiers((prev) => [...prev, { id: Date.now(), cantidadMinima: '', porcentaje: '' }])
 
   const removeTier = (idx: number) => {
     setTiers((prev) => prev.filter((_, i) => i !== idx))
@@ -153,7 +154,7 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
             ) : (
               <div className="flex flex-col gap-2">
                 {tiers.map((tier, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
+                  <div key={tier.id} className="flex items-center gap-2">
                     <div className="flex-1">
                       <input
                         type="number"

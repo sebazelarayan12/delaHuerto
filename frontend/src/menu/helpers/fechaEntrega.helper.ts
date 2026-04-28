@@ -71,13 +71,17 @@ export function isSameDay(a: Date, b: Date): boolean {
   )
 }
 
-export function getDiasDelMes(year: number, month: number): readonly (Date | null)[] {
+export function getDiasDelMes(year: number, month: number): readonly { key: string; date: Date | null }[] {
   const firstDay = new Date(year, month, 1).getDay()
   const offset = (firstDay + 6) % 7 // Lunes = 0
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const cells: (Date | null)[] = Array<null>(offset).fill(null)
+  const cells: { key: string; date: Date | null }[] = []
+  for (let i = 0; i < offset; i++) {
+    cells.push({ key: `pad-${year}-${month}-${i}`, date: null })
+  }
   for (let d = 1; d <= daysInMonth; d++) {
-    cells.push(new Date(year, month, d))
+    const date = new Date(year, month, d)
+    cells.push({ key: date.toISOString(), date })
   }
   return cells
 }
