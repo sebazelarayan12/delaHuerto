@@ -5,6 +5,7 @@ import { z } from 'zod'
 import type { CategoriaAdmin } from '../categorias/hooks/useCategorias'
 import type { ProductoAdmin } from './hooks/useProductos'
 import ImageUpload from '../../shared/components/ImageUpload'
+import Toggle from '../../shared/components/Toggle'
 
 const schema = z.object({
   categoriaId: z.coerce.number().min(1, 'Seleccioná una categoría'),
@@ -50,139 +51,103 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(44,18,8,0.5)',
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        fontFamily: "'Manrope', sans-serif",
-      }}
+      className="fixed inset-0 bg-[#2C1208]/50 z-50 flex items-center justify-center p-5 font-sans"
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
     >
-      <div
-        style={{
-          background: 'white',
-          borderRadius: 18,
-          width: '100%',
-          maxWidth: 600,
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          boxShadow: '0 20px 60px rgba(44,18,8,0.2)',
-          overflow: 'hidden',
-          display: 'flex',
-          flexDirection: 'column',
-        }}
-      >
-        <div
-          style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid #F3E8D8',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: '#2C1208' }}>
+      <div className="bg-white rounded-[18px] w-full max-w-[600px] max-h-[90vh] overflow-y-auto shadow-[0_20px_60px_rgba(44,18,8,0.2)] flex flex-col">
+        <div className="py-5 px-6 border-b border-sand flex items-center justify-between">
+          <h2 className="text-lg font-extrabold text-espresso">
             {initial ? 'Editar producto' : 'Nuevo producto'}
           </h2>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9A7A66', display: 'flex', alignItems: 'center' }}>
+          <button onClick={onClose} className="bg-transparent border-none cursor-pointer text-muted flex items-center transition-colors hover:text-brown">
             <span className="icon">close</span>
           </button>
         </div>
 
         <form
           onSubmit={handleSubmit((data) => onSave(data, foto))}
-          style={{ padding: 24, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 0 }}
+          className="p-6 overflow-y-auto flex flex-col gap-0"
         >
-          <div style={{ marginBottom: 16 }}>
-            <label htmlFor="prod-categoria" style={labelStyle}>Categoría</label>
-            <select id="prod-categoria" {...register('categoriaId')} style={inputStyle}>
+          <div className="mb-4">
+            <label htmlFor="prod-categoria" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Categoría</label>
+            <select id="prod-categoria" {...register('categoriaId')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra">
               <option value="">Seleccioná una categoría</option>
               {categorias.filter((c) => c.activa).map((c) => (
                 <option key={c.id} value={c.id}>{c.nombre}</option>
               ))}
             </select>
-            {errors.categoriaId && <span style={errStyle}>{errors.categoriaId.message}</span>}
+            {errors.categoriaId && <span className="text-xs text-red-600 mt-1 block">{errors.categoriaId.message}</span>}
           </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <label htmlFor="prod-nombre" style={labelStyle}>Nombre</label>
-            <input id="prod-nombre" type="text" placeholder="Carne cortada a cuchillo" {...register('nombre')} style={inputStyle} />
-            {errors.nombre && <span style={errStyle}>{errors.nombre.message}</span>}
+          <div className="mb-4">
+            <label htmlFor="prod-nombre" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Nombre</label>
+            <input id="prod-nombre" type="text" placeholder="Carne cortada a cuchillo" {...register('nombre')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
+            {errors.nombre && <span className="text-xs text-red-600 mt-1 block">{errors.nombre.message}</span>}
           </div>
 
-          <div style={{ marginBottom: 16 }}>
-            <label htmlFor="prod-descripcion" style={labelStyle}>Descripción (opcional)</label>
+          <div className="mb-4">
+            <label htmlFor="prod-descripcion" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Descripción (opcional)</label>
             <textarea
               id="prod-descripcion"
               placeholder="Descripción del producto…"
               {...register('descripcion')}
-              style={{ ...inputStyle, resize: 'none', height: 72 }}
+              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra resize-none h-[72px]"
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+          <div className="grid grid-cols-2 gap-3.5 mb-4">
             <div>
-              <label htmlFor="prod-precio" style={labelStyle}>Precio por docena</label>
-              <input id="prod-precio" type="number" step="0.01" placeholder="5500" {...register('precio')} style={inputStyle} />
-              {errors.precio && <span style={errStyle}>{errors.precio.message}</span>}
+              <label htmlFor="prod-precio" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Precio por docena</label>
+              <input id="prod-precio" type="number" step="0.01" placeholder="5500" {...register('precio')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
+              {errors.precio && <span className="text-xs text-red-600 mt-1 block">{errors.precio.message}</span>}
             </div>
             <div>
-              <label htmlFor="prod-precio-unidad" style={labelStyle}>Precio por unidad (opcional)</label>
-              <input id="prod-precio-unidad" type="number" step="0.01" placeholder="500" {...register('precioUnidad')} style={inputStyle} />
+              <label htmlFor="prod-precio-unidad" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Precio por unidad (opcional)</label>
+              <input id="prod-precio-unidad" type="number" step="0.01" placeholder="500" {...register('precioUnidad')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+          <div className="grid grid-cols-2 gap-3.5 mb-4">
             <div>
-              <label htmlFor="prod-orden" style={labelStyle}>Orden</label>
-              <input id="prod-orden" type="number" min="0" {...register('orden')} style={inputStyle} />
+              <label htmlFor="prod-orden" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Orden</label>
+              <input id="prod-orden" type="number" min="0" {...register('orden')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
             </div>
             <div>
-              <label htmlFor="prod-disponible" style={labelStyle}>Disponible</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4 }}>
-                <label aria-label={disponible ? 'Marcar no disponible' : 'Marcar disponible'} style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={disponible}
-                    onChange={(e) => setValue('disponible', e.target.checked)}
-                    style={{ opacity: 0, width: 0, height: 0 }}
-                  />
-                  <span style={{ position: 'absolute', inset: 0, borderRadius: 99, background: disponible ? '#C4522A' : '#E2CFB5', transition: 'background 0.2s' }} />
-                  <span style={{ position: 'absolute', top: 3, left: disponible ? 22 : 3, width: 18, height: 18, borderRadius: '50%', background: 'white', boxShadow: '0 1px 4px rgba(0,0,0,0.2)', transition: 'left 0.2s' }} />
-                </label>
-                <span style={{ fontSize: 13, fontWeight: 600, color: disponible ? '#15803d' : '#9A7A66' }}>
+              <label htmlFor="prod-disponible" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Disponible</label>
+              <div className="flex items-center gap-2.5 mt-1 h-[44px]">
+                <Toggle
+                  checked={disponible}
+                  onChange={() => setValue('disponible', !disponible)}
+                  label={disponible ? 'Marcar no disponible' : 'Marcar disponible'}
+                />
+                <span className={`text-[13px] font-semibold ${disponible ? 'text-green-700' : 'text-muted'}`}>
                   {disponible ? 'Disponible' : 'No disponible'}
                 </span>
               </div>
             </div>
           </div>
 
-          <div style={{ marginBottom: 20 }}>
-            <label htmlFor="prod-foto" style={labelStyle}>Foto del producto</label>
+          <div className="mb-5">
+            <label htmlFor="prod-foto" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Foto del producto</label>
             <ImageUpload currentUrl={initial?.fotoUrl} onFileChange={setFoto} />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #F3E8D8' }}>
+          <div className="flex justify-end gap-2.5 pt-2 border-t border-sand">
             <button
               type="button"
               onClick={onClose}
-              style={{ padding: '9px 16px', borderRadius: 10, border: '1.5px solid #E2CFB5', background: 'transparent', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, color: '#7A4020', cursor: 'pointer' }}
+              className="px-4 py-2.5 rounded-[10px] border-[1.5px] border-sand-deep bg-transparent font-sans text-sm font-semibold text-brown cursor-pointer transition-colors hover:bg-sand"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              style={{ padding: '9px 16px', borderRadius: 10, border: 'none', background: loading ? '#E2CFB5' : '#C4522A', color: 'white', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: 6, boxShadow: '0 2px 8px rgba(196,82,42,0.3)' }}
+              className={`px-4 py-2.5 rounded-[10px] border-none font-sans text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_8px_rgba(196,82,42,0.3)] transition-colors ${loading ? 'bg-sand-deep text-white cursor-not-allowed' : 'bg-terra text-white cursor-pointer hover:bg-terra-dark'}`}
             >
-              <span className="icon icon-fill" style={{ fontSize: 17 }}>save</span>
+              <span className="icon icon-fill text-[17px]">save</span>
               {initial ? 'Guardar cambios' : 'Crear producto'}
             </button>
           </div>
@@ -190,33 +155,4 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
       </div>
     </div>
   )
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-  color: '#7A4020',
-  marginBottom: 5,
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '10px 13px',
-  border: '1.5px solid #E2CFB5',
-  borderRadius: 10,
-  fontFamily: "'Manrope', sans-serif",
-  fontSize: 14,
-  color: '#2C1208',
-  background: '#FDF6EC',
-  outline: 'none',
-}
-
-const errStyle: React.CSSProperties = {
-  fontSize: 12,
-  color: '#dc2626',
-  marginTop: 4,
-  display: 'block',
 }

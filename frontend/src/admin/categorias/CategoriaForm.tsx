@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { CategoriaAdmin } from './hooks/useCategorias'
+import Toggle from '../../shared/components/Toggle'
 
 const schema = z.object({
   nombre: z.string().min(1, 'El nombre es requerido'),
@@ -33,141 +34,77 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
 
   return (
     <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(44,18,8,0.5)',
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 20,
-        fontFamily: "'Manrope', sans-serif",
-      }}
+      className="fixed inset-0 bg-[#2C1208]/50 z-50 flex items-center justify-center p-5 font-sans"
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
     >
-      <div
-        style={{
-          background: 'white',
-          borderRadius: 18,
-          width: '100%',
-          maxWidth: 480,
-          boxShadow: '0 20px 60px rgba(44,18,8,0.2)',
-          overflow: 'hidden',
-        }}
-      >
-        <div
-          style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid #F3E8D8',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}
-        >
-          <h2 style={{ fontSize: 18, fontWeight: 800, color: '#2C1208' }}>
+      <div className="bg-white rounded-[18px] w-full max-w-[480px] shadow-[0_20px_60px_rgba(44,18,8,0.2)] overflow-hidden">
+        <div className="py-5 px-6 border-b border-sand flex items-center justify-between">
+          <h2 className="text-lg font-extrabold text-espresso">
             {initial ? 'Editar categoría' : 'Nueva categoría'}
           </h2>
           <button
             onClick={onClose}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9A7A66', display: 'flex', alignItems: 'center' }}
+            className="bg-transparent border-none cursor-pointer text-muted flex items-center transition-colors hover:text-brown"
           >
             <span className="icon">close</span>
           </button>
         </div>
 
-        <form onSubmit={handleSubmit(onSave)} style={{ padding: 24 }}>
-          <div style={{ marginBottom: 16 }}>
-            <label htmlFor="cat-nombre" style={labelStyle}>Nombre de la categoría</label>
-            <input id="cat-nombre" type="text" placeholder="Ej: Empanadas Fritas" {...register('nombre')} style={inputStyle} />
-            {errors.nombre && <span style={errStyle}>{errors.nombre.message}</span>}
+        <form onSubmit={handleSubmit(onSave)} className="p-6">
+          <div className="mb-4">
+            <label htmlFor="cat-nombre" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Nombre de la categoría</label>
+            <input
+              id="cat-nombre"
+              type="text"
+              placeholder="Ej: Empanadas Fritas"
+              {...register('nombre')}
+              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+            />
+            {errors.nombre && <span className="text-xs text-red-600 mt-1 block">{errors.nombre.message}</span>}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, marginBottom: 16 }}>
+          <div className="grid grid-cols-2 gap-3.5 mb-4">
             <div>
-              <label htmlFor="cat-orden" style={labelStyle}>Orden</label>
-              <input id="cat-orden" type="number" min="0" {...register('orden')} style={inputStyle} />
+              <label htmlFor="cat-orden" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Orden</label>
+              <input
+                id="cat-orden"
+                type="number"
+                min="0"
+                {...register('orden')}
+                className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+              />
             </div>
             <div>
-              <label htmlFor="cat-activa" style={labelStyle}>Estado</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 4 }}>
-                <label aria-label={activa ? 'Desactivar categoría' : 'Activar categoría'} style={{ position: 'relative', display: 'inline-block', width: 44, height: 24, cursor: 'pointer' }}>
-                  <input
-                    type="checkbox"
-                    checked={activa}
-                    onChange={(e) => setValue('activa', e.target.checked)}
-                    style={{ opacity: 0, width: 0, height: 0 }}
-                  />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      inset: 0,
-                      borderRadius: 99,
-                      background: activa ? '#C4522A' : '#E2CFB5',
-                      transition: 'background 0.2s',
-                    }}
-                  />
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: 3,
-                      left: activa ? 22 : 3,
-                      width: 18,
-                      height: 18,
-                      borderRadius: '50%',
-                      background: 'white',
-                      boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-                      transition: 'left 0.2s',
-                    }}
-                  />
-                </label>
-                <span style={{ fontSize: 13, fontWeight: 600, color: activa ? '#15803d' : '#9A7A66' }}>
+              <label htmlFor="cat-activa" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Estado</label>
+              <div className="flex items-center gap-2.5 mt-1 h-[44px]">
+                <Toggle
+                  checked={activa}
+                  onChange={() => setValue('activa', !activa)}
+                  label={activa ? 'Desactivar categoría' : 'Activar categoría'}
+                />
+                <span className={`text-[13px] font-semibold ${activa ? 'text-green-700' : 'text-muted'}`}>
                   {activa ? 'Activa' : 'Inactiva'}
                 </span>
               </div>
             </div>
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, paddingTop: 8, borderTop: '1px solid #F3E8D8' }}>
+          <div className="flex justify-end gap-2.5 pt-2 border-t border-sand">
             <button
               type="button"
               onClick={onClose}
-              style={{
-                padding: '9px 16px',
-                borderRadius: 10,
-                border: '1.5px solid #E2CFB5',
-                background: 'transparent',
-                fontFamily: "'Manrope', sans-serif",
-                fontSize: 14,
-                fontWeight: 600,
-                color: '#7A4020',
-                cursor: 'pointer',
-              }}
+              className="px-4 py-2.5 rounded-[10px] border-[1.5px] border-sand-deep bg-transparent font-sans text-sm font-semibold text-brown cursor-pointer transition-colors hover:bg-sand"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              style={{
-                padding: '9px 16px',
-                borderRadius: 10,
-                border: 'none',
-                background: loading ? '#E2CFB5' : '#C4522A',
-                color: 'white',
-                fontFamily: "'Manrope', sans-serif",
-                fontSize: 14,
-                fontWeight: 600,
-                cursor: loading ? 'not-allowed' : 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 6,
-                boxShadow: '0 2px 8px rgba(196,82,42,0.3)',
-              }}
+              className={`px-4 py-2.5 rounded-[10px] border-none font-sans text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_8px_rgba(196,82,42,0.3)] transition-colors ${loading ? 'bg-sand-deep text-white cursor-not-allowed' : 'bg-terra text-white cursor-pointer hover:bg-terra-dark'}`}
             >
-              <span className="icon icon-fill" style={{ fontSize: 17 }}>save</span>
+              <span className="icon icon-fill text-[17px]">save</span>
               {initial ? 'Guardar cambios' : 'Crear categoría'}
             </button>
           </div>
@@ -175,33 +112,4 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
       </div>
     </div>
   )
-}
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: 12,
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  letterSpacing: '0.08em',
-  color: '#7A4020',
-  marginBottom: 5,
-}
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '10px 13px',
-  border: '1.5px solid #E2CFB5',
-  borderRadius: 10,
-  fontFamily: "'Manrope', sans-serif",
-  fontSize: 14,
-  color: '#2C1208',
-  background: '#FDF6EC',
-  outline: 'none',
-}
-
-const errStyle: React.CSSProperties = {
-  fontSize: 12,
-  color: '#dc2626',
-  marginTop: 4,
-  display: 'block',
 }

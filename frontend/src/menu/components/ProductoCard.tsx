@@ -11,177 +11,65 @@ interface Props {
 }
 
 export default function ProductoCard({ producto, cantidad, onAgregar, onIncrementar, onDecrementar }: Props) {
-  const precio = parseFloat(producto.precio)
+  const precio = parseFloat(producto.precio as unknown as string)
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 12,
-        padding: '14px 16px',
-        borderBottom: '1px solid #F3E8D8',
-        background: '#FFFDF9',
-      }}
-    >
-      <div
-        style={{
-          width: 88,
-          height: 88,
-          flexShrink: 0,
-          borderRadius: 14,
-          overflow: 'hidden',
-          background: '#F3E8D8',
-        }}
-      >
+    <div className="flex gap-3 px-4 py-3.5 border-b border-sand bg-ivory">
+      <div className="w-[88px] h-[88px] shrink-0 rounded-[14px] overflow-hidden bg-sand">
         {producto.fotoUrl ? (
           <img
             src={producto.fotoUrl}
             alt={producto.nombre}
             loading="lazy"
-            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            className="w-full h-full object-cover block"
           />
         ) : (
-          <div
-            style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 32,
-            }}
-          >
+          <div className="w-full h-full flex items-center justify-center text-[32px]">
             🥟
           </div>
         )}
       </div>
 
-      <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
-        <div
-          style={{
-            fontSize: 15,
-            fontWeight: 700,
-            color: '#2C1208',
-            lineHeight: 1.3,
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-          }}
-        >
+      <div className="flex-1 min-w-0 flex flex-col gap-1">
+        <div className="text-[15px] font-bold text-espresso leading-snug whitespace-nowrap overflow-hidden text-ellipsis">
           {producto.nombre}
         </div>
         {producto.descripcion && (
-          <div
-            style={{
-              fontSize: 12.5,
-              color: '#9A7A66',
-              lineHeight: 1.5,
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden',
-            }}
-          >
+          <div className="text-[12.5px] text-muted leading-relaxed line-clamp-2">
             {producto.descripcion}
           </div>
         )}
-        <div
-          style={{
-            marginTop: 'auto',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingTop: 6,
-          }}
-        >
+        <div className="mt-auto flex items-center justify-between pt-1.5">
           <div>
-            <div style={{ fontSize: 17, fontWeight: 800, color: '#C4522A' }}>{fmt(precio)}</div>
-            <div style={{ fontSize: 10.5, color: '#9A7A66', fontWeight: 500 }}>la docena</div>
+            <div className="text-[17px] font-extrabold text-terra">{fmt(precio)}</div>
+            <div className="text-xs text-muted font-medium">la docena</div>
           </div>
 
           {!producto.disponible ? (
-            <div style={{ background: '#F3E8D8', color: '#9A7A66', padding: '6px 12px', borderRadius: 99, fontSize: 12, fontWeight: 700 }}>
+            <div className="bg-sand text-muted px-3 py-1.5 rounded-full text-xs font-bold">
               Sin stock
             </div>
           ) : cantidad === 0 ? (
             <button
               onClick={onAgregar}
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: '50%',
-                background: '#C4522A',
-                border: 'none',
-                color: 'white',
-                fontSize: 22,
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 3px 10px rgba(196,82,42,0.4)',
-                flexShrink: 0,
-                transition: 'transform 0.15s, background 0.15s',
-              }}
-              onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#A0401E' }}
-              onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = '#C4522A' }}
+              className="w-9 h-9 rounded-full bg-terra text-white text-[22px] flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-colors duration-150 hover:bg-[#A0401E] border-none cursor-pointer"
             >
-              <span className="icon" style={{ fontSize: 20 }}>add</span>
+              <span className="icon text-[20px]">add</span>
             </button>
           ) : (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                background: '#C4522A',
-                borderRadius: 99,
-                overflow: 'hidden',
-                height: 36,
-              }}
-            >
+            <div className="flex items-center bg-terra rounded-full overflow-hidden h-9">
               <button
                 onClick={onDecrementar}
-                style={{
-                  width: 36,
-                  height: 36,
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  fontSize: 20,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                className="w-9 h-9 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
               >
                 −
               </button>
-              <span
-                style={{
-                  minWidth: 28,
-                  textAlign: 'center',
-                  color: 'white',
-                  fontSize: 15,
-                  fontWeight: 700,
-                }}
-              >
+              <span className="min-w-[28px] text-center text-white text-[15px] font-bold">
                 {cantidad}
               </span>
               <button
                 onClick={onIncrementar}
-                style={{
-                  width: 36,
-                  height: 36,
-                  border: 'none',
-                  background: 'transparent',
-                  color: 'white',
-                  fontSize: 20,
-                  fontWeight: 700,
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
+                className="w-9 h-9 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
               >
                 +
               </button>

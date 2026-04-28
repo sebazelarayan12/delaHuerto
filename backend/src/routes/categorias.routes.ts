@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
 import { zValidator } from '@hono/zod-validator'
 import { z } from 'zod'
-import { prisma } from '../db.js'
 import { authMiddleware } from '../middleware/auth.middleware.js'
+import { CategoriasService } from '../services/categorias.service.js'
 
 const app = new Hono()
 
@@ -14,20 +14,8 @@ const categoriaSchema = z.object({
 
 // Public: active categories with available products
 app.get('/', async (c) => {
-  try {
-    const categorias = await prisma.categoria.findMany({
-      where: { activa: true },
-      orderBy: { orden: 'asc' },
-      include: {
-        productos: {
-          orderBy: { orden: 'asc' },
-        },
-      },
-    })
-    return c.json(categorias)
-  } catch (e) {
-    return c.json({ error: 'Error al obtener categorías' }, 500)
-  }
+  const categorias = await CategoriasService.getPublicCategories()
+  return c.json(categorias)
 })
 
 // Admin routes
@@ -35,67 +23,33 @@ const admin = new Hono()
 admin.use('/*', authMiddleware)
 
 admin.get('/', async (c) => {
-  try {
-    const categorias = await prisma.categoria.findMany({
-      orderBy: { orden: 'asc' },
-    })
-    return c.json(categorias)
-  } catch (e) {
-    return c.json({ error: 'Error al obtener categorías' }, 500)
-  }
+  const categorias = await CategoriasService.getAdminCategories()
+  return c.json(categorias)
 })
 
 admin.post('/', zValidator('json', categoriaSchema), async (c) => {
-  try {
-    const data = c.req.valid('json')
-    const dup = await prisma.categoria.findFirst({ where: { orden: data.orden } })
-    if (dup) return c.json({ error: `Ya existe una categoría con el orden ${data.orden}` }, 409)
-    const categoria = await prisma.categoria.create({ data })
-    return c.json(categoria, 201)
-  } catch (e) {
-    return c.json({ error: 'Error al crear categoría' }, 500)
-  }
+  const data = c.req.valid('json')
+  const categoria = await CategoriasService.createCategory(data)
+  return c.json(categoria, 201)
 })
 
 admin.put('/:id', zValidator('json', categoriaSchema.partial()), async (c) => {
   const id = parseInt(c.req.param('id'))
-  try {
-    const data = c.req.valid('json')
-    if (data.orden !== undefined) {
-      const dup = await prisma.categoria.findFirst({ where: { orden: data.orden, NOT: { id } } })
-      if (dup) return c.json({ error: `Ya existe una categoría con el orden ${data.orden}` }, 409)
-    }
-    const categoria = await prisma.categoria.update({ where: { id }, data })
-    return c.json(categoria)
-  } catch (e: unknown) {
-    if ((e as { code?: string }).code === 'P2025') return c.json({ error: 'Categoría no encontrada' }, 404)
-    return c.json({ error: 'Error al actualizar categoría' }, 500)
-  }
+  const data = c.req.valid('json')
+  const categoria = await CategoriasService.updateCategory(id, data)
+  return c.json(categoria)
 })
 
 admin.delete('/:id', async (c) => {
   const id = parseInt(c.req.param('id'))
-  try {
-    const count = await prisma.producto.count({ where: { categoriaId: id } })
-    if (count > 0) return c.json({ error: 'La categoría tiene productos. Eliminá los productos primero.' }, 409)
-    await prisma.categoria.delete({ where: { id } })
-    return c.json({ ok: true })
-  } catch (e: unknown) {
-    if ((e as { code?: string }).code === 'P2025') return c.json({ error: 'Categoría no encontrada' }, 404)
-    return c.json({ error: 'Error al eliminar categoría' }, 500)
-  }
+  await CategoriasService.deleteCategory(id)
+  return c.json({ ok: true })
 })
 
 admin.post('/reorder', zValidator('json', z.object({ ordenes: z.array(z.object({ id: z.number(), orden: z.number() })) })), async (c) => {
-  try {
-    const { ordenes } = c.req.valid('json')
-    await prisma.$transaction(
-      ordenes.map((o) => prisma.categoria.update({ where: { id: o.id }, data: { orden: o.orden } }))
-    )
-    return c.json({ ok: true })
-  } catch (e) {
-    return c.json({ error: 'Error al reordenar categorías' }, 500)
-  }
+  const { ordenes } = c.req.valid('json')
+  await CategoriasService.reorderCategories(ordenes)
+  return c.json({ ok: true })
 })
 
 export { app as categoriasPublicRoutes, admin as categoriasAdminRoutes }

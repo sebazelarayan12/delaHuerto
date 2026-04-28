@@ -56,7 +56,7 @@ export default function MenuPage() {
   }
 
   return (
-    <div style={{ width: '100%', maxWidth: 430, minHeight: '100vh', background: '#FDF6EC', position: 'relative', overflow: 'hidden', margin: '0 auto', display: 'flex', flexDirection: 'column' }}>
+    <div className="w-full max-w-[430px] min-h-screen bg-cream relative mx-auto flex flex-col">
 
       <MenuHeader
         cantidadTotal={cantidadTotal}
@@ -67,33 +67,33 @@ export default function MenuPage() {
         onScrollToCategory={scrollToCategory}
       />
 
-      <div style={{ background: 'linear-gradient(135deg, #3D1A0A 0%, #6B2D15 100%)', padding: '20px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
+      <div className="bg-gradient-to-br from-[#3D1A0A] to-[#6B2D15] px-4 py-5 flex items-center gap-3.5">
         <div>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#FBF1D8', lineHeight: 1.3 }}>
+          <div className="font-display text-lg font-extrabold text-gold-light leading-snug">
             Hechas con amor
           </div>
-          <div style={{ fontSize: 12, color: '#C49060', marginTop: 4, fontWeight: 500 }}>
+          <div className="text-xs text-[#C49060] mt-1 font-medium">
             Masa casera · Estilo tucumanas
           </div>
         </div>
-        <div style={{ marginLeft: 'auto', fontSize: 44, flexShrink: 0 }}>🥟</div>
+        <div className="ml-auto text-[44px] shrink-0">🥟</div>
       </div>
 
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <main className="flex-1 flex flex-col">
         {isLoading && (
-          <div style={{ textAlign: 'center', padding: '60px 24px', color: '#9A7A66' }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>🥟</div>
-            <div style={{ fontWeight: 600 }}>Cargando menú…</div>
+          <div className="text-center py-[60px] px-6 text-muted">
+            <div className="text-[32px] mb-2">🥟</div>
+            <div className="font-semibold">Cargando menú…</div>
           </div>
         )}
 
         {isError && (
-          <div style={{ textAlign: 'center', padding: '60px 24px', color: '#dc2626' }}>
-            <div style={{ fontSize: 32, marginBottom: 8 }}>😕</div>
-            <div style={{ fontWeight: 600, marginBottom: 12 }}>No se pudo cargar el menú</div>
+          <div className="text-center py-[60px] px-6 text-red-600">
+            <div className="text-[32px] mb-2">😕</div>
+            <div className="font-semibold mb-3">No se pudo cargar el menú</div>
             <button
               onClick={() => refetch()}
-              style={{ padding: '10px 20px', background: '#C4522A', color: 'white', border: 'none', borderRadius: 10, fontWeight: 600, cursor: 'pointer' }}
+              className="px-5 py-2.5 bg-terra text-white rounded-[10px] font-semibold cursor-pointer"
             >
               Reintentar
             </button>

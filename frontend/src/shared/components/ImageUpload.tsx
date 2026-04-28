@@ -26,35 +26,24 @@ export default function ImageUpload({ currentUrl, onFileChange }: Props) {
     <button
       type="button"
       onClick={() => inputRef.current?.click()}
-      style={{
-        border: '2px dashed #E2CFB5',
-        borderRadius: 12,
-        padding: 16,
-        cursor: 'pointer',
-        textAlign: 'center',
-        background: '#FDF6EC',
-        transition: 'border-color 0.2s',
-        width: '100%',
-      }}
-      onMouseEnter={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#C4522A')}
-      onMouseLeave={(e) => ((e.currentTarget as HTMLButtonElement).style.borderColor = '#E2CFB5')}
+      className="border-2 border-dashed border-sand-deep rounded-xl p-4 cursor-pointer text-center bg-cream transition-colors duration-200 w-full hover:border-terra"
     >
-      <input ref={inputRef} type="file" accept="image/*" onChange={handleChange} style={{ display: 'none' }} />
+      <input ref={inputRef} type="file" accept="image/*" onChange={handleChange} className="hidden" />
       {displayed ? (
         <div>
           <img
             src={displayed}
             alt="Preview"
-            style={{ width: '100%', maxHeight: 160, objectFit: 'cover', borderRadius: 8, marginBottom: 8 }}
+            className="w-full max-h-[160px] object-cover rounded-lg mb-2"
           />
-          <span style={{ fontSize: 12, color: '#9A7A66' }}>Clic para cambiar imagen</span>
+          <span className="text-xs text-muted">Clic para cambiar imagen</span>
         </div>
       ) : (
         <div>
-          <span className="icon" style={{ fontSize: 36, color: '#C4522A', display: 'block', marginBottom: 6 }}>
+          <span className="icon text-[36px] text-terra block mb-1.5">
             add_photo_alternate
           </span>
-          <span style={{ fontSize: 13, color: '#9A7A66', fontWeight: 600 }}>Subir foto del producto</span>
+          <span className="text-[13px] text-muted font-semibold">Subir foto del producto</span>
         </div>
       )}
     </button>

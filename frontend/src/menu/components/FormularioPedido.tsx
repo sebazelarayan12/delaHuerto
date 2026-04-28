@@ -78,113 +78,91 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') handleClose() }}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(44,18,8,0.6)',
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        opacity: open ? 1 : 0,
-        pointerEvents: open ? 'all' : 'none',
-        transition: 'opacity 0.3s ease',
-        maxWidth: 430,
-        margin: '0 auto',
-      }}
+      className={`fixed inset-0 bg-[#2C1208]/60 z-50 flex items-end justify-center max-w-[430px] mx-auto transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
       <div
-        style={{
-          width: '100%',
-          background: '#FFFDF9',
-          borderRadius: '24px 24px 0 0',
-          maxHeight: 'calc(100dvh - 40px)',
-          display: 'flex',
-          flexDirection: 'column',
-          transform: open ? 'translateY(0)' : 'translateY(100%)',
-          transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-        }}
+        className={`w-full bg-ivory rounded-t-[24px] max-h-[calc(100dvh-40px)] flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? 'translate-y-0' : 'translate-y-full'}`}
       >
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 8px', flexShrink: 0 }}>
-          <div style={{ width: 40, height: 4, borderRadius: 99, background: '#E2CFB5' }} />
+        <div className="flex justify-center pt-3 pb-2 shrink-0">
+          <div className="w-10 h-1 rounded-full bg-sand-deep" />
         </div>
 
         {!sent ? (
           <>
-            <div style={{ padding: '8px 20px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2CFB5', flexShrink: 0 }}>
+            <div className="px-5 pt-2 pb-4 flex justify-between items-start border-b border-sand-deep shrink-0">
               <div>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#2C1208' }}>
+                <h2 className="font-display text-lg font-extrabold text-espresso">
                   Datos del pedido
                 </h2>
-                <p style={{ fontSize: 13, color: '#9A7A66', marginTop: 2 }}>
+                <p className="text-[13px] text-muted mt-0.5">
                   Completá tus datos para WhatsApp
                 </p>
               </div>
               <button 
                 type="button"
                 onClick={handleClose} 
-                style={{ background: '#F3E8D8', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#7A4020', flexShrink: 0 }}
+                className="bg-sand border-none rounded-full w-8 h-8 flex items-center justify-center cursor-pointer text-brown shrink-0"
               >
-                <span className="icon" style={{ fontSize: 20 }}>close</span>
+                <span className="icon text-[20px]">close</span>
               </button>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
-              <div style={{ background: '#F3E8D8', borderRadius: 14, padding: '12px 14px', marginBottom: 20 }}>
+            <div className="flex-1 overflow-y-auto px-5 pt-5 pb-8">
+              <div className="bg-sand rounded-[14px] px-3.5 py-3 mb-5">
               {items.map((item) => (
-                <div key={item.productoId} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#7A4020', marginBottom: 4 }}>
-                  <span style={{ fontWeight: 600 }}>{item.nombre} × {item.cantidad}</span>
+                <div key={item.productoId} className="flex justify-between text-[13px] color-brown mb-1">
+                  <span className="font-semibold">{item.nombre} × {item.cantidad}</span>
                   <span>{fmt(item.precio * item.cantidad)}</span>
                 </div>
               ))}
               {montoDescuento > 0 && (
                 <>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: '1px solid #E2CFB5', marginTop: 4 }}>
-                    <span style={{ color: '#9A7A66', fontSize: 13 }}>Subtotal</span>
-                    <span style={{ color: '#9A7A66', fontSize: 13 }}>{fmt(subtotal)}</span>
+                  <div className="flex justify-between pt-2 border-t border-sand-deep mt-1">
+                    <span className="text-muted text-[13px]">Subtotal</span>
+                    <span className="text-muted text-[13px]">{fmt(subtotal)}</span>
                   </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 4 }}>
-                    <span style={{ color: '#15803d', fontSize: 13, fontWeight: 600 }}>Descuento ({porcentajeDescuento * 100}%)</span>
-                    <span style={{ color: '#15803d', fontSize: 13, fontWeight: 600 }}>-{fmt(montoDescuento)}</span>
+                  <div className="flex justify-between mt-1">
+                    <span className="text-green-700 text-[13px] font-semibold">Descuento ({porcentajeDescuento * 100}%)</span>
+                    <span className="text-green-700 text-[13px] font-semibold">-{fmt(montoDescuento)}</span>
                   </div>
                 </>
               )}
-              <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: 8, borderTop: montoDescuento > 0 ? 'none' : '1px solid #E2CFB5', marginTop: 4 }}>
-                <span style={{ fontWeight: 800, color: '#2C1208', fontSize: 14 }}>Total</span>
-                <span style={{ fontWeight: 800, color: '#C4522A', fontSize: 14 }}>{fmt(total)}</span>
+              <div className={`flex justify-between pt-2 mt-1 ${montoDescuento > 0 ? '' : 'border-t border-sand-deep'}`}>
+                <span className="font-extrabold text-espresso text-sm">Total</span>
+                <span className="font-extrabold text-terra text-sm">{fmt(total)}</span>
               </div>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <Field label="Nombre y apellido" error={errors.nombre?.message}>
-                <input type="text" placeholder="María González" {...register('nombre')} style={inputStyle} />
+                <input type="text" placeholder="María González" {...register('nombre')} className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] text-espresso bg-cream outline-none focus:border-terra" />
               </Field>
               <Field label="Teléfono" error={errors.telefono?.message}>
                 <>
-                  <input type="tel" placeholder="11 1234-5678" {...register('telefono')} style={inputStyle} onChange={() => setDupError(false)} />
+                  <input type="tel" placeholder="11 1234-5678" {...register('telefono')} className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] text-espresso bg-cream outline-none focus:border-terra" onChange={() => setDupError(false)} />
                   {dupError && (
-                    <span style={{ fontSize: 12, color: '#dc2626', marginTop: 4, display: 'block' }}>
+                    <span className="text-xs text-red-600 mt-1 block">
                       Ya enviaste un pedido con este número en esta sesión.
                     </span>
                   )}
                 </>
               </Field>
               <Field label="Dirección de entrega" error={errors.direccion?.message}>
-                <input type="text" placeholder="Av. Corrientes 1234, CABA" {...register('direccion')} style={inputStyle} />
+                <input type="text" placeholder="Av. Corrientes 1234, CABA" {...register('direccion')} className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] text-espresso bg-cream outline-none focus:border-terra" />
               </Field>
               <Field label="Método de pago" error={errors.metodoPago?.message}>
-                <div style={{ display: 'flex', gap: 10 }}>
+                <div className="flex gap-2.5">
                   <RadioPill id="ef" value="efectivo" label="Efectivo" icon="payments" register={register} name="metodoPago" checked={metodoPago === 'efectivo'} />
                   <RadioPill id="tr" value="transferencia" label="Transferencia" icon="account_balance" register={register} name="metodoPago" checked={metodoPago === 'transferencia'} />
                 </div>
               </Field>
               <Field label="Notas (opcional)">
-                <textarea placeholder="Sin aceitunas, picante, horario de entrega…" {...register('notas')} style={{ ...inputStyle, resize: 'none', height: 72 }} />
+                <textarea placeholder="Sin aceitunas, picante, horario de entrega…" {...register('notas')} className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] text-espresso bg-cream outline-none focus:border-terra resize-none h-[72px]" />
               </Field>
 
               <button
                 type="submit"
-                style={{ width: '100%', padding: 16, background: '#25D366', border: 'none', borderRadius: 14, color: 'white', fontFamily: "'Manrope', sans-serif", fontSize: 16, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, boxShadow: '0 4px 16px rgba(37,211,102,0.4)', marginBottom: 8 }}
+                className="w-full p-4 bg-[#25D366] border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2.5 shadow-[0_4px_16px_rgba(37,211,102,0.4)] mb-2 transition-transform duration-200 hover:scale-[1.02]"
               >
                 <WhatsAppIcon />
                 Enviar pedido por WhatsApp
@@ -193,17 +171,17 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
           </div>
           </>
         ) : (
-          <div style={{ padding: '40px 28px 32px', textAlign: 'center', flex: 1, overflowY: 'auto' }}>
-            <div style={{ fontSize: 64, marginBottom: 16 }}>🎉</div>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 24, fontWeight: 800, color: '#2C1208', marginBottom: 8 }}>
+          <div className="px-7 pt-10 pb-8 text-center flex-1 overflow-y-auto">
+            <div className="text-[64px] mb-4">🎉</div>
+            <h2 className="font-display text-2xl font-extrabold text-espresso mb-2">
               ¡Pedido enviado!
             </h2>
-            <p style={{ color: '#9A7A66', lineHeight: 1.6, marginBottom: 28 }}>
+            <p className="text-muted leading-relaxed mb-7">
               Te abrimos WhatsApp para que confirmemos los detalles. En breve nos ponemos en contacto.
             </p>
             <button
               onClick={handleClose}
-              style={{ width: '100%', padding: 16, background: '#C4522A', border: 'none', borderRadius: 14, color: 'white', fontFamily: "'Manrope', sans-serif", fontSize: 16, fontWeight: 700, cursor: 'pointer' }}
+              className="w-full p-4 bg-terra border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer shadow-[0_4px_16px_rgba(196,82,42,0.4)] transition-colors duration-200 hover:bg-terra-dark"
             >
               Volver al menú
             </button>
@@ -214,28 +192,14 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
   )
 }
 
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '12px 14px',
-  border: '1.5px solid #E8D5BC',
-  borderRadius: 12,
-  fontFamily: "'Manrope', sans-serif",
-  fontSize: 15,
-  color: '#2C1208',
-  background: '#FDF6EC',
-  outline: 'none',
-  WebkitAppearance: 'none',
-  boxSizing: 'border-box',
-}
-
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: 16 }}>
-      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: '#7A4020', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+    <div className="mb-4">
+      <label className="block text-xs font-semibold text-brown mb-1.5 uppercase tracking-[0.08em]">
         {label}
       </label>
       {children}
-      {error && <span style={{ fontSize: 12, color: '#dc2626', marginTop: 4, display: 'block' }}>{error}</span>}
+      {error && <span className="text-xs text-red-600 mt-1 block">{error}</span>}
     </div>
   )
 }
@@ -250,33 +214,19 @@ function RadioPill({ id, value, label, icon, register, name, checked }: {
   checked: boolean
 }) {
   return (
-    <div style={{ flex: 1, position: 'relative' }}>
+    <div className="flex-1 relative">
       <input
         type="radio"
         id={`p-${id}`}
         value={value}
         {...register(name)}
-        style={{ position: 'absolute', opacity: 0, width: 0, height: 0 }}
+        className="absolute opacity-0 w-0 h-0"
       />
       <label
         htmlFor={`p-${id}`}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 6,
-          padding: '11px 8px',
-          border: checked ? '2px solid #C4522A' : '1.5px solid #E8D5BC',
-          borderRadius: 12,
-          cursor: 'pointer',
-          fontSize: 14,
-          fontWeight: 600,
-          color: checked ? '#C4522A' : '#9A7A66',
-          background: checked ? '#FDF0EB' : '#FDF6EC',
-          transition: 'background 0.15s, border-color 0.15s, color 0.15s',
-        }}
+        className={`flex items-center justify-center gap-1.5 py-2.5 px-2 border-[1.5px] rounded-xl cursor-pointer text-sm font-semibold transition-all duration-150 ${checked ? 'border-terra text-terra bg-[#FDF0EB] ring-1 ring-terra' : 'border-sand-deep text-muted bg-cream hover:bg-sand'}`}
       >
-        <span className="icon" style={{ fontSize: 18 }}>{icon}</span>
+        <span className="icon text-[18px]">{icon}</span>
         {label}
       </label>
     </div>

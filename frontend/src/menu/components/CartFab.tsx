@@ -11,14 +11,14 @@ export default function CartFab({ cantidadTotal, total, onClick }: Props) {
   return (
     <button
       onClick={onClick}
-      style={{ position: 'fixed', bottom: 24, right: 16, background: '#C4522A', border: 'none', borderRadius: 99, padding: '14px 20px 14px 16px', display: 'flex', alignItems: 'center', gap: 10, color: 'white', fontFamily: "'Manrope', sans-serif", fontSize: 15, fontWeight: 700, cursor: 'pointer', zIndex: 50, boxShadow: '0 6px 20px rgba(196,82,42,0.5)', transition: 'transform 0.2s, background 0.2s' }}
+      className="fixed bottom-6 right-4 bg-terra border-none rounded-full py-3.5 pr-5 pl-4 flex items-center gap-2.5 text-white font-sans text-[15px] font-bold cursor-pointer z-50 shadow-[0_6px_20px_rgba(196,82,42,0.5)] transition-all duration-200 hover:scale-105 hover:bg-terra-dark"
     >
-      <span className="icon" style={{ fontSize: 22 }}>shopping_bag</span>
+      <span className="icon text-[22px]">shopping_bag</span>
       <span>Ver carrito</span>
-      <div style={{ background: '#D4920A', color: '#2C1208', borderRadius: 99, minWidth: 24, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, padding: '0 6px' }}>
+      <div className="bg-gold text-espresso rounded-full min-w-[24px] h-6 flex items-center justify-center text-[13px] font-extrabold px-1.5">
         {cantidadTotal}
       </div>
-      <span style={{ marginLeft: 4, fontWeight: 600 }}>{fmt(total)}</span>
+      <span className="ml-1 font-semibold">{fmt(total)}</span>
     </button>
   )
 }
