@@ -52,4 +52,16 @@ admin.post('/reorder', zValidator('json', z.object({ ordenes: z.array(z.object({
   return c.json({ ok: true })
 })
 
+const descuentoSchema = z.array(z.object({
+  cantidadMinima: z.number().int().positive(),
+  porcentaje: z.number().positive().max(100),
+}))
+
+admin.put('/:id/descuentos', zValidator('json', descuentoSchema), async (c) => {
+  const id = parseInt(c.req.param('id'))
+  const tiers = c.req.valid('json')
+  await CategoriasService.syncDescuentos(id, tiers)
+  return c.json({ ok: true })
+})
+
 export { app as categoriasPublicRoutes, admin as categoriasAdminRoutes }

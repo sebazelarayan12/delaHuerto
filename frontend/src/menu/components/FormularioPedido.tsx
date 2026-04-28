@@ -39,11 +39,10 @@ interface Props {
   total: number
   subtotal: number
   montoDescuento: number
-  porcentajeDescuento: number
   onSuccess: () => void
 }
 
-export default function FormularioPedido({ open, onClose, onSuccess, items, total, subtotal, montoDescuento, porcentajeDescuento }: Props) {
+export default function FormularioPedido({ open, onClose, onSuccess, items, total, subtotal, montoDescuento }: Props) {
   const [sent, setSent] = useState(false)
   const [dupError, setDupError] = useState(false)
 
@@ -122,7 +121,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                     <span className="text-muted text-[13px]">{fmt(subtotal)}</span>
                   </div>
                   <div className="flex justify-between mt-1">
-                    <span className="text-green-700 text-[13px] font-semibold">Descuento ({porcentajeDescuento * 100}%)</span>
+                    <span className="text-green-700 text-[13px] font-semibold">Descuento</span>
                     <span className="text-green-700 text-[13px] font-semibold">-{fmt(montoDescuento)}</span>
                   </div>
                 </>
