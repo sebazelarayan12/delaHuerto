@@ -40,8 +40,9 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         )}
       </div>
 
-      <div className="bg-gold -mx-4 py-[7px] px-4 text-xs font-bold text-espresso text-center tracking-[0.02em]">
-        Descuento en compras por mayor!
+      <div className="bg-gold -mx-4 px-4 pt-[7px] pb-2 text-espresso text-center">
+        <div className="text-xs font-bold tracking-[0.02em] mb-1">🎉 Descuento en compras por mayor!</div>
+        <div className="text-[11px] font-semibold">+5 docenas → 5% off · +10 docenas → 25% off</div>
       </div>
 
       <nav className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
