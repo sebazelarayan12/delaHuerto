@@ -59,7 +59,7 @@ app.onError((err, c) => {
     return c.json({ error: 'Recurso no encontrado' }, 404)
   }
 
-  return c.json({ error: 'Internal server error' }, 500)
+  return c.json({ error: 'Internal server error', details: err instanceof Error ? err.message : String(err) }, 500)
 })
 
 const port = env.PORT
