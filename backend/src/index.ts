@@ -7,6 +7,7 @@ import { prisma } from './db.js'
 import authRoutes from './routes/auth.routes.js'
 import { categoriasPublicRoutes, categoriasAdminRoutes } from './routes/categorias.routes.js'
 import { productosAdminRoutes } from './routes/productos.routes.js'
+import { HttpError } from './utils/errors.js'
 
 const isProd = process.env.NODE_ENV === 'production'
 
@@ -48,6 +49,16 @@ app.onError((err, c) => {
     c.header('Access-Control-Allow-Origin', origin)
     c.header('Vary', 'Origin')
   }
+
+  if (err instanceof HttpError) {
+    return c.json({ error: err.message }, err.status as any)
+  }
+
+  // Handle Prisma 'Not Found' errors automatically if they bubble up
+  if (typeof err === 'object' && err !== null && 'code' in err && (err as any).code === 'P2025') {
+    return c.json({ error: 'Recurso no encontrado' }, 404)
+  }
+
   return c.json({ error: 'Internal server error' }, 500)
 })
 

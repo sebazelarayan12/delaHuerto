@@ -53,10 +53,10 @@ export default function DashboardPage() {
   return (
     <AdminLayout>
       <div>
-        <div className="px-4 lg:px-8 pt-6 lg:pt-8 flex justify-between items-start" style={{ borderBottom: '1px solid #E2CFB5', paddingBottom: 20 }}>
+        <div className="px-4 lg:px-8 pt-6 lg:pt-8 flex justify-between items-start border-b border-sand-deep pb-5">
           <div>
-            <h1 style={{ fontSize: 22, fontWeight: 800, color: '#2C1208' }}>Buen día 👋</h1>
-            <p style={{ fontSize: 14, color: '#9A7A66', marginTop: 4 }}>
+            <h1 className="text-[22px] font-extrabold text-espresso">Buen día 👋</h1>
+            <p className="text-sm text-muted mt-1">
               Esto es lo que está pasando hoy con tu menú.
             </p>
           </div>
@@ -64,20 +64,9 @@ export default function DashboardPage() {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 8,
-              background: '#C4522A',
-              color: 'white',
-              padding: '8px 16px',
-              borderRadius: 8,
-              textDecoration: 'none',
-              fontSize: 14,
-              fontWeight: 600,
-            }}
+            className="inline-flex items-center gap-2 bg-terra text-white px-4 py-2 rounded-lg no-underline text-sm font-semibold"
           >
-            <span className="icon" style={{ fontSize: 18 }}>storefront</span>
+            <span className="icon text-[18px]">storefront</span>
             Ver Tienda
           </a>
         </div>
@@ -88,32 +77,25 @@ export default function DashboardPage() {
             {KPIS.map((k) => (
               <div
                 key={k.label}
-                style={{
-                  background: 'white',
-                  borderRadius: 14,
-                  padding: 16,
-                  boxShadow: '0 2px 8px rgba(44,18,8,0.06)',
-                  position: 'relative',
-                  overflow: 'hidden',
-                }}
+                className="bg-white rounded-xl p-4 shadow-[0_2px_8px_rgba(44,18,8,0.06)] relative overflow-hidden"
               >
-                <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 4, background: k.color, borderRadius: '14px 14px 0 0' }} />
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                  <span className="icon icon-fill" style={{ color: k.color, fontSize: 20 }}>{k.icon}</span>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: '#9A7A66', textTransform: 'uppercase', letterSpacing: '0.06em', lineHeight: 1.2 }}>{k.label}</span>
+                <div style={{ background: k.color }} className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" />
+                <div className="flex items-center gap-1.5 mb-2">
+                  <span className="icon icon-fill text-[20px]" style={{ color: k.color }}>{k.icon}</span>
+                  <span className="text-xs font-semibold text-muted uppercase tracking-[0.06em] leading-tight">{k.label}</span>
                 </div>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 26, fontWeight: 800, color: '#2C1208' }}>{k.value}</div>
+                <div className="font-display text-[26px] font-extrabold text-espresso">{k.value}</div>
               </div>
             ))}
           </div>
 
           {/* Cards: 1 col mobile, 2 cols desktop */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
-            <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 8px rgba(44,18,8,0.06)', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid #F3E8D8', fontWeight: 700, fontSize: 15 }}>
+            <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
+              <div className="px-5 py-4 border-b border-sand font-bold text-[15px]">
                 Accesos rápidos
               </div>
-              <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <div className="px-4 py-3 flex flex-col gap-2">
                 {[
                   { label: 'Gestionar categorías', icon: 'category', path: '/admin/categorias' },
                   { label: 'Gestionar productos', icon: 'inventory_2', path: '/admin/productos' },
@@ -121,40 +103,40 @@ export default function DashboardPage() {
                   <button
                     key={l.path}
                     onClick={() => navigate(l.path)}
-                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '11px 14px', borderRadius: 10, border: '1.5px solid #E2CFB5', background: 'transparent', cursor: 'pointer', width: '100%', fontFamily: "'Manrope', sans-serif", fontSize: 14, fontWeight: 600, color: '#7A4020', transition: 'background 0.15s, color 0.15s' }}
+                    className="flex items-center gap-2.5 px-3.5 py-[11px] rounded-[10px] border-[1.5px] border-sand-deep bg-transparent cursor-pointer w-full font-sans text-sm font-semibold text-brown transition-colors duration-150 hover:bg-sand/30"
                   >
-                    <span className="icon" style={{ color: '#C4522A' }}>{l.icon}</span>
+                    <span className="icon text-terra">{l.icon}</span>
                     {l.label}
-                    <span className="icon" style={{ marginLeft: 'auto', fontSize: 16, color: '#9A7A66' }}>arrow_forward</span>
+                    <span className="icon ml-auto text-base text-muted">arrow_forward</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            <div style={{ background: 'white', borderRadius: 14, boxShadow: '0 2px 8px rgba(44,18,8,0.06)', overflow: 'hidden' }}>
-              <div style={{ padding: '16px 20px', borderBottom: '1px solid #F3E8D8', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontWeight: 700, fontSize: 15 }}>Productos no disponibles</span>
-                <span style={{ background: '#fef2f2', color: '#dc2626', borderRadius: 99, padding: '2px 8px', fontSize: 12, fontWeight: 700 }}>
+            <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
+              <div className="px-5 py-4 border-b border-sand flex items-center gap-2">
+                <span className="font-bold text-[15px]">Productos no disponibles</span>
+                <span className="bg-red-50 text-red-600 rounded-full px-2 py-0.5 text-xs font-bold">
                   {unavailableProds.length}
                 </span>
               </div>
               {unavailableProds.length === 0 ? (
-                <div style={{ padding: '20px 16px', textAlign: 'center', color: '#9A7A66', fontSize: 13 }}>
+                <div className="px-4 py-5 text-center text-muted text-sm">
                   ✅ Todo disponible
                 </div>
               ) : (
                 unavailableProds.slice(0, 5).map((p) => (
-                  <div key={p.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 16px', borderTop: '1px solid #F3E8D8' }}>
-                    <div style={{ width: 36, height: 36, borderRadius: 8, background: '#F3E8D8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>
+                  <div key={p.id} className="flex items-center gap-2.5 px-4 py-2.5 border-t border-sand">
+                    <div className="w-9 h-9 rounded-lg bg-sand flex items-center justify-center text-lg shrink-0">
                       {p.fotoUrl ? (
-                        <img src={p.fotoUrl} alt={p.nombre} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 8 }} />
+                        <img src={p.fotoUrl} alt={p.nombre} className="w-full h-full object-cover rounded-lg" />
                       ) : '🥟'}
                     </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.nombre}</div>
-                      <div style={{ fontSize: 12, color: '#9A7A66' }}>{p.categoria.nombre}</div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold truncate">{p.nombre}</div>
+                      <div className="text-xs text-muted">{p.categoria.nombre}</div>
                     </div>
-                    <span style={{ background: '#fef2f2', color: '#dc2626', borderRadius: 99, padding: '2px 8px', fontSize: 11, fontWeight: 700, flexShrink: 0 }}>
+                    <span className="bg-red-50 text-red-600 rounded-full px-2 py-0.5 text-xs font-bold shrink-0">
                       Sin stock
                     </span>
                   </div>

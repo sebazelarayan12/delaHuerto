@@ -78,59 +78,37 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') handleClose() }}
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(44,18,8,0.6)',
-        zIndex: 50,
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'center',
-        opacity: open ? 1 : 0,
-        pointerEvents: open ? 'all' : 'none',
-        transition: 'opacity 0.3s ease',
-        maxWidth: 430,
-        margin: '0 auto',
-      }}
+      className={`fixed inset-0 bg-[#2C1208]/60 z-50 flex items-end justify-center max-w-[430px] mx-auto transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
       <div
-        style={{
-          width: '100%',
-          background: '#FFFDF9',
-          borderRadius: '24px 24px 0 0',
-          maxHeight: 'calc(100dvh - 40px)',
-          display: 'flex',
-          flexDirection: 'column',
-          transform: open ? 'translateY(0)' : 'translateY(100%)',
-          transition: 'transform 0.4s cubic-bezier(0.16,1,0.3,1)',
-        }}
+        className={`w-full bg-ivory rounded-t-[24px] max-h-[calc(100dvh-40px)] flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? 'translate-y-0' : 'translate-y-full'}`}
       >
-        <div style={{ display: 'flex', justifyContent: 'center', padding: '12px 0 8px', flexShrink: 0 }}>
-          <div style={{ width: 40, height: 4, borderRadius: 99, background: '#E2CFB5' }} />
+        <div className="flex justify-center pt-3 pb-2 shrink-0">
+          <div className="w-10 h-1 rounded-full bg-sand-deep" />
         </div>
 
         {!sent ? (
           <>
-            <div style={{ padding: '8px 20px 16px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', borderBottom: '1px solid #E2CFB5', flexShrink: 0 }}>
+            <div className="px-5 pt-2 pb-4 flex justify-between items-start border-b border-sand-deep shrink-0">
               <div>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#2C1208' }}>
+                <h2 className="font-display text-lg font-extrabold text-espresso">
                   Datos del pedido
                 </h2>
-                <p style={{ fontSize: 13, color: '#9A7A66', marginTop: 2 }}>
+                <p className="text-[13px] text-muted mt-0.5">
                   Completá tus datos para WhatsApp
                 </p>
               </div>
               <button 
                 type="button"
                 onClick={handleClose} 
-                style={{ background: '#F3E8D8', border: 'none', borderRadius: '50%', width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#7A4020', flexShrink: 0 }}
+                className="bg-sand border-none rounded-full w-8 h-8 flex items-center justify-center cursor-pointer text-brown shrink-0"
               >
-                <span className="icon" style={{ fontSize: 20 }}>close</span>
+                <span className="icon text-[20px]">close</span>
               </button>
             </div>
 
-            <div style={{ flex: 1, overflowY: 'auto', padding: '20px 20px 32px' }}>
-              <div style={{ background: '#F3E8D8', borderRadius: 14, padding: '12px 14px', marginBottom: 20 }}>
+            <div className="flex-1 overflow-y-auto px-5 pt-5 pb-8">
+              <div className="bg-sand rounded-[14px] px-3.5 py-3 mb-5">
               {items.map((item) => (
                 <div key={item.productoId} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13, color: '#7A4020', marginBottom: 4 }}>
                   <span style={{ fontWeight: 600 }}>{item.nombre} × {item.cantidad}</span>
