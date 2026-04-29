@@ -6,8 +6,9 @@ import LogoMark from '../shared/components/LogoMark'
 
 const NAV = [
   { path: '/admin', label: 'Inicio', icon: 'dashboard' },
-  { path: '/admin/categorias', label: 'Categorías', icon: 'category' },
+  { path: '/admin/categorias', label: 'Categorias', icon: 'category' },
   { path: '/admin/productos', label: 'Productos', icon: 'inventory_2' },
+  { path: '/admin/banner', label: 'Banner', icon: 'campaign' },
 ]
 
 interface Props {

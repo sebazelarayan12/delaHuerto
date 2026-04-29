@@ -29,6 +29,16 @@ model DescuentoCategoria {
   @@map("descuentos_categoria")
 }
 
+model Banner {
+  id     Int     @id @default(autoincrement())
+  titulo String  @default("Descuento en compras por mayor!")
+  linea1 String  @default("+5 unidades: 5% de descuento")
+  linea2 String  @default("+10 unidades: 25% de descuento")
+  activo Boolean @default(true)
+
+  @@map("banner")
+}
+
 model Producto {
   id           Int       @id @default(autoincrement())
   categoriaId  Int       @map("categoria_id")

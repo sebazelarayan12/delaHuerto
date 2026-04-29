@@ -7,6 +7,7 @@ import { prisma } from './db.js'
 import authRoutes from './routes/auth.routes.js'
 import { categoriasPublicRoutes, categoriasAdminRoutes } from './routes/categorias.routes.js'
 import { productosAdminRoutes } from './routes/productos.routes.js'
+import { bannerPublicRoutes, bannerAdminRoutes } from './routes/banner.routes.js'
 import { HttpError } from './utils/errors.js'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -32,6 +33,8 @@ app.route('/api/auth', authRoutes)
 app.route('/api/categorias', categoriasPublicRoutes)
 app.route('/api/admin/categorias', categoriasAdminRoutes)
 app.route('/api/admin/productos', productosAdminRoutes)
+app.route('/api/banner', bannerPublicRoutes)
+app.route('/api/admin/banner', bannerAdminRoutes)
 
 app.get('/health', async (c) => {
   try {

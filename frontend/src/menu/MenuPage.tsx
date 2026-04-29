@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useMenu } from './hooks/useMenu'
 import { useCarrito } from './hooks/useCarrito'
+import { useBanner } from './hooks/useBanner'
 import { calcularDescuentoParaCantidad } from './helpers/descuentos.helper'
 import CategoriaSection from './components/CategoriaSection'
 import Carrito from './components/Carrito'
@@ -10,6 +11,7 @@ import CartFab from './components/CartFab'
 
 export default function MenuPage() {
   const { data: categorias, isLoading, isError, refetch } = useMenu()
+  const { data: banner } = useBanner()
   const { items, agregar, incrementar, decrementar, subtotal, cantidadTotal, vaciar } = useCarrito()
 
   const { montoDescuento, total } = useMemo(() => {
@@ -86,6 +88,7 @@ export default function MenuPage() {
         total={total}
         activeCat={activeCat}
         categorias={categorias ?? []}
+        banner={banner}
         onOpenCarrito={() => setCarritoOpen(true)}
         onScrollToCategory={scrollToCategory}
       />
