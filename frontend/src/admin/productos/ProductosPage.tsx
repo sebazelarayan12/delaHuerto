@@ -52,7 +52,7 @@ export default function ProductosPage() {
   }
 
   const handleSave = async (
-    data: { categoriaId: number; nombre: string; descripcion?: string; precio: number; precioUnidad?: number | ''; disponible: boolean; orden: number },
+    data: { categoriaId: number; nombre: string; descripcion?: string; precio: number; disponible: boolean; orden: number },
     foto: File | null
   ) => {
     const fd = new FormData()
@@ -60,7 +60,6 @@ export default function ProductosPage() {
     fd.append('nombre', data.nombre)
     if (data.descripcion) fd.append('descripcion', data.descripcion)
     fd.append('precio', String(data.precio))
-    if (data.precioUnidad) fd.append('precioUnidad', String(data.precioUnidad))
     fd.append('disponible', String(data.disponible))
     fd.append('orden', String(data.orden))
     if (foto) fd.append('foto', foto)
@@ -87,13 +86,15 @@ export default function ProductosPage() {
   const openEdit = (prod: ProductoAdmin) => dispatch({ type: 'OPEN_EDIT', payload: prod })
   const openNew = () => dispatch({ type: 'OPEN_NEW' })
 
-  const productos = (query.data ?? []).filter((p) => {
+  const allProductos = query.data ?? []
+  const productos = allProductos.filter((p) => {
     const matchSearch = p.nombre.toLowerCase().includes(search.toLowerCase())
     const matchCat = filterCat === '' || p.categoriaId === filterCat
     return matchSearch && matchCat
   })
 
   const categorias = catQuery.data ?? []
+  const nextOrden = allProductos.length > 0 ? Math.max(...allProductos.map((p) => p.orden)) + 1 : 0
 
   return (
     <AdminLayout>
@@ -161,7 +162,7 @@ export default function ProductosPage() {
                         <div className="w-11 h-11 rounded-lg overflow-hidden bg-sand flex items-center justify-center text-[20px]">
                           {prod.fotoUrl ? (
                             <img src={prod.fotoUrl} alt={prod.nombre} className="w-full h-full object-cover" />
-                          ) : '🥟'}
+                          ) : <span className="icon text-[20px] text-muted">lunch_dining</span>}
                         </div>
                       </td>
                       <td className="px-4 py-3 text-sm font-bold text-espresso whitespace-nowrap">{prod.nombre}</td>
@@ -226,6 +227,7 @@ export default function ProductosPage() {
         initial={editing}
         categorias={categorias}
         loading={crear.isPending || editar.isPending}
+        nextOrden={nextOrden}
       />
 
       {toast && (

@@ -42,8 +42,8 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
 
       <div className="bg-gold -mx-4 px-4 pt-[7px] pb-2 text-espresso text-center">
         <div className="text-xs font-bold tracking-[0.02em] mb-1.5">Descuento en compras por mayor!</div>
-        <div className="text-[11.5px] font-bold">+5 docenas: 5% de descuento</div>
-        <div className="text-[11.5px] font-bold">+10 docenas: 25% de descuento</div>
+        <div className="text-[11.5px] font-bold">+5 unidades: 5% de descuento</div>
+        <div className="text-[11.5px] font-bold">+10 unidades: 25% de descuento</div>
       </div>
 
       <nav className="flex gap-2 overflow-x-auto py-3 no-scrollbar">

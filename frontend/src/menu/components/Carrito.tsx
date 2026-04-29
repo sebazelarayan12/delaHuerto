@@ -32,7 +32,7 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
               Tu pedido
             </div>
             <div className="text-xs text-gold mt-0.5 font-semibold">
-              {cantidadTotal} docena{cantidadTotal !== 1 ? 's' : ''}
+              {cantidadTotal} articulo{cantidadTotal !== 1 ? 's' : ''}
             </div>
           </div>
           <button

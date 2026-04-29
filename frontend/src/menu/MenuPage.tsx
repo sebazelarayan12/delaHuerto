@@ -90,16 +90,13 @@ export default function MenuPage() {
         onScrollToCategory={scrollToCategory}
       />
 
-      <div className="bg-gradient-to-br from-[#3D1A0A] to-[#6B2D15] px-4 py-5 flex items-center gap-3.5">
-        <div>
-          <div className="font-display text-lg font-extrabold text-gold-light leading-snug">
-            Hechas con amor
-          </div>
-          <div className="text-xs text-[#C49060] mt-1 font-medium">
-            Masa casera · Estilo tucumanas
-          </div>
+      <div className="bg-gradient-to-br from-[#3D1A0A] to-[#6B2D15] px-4 py-5">
+        <div className="font-display text-lg font-extrabold text-gold-light leading-snug">
+          Hechas con amor
         </div>
-        <span className="icon text-[44px] text-gold shrink-0">lunch_dining</span>
+        <div className="text-xs text-[#C49060] mt-1 font-medium">
+          Masa casera · Estilo tucumanas
+        </div>
       </div>
 
       <main className="flex-1 flex flex-col">
@@ -134,7 +131,7 @@ export default function MenuPage() {
           />
         ))}
 
-        <div style={{ marginTop: 'auto', paddingTop: 40, paddingBottom: cantidadTotal > 0 ? 118 : 60, paddingLeft: 16, paddingRight: 16, textAlign: 'center', background: '#2C1208' }}>
+        <div style={{ marginTop: 'auto', paddingTop: 16, paddingBottom: cantidadTotal > 0 ? 88 : 16, paddingLeft: 16, paddingRight: 16, textAlign: 'center', background: '#2C1208' }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#FBF1D8', marginBottom: 6 }}>
             Huerto Empanadas
           </div>

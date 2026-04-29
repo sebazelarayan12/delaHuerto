@@ -91,6 +91,7 @@ export default function CategoriasPage() {
   }
 
   const categorias = query.data ?? []
+  const nextOrden = localCats.length > 0 ? Math.max(...localCats.map((c) => c.orden)) + 1 : 0
 
   return (
     <AdminLayout>
@@ -153,7 +154,7 @@ export default function CategoriasPage() {
                               .sort((a, b) => a.cantidadMinima - b.cantidadMinima)
                               .map((d) => (
                                 <span key={d.id} className="text-xs font-semibold text-brown whitespace-nowrap">
-                                  {d.cantidadMinima}+ doc: {d.porcentaje}%
+                                  {d.cantidadMinima}+: {d.porcentaje}%
                                 </span>
                               ))}
                           </div>
@@ -214,6 +215,7 @@ export default function CategoriasPage() {
         onSave={handleSave}
         initial={modal.editing}
         loading={crear.isPending || editar.isPending}
+        nextOrden={nextOrden}
       />
 
       {toast && (
