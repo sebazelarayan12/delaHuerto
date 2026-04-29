@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 
 interface Props {
   currentUrl?: string | null
@@ -8,11 +8,24 @@ interface Props {
 export default function ImageUpload({ currentUrl, onFileChange }: Props) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [preview, setPreview] = useState<string | null>(null)
+  const previewUrlRef = useRef<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current)
+    }
+  }, [])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] ?? null
+    if (previewUrlRef.current) {
+      URL.revokeObjectURL(previewUrlRef.current)
+      previewUrlRef.current = null
+    }
     if (file) {
-      setPreview(URL.createObjectURL(file))
+      const url = URL.createObjectURL(file)
+      previewUrlRef.current = url
+      setPreview(url)
       onFileChange(file)
     } else {
       setPreview(null)

@@ -99,20 +99,20 @@ export default function MenuPage() {
             Masa casera · Estilo tucumanas
           </div>
         </div>
-        <div className="ml-auto text-[44px] shrink-0">🥟</div>
+        <span className="icon text-[44px] text-gold shrink-0">lunch_dining</span>
       </div>
 
       <main className="flex-1 flex flex-col">
         {isLoading && (
           <div className="text-center py-[60px] px-6 text-muted">
-            <div className="text-[32px] mb-2">🥟</div>
+            <span className="icon text-[32px] text-muted block mb-2">lunch_dining</span>
             <div className="font-semibold">Cargando menú…</div>
           </div>
         )}
 
         {isError && (
           <div className="text-center py-[60px] px-6 text-red-600">
-            <div className="text-[32px] mb-2">😕</div>
+            <span className="icon text-[32px] text-red-600 block mb-2">sentiment_dissatisfied</span>
             <div className="font-semibold mb-3">No se pudo cargar el menú</div>
             <button
               onClick={() => refetch()}
@@ -138,8 +138,14 @@ export default function MenuPage() {
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#FBF1D8', marginBottom: 6 }}>
             Huerto Empanadas
           </div>
-          <div style={{ fontSize: 12, color: '#C49060', marginBottom: 4 }}>📍 Don bosco, San Miguel de Tucuman</div>
-          <div style={{ fontSize: 12, color: '#C49060' }}>⏰ Lun a Sab · 10 a 21hs</div>
+          <div style={{ fontSize: 12, color: '#C49060', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+            <span className="icon" style={{ fontSize: 14 }}>location_on</span>
+            Don bosco, San Miguel de Tucuman
+          </div>
+          <div style={{ fontSize: 12, color: '#C49060', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+            <span className="icon" style={{ fontSize: 14 }}>schedule</span>
+            Lun a Sab · 10 a 21hs
+          </div>
         </div>
       </main>
 

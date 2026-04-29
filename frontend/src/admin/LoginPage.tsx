@@ -10,6 +10,7 @@ export default function LoginPage() {
   const navigate = useNavigate()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -57,15 +58,25 @@ export default function LoginPage() {
             <label htmlFor="login-password" className="text-xs font-bold uppercase tracking-[0.08em] text-brown">
               Contraseña
             </label>
-            <input
-              id="login-password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => { setPassword(e.target.value); setError('') }}
-              autoComplete="current-password"
-              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-ivory outline-none focus:border-terra"
-            />
+            <div className="relative">
+              <input
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => { setPassword(e.target.value); setError('') }}
+                autoComplete="current-password"
+                className="w-full px-[13px] py-2.5 pr-10 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-ivory outline-none focus:border-terra"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((p) => !p)}
+                aria-label={showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-none cursor-pointer text-muted p-1 flex items-center justify-center"
+              >
+                <span className="icon text-[18px]">{showPassword ? 'visibility_off' : 'visibility'}</span>
+              </button>
+            </div>
           </div>
 
           {error && (

@@ -24,8 +24,8 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
             className="w-full h-full object-cover block"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center text-[32px]">
-            🥟
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="icon text-[36px] text-muted">lunch_dining</span>
           </div>
         )}
       </div>
@@ -41,7 +41,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
         )}
         <div className="mt-auto flex items-center justify-between pt-1.5">
           <div>
-            <div className="text-[17px] font-extrabold text-terra">{fmt(precio)}</div>
+            <div className="text-[17px] font-extrabold text-terra tabular-nums">{fmt(precio)}</div>
           </div>
 
           {!producto.disponible ? (
@@ -51,24 +51,27 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
           ) : cantidad === 0 ? (
             <button
               onClick={onAgregar}
-              className="w-9 h-9 rounded-full bg-terra text-white text-[22px] flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-colors duration-150 hover:bg-[#A0401E] border-none cursor-pointer"
+              aria-label={`Agregar ${producto.nombre}`}
+              className="w-11 h-11 rounded-full bg-terra text-white text-[22px] flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-colors duration-150 hover:bg-[#A0401E] border-none cursor-pointer"
             >
               <span className="icon text-[20px]">add</span>
             </button>
           ) : (
-            <div className="flex items-center bg-terra rounded-full overflow-hidden h-9">
+            <div className="flex items-center bg-terra rounded-full overflow-hidden h-11">
               <button
                 onClick={onDecrementar}
-                className="w-9 h-9 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
+                aria-label="Reducir cantidad"
+                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
               >
                 −
               </button>
-              <span className="min-w-[28px] text-center text-white text-[15px] font-bold">
+              <span className="min-w-[28px] text-center text-white text-[15px] font-bold tabular-nums">
                 {cantidad}
               </span>
               <button
                 onClick={onIncrementar}
-                className="w-9 h-9 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
+                aria-label="Aumentar cantidad"
+                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
               >
                 +
               </button>

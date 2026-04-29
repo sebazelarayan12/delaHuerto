@@ -112,10 +112,11 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                   Completá tus datos para WhatsApp
                 </p>
               </div>
-              <button 
+              <button
                 type="button"
-                onClick={handleClose} 
-                className="bg-sand border-none rounded-full w-8 h-8 flex items-center justify-center cursor-pointer text-brown shrink-0"
+                onClick={handleClose}
+                aria-label="Cerrar formulario"
+                className="bg-sand border-none rounded-full w-11 h-11 flex items-center justify-center cursor-pointer text-brown shrink-0"
               >
                 <span className="icon text-[20px]">close</span>
               </button>
@@ -216,7 +217,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
           </>
         ) : (
           <div className="px-7 pt-10 pb-8 text-center flex-1 overflow-y-auto">
-            <div className="text-[64px] mb-4">🎉</div>
+            <span className="icon icon-fill text-[64px] text-terra block mb-4">celebration</span>
             <h2 className="font-display text-2xl font-extrabold text-espresso mb-2">
               ¡Pedido enviado!
             </h2>

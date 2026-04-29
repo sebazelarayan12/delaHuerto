@@ -117,7 +117,8 @@ export default function AdminLayout({ children }: Props) {
         >
           <button
             onClick={() => setSidebarOpen(true)}
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#2C1208', display: 'flex', alignItems: 'center' }}
+            aria-label="Abrir menu de navegacion"
+            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#2C1208', display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center' }}
           >
             <span className="icon" style={{ fontSize: 26 }}>menu</span>
           </button>
