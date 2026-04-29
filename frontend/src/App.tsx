@@ -5,10 +5,13 @@ import DashboardPage from './admin/DashboardPage'
 import CategoriasPage from './admin/categorias/CategoriasPage'
 import ProductosPage from './admin/productos/ProductosPage'
 import ProtectedRoute from './shared/components/ProtectedRoute'
+import TestBanner from './shared/components/TestBanner'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <>
+      <TestBanner />
+      <BrowserRouter>
       <Routes>
         <Route path="/" element={<MenuPage />} />
         <Route path="/admin/login" element={<LoginPage />} />
@@ -39,5 +42,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </>
   )
 }
