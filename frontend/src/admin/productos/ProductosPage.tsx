@@ -107,7 +107,7 @@ export default function ProductosPage() {
         </div>
         <button
           onClick={openNew}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] border-none bg-terra text-white font-sans text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_8px_rgba(196,82,42,0.3)] shrink-0 transition-opacity hover:opacity-90"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] border-none bg-terra text-white font-sans text-sm font-semibold cursor-pointer shadow-[0_2px_8px_rgba(196,82,42,0.3)] shrink-0 transition-opacity hover:opacity-90"
         >
           <span className="icon icon-fill text-[18px]">add_circle</span>
           <span className="hidden sm:inline">Nuevo producto</span>
@@ -149,7 +149,7 @@ export default function ProductosPage() {
                 <thead>
                   <tr className="bg-gold-light">
                     {['Foto', 'Nombre', 'Categoría', 'Precio', 'Estado', 'Disponible', 'Acciones'].map((h) => (
-                      <th key={h} className="px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap">
+                      <th key={h} className="px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap">
                         {h}
                       </th>
                     ))}

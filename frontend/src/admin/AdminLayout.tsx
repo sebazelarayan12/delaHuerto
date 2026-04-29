@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: Props) {
           <LogoMark size={36} />
           <div>
             <div className="font-display text-base font-extrabold text-gold-light leading-none">Huerto</div>
-            <div className="text-[10px] text-[#C49060] font-semibold tracking-widest uppercase mt-0.5">Admin</div>
+            <div className="text-xs text-[#C49060] font-semibold tracking-widest uppercase mt-0.5">Admin</div>
           </div>
         </div>
       </div>

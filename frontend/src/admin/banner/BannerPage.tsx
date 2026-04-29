@@ -131,8 +131,8 @@ export default function BannerPage() {
               {activo ? (
                 <div className="bg-gold rounded-[10px] px-4 py-3 text-espresso text-center">
                   <div className="text-xs font-bold mb-1">{watch('titulo') || '—'}</div>
-                  {watch('linea1') && <div className="text-[11.5px] font-bold">{watch('linea1')}</div>}
-                  {watch('linea2') && <div className="text-[11.5px] font-bold">{watch('linea2')}</div>}
+                  {watch('linea1') && <div className="text-xs font-bold">{watch('linea1')}</div>}
+                  {watch('linea2') && <div className="text-xs font-bold">{watch('linea2')}</div>}
                 </div>
               ) : (
                 <div className="bg-sand rounded-[10px] px-4 py-3 text-center text-muted text-sm">

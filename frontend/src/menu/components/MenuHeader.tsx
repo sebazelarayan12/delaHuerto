@@ -45,8 +45,8 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
       {banner?.activo && (
         <div className="bg-gold -mx-4 px-4 pt-[7px] pb-2 text-espresso text-center">
           <div className="text-xs font-bold tracking-[0.02em] mb-1.5">{banner.titulo}</div>
-          {banner.linea1 && <div className="text-[11.5px] font-bold">{banner.linea1}</div>}
-          {banner.linea2 && <div className="text-[11.5px] font-bold">{banner.linea2}</div>}
+          {banner.linea1 && <div className="text-xs font-bold">{banner.linea1}</div>}
+          {banner.linea2 && <div className="text-xs font-bold">{banner.linea2}</div>}
         </div>
       )}
 

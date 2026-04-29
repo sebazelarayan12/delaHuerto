@@ -35,7 +35,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
           {producto.nombre}
         </div>
         {producto.descripcion && (
-          <div className="text-[12.5px] text-muted leading-relaxed line-clamp-2">
+          <div className="text-[13px] text-muted leading-relaxed line-clamp-2">
             {producto.descripcion}
           </div>
         )}
