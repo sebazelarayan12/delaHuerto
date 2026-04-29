@@ -55,7 +55,7 @@ export default function DashboardPage() {
       <div>
         <div className="px-4 lg:px-8 pt-6 lg:pt-8 flex justify-between items-start border-b border-sand-deep pb-5">
           <div>
-            <h1 className="text-[22px] font-extrabold text-espresso">Buen día 👋</h1>
+            <h1 className="text-[22px] font-extrabold text-espresso">Buen dia</h1>
             <p className="text-sm text-muted mt-1">
               Esto es lo que está pasando hoy con tu menú.
             </p>
@@ -121,8 +121,9 @@ export default function DashboardPage() {
                 </span>
               </div>
               {unavailableProds.length === 0 ? (
-                <div className="px-4 py-5 text-center text-muted text-sm">
-                  ✅ Todo disponible
+                <div className="px-4 py-5 text-center text-muted text-sm flex items-center justify-center gap-1.5">
+                  <span className="icon icon-fill text-green-700 text-base">check_circle</span>
+                  Todo disponible
                 </div>
               ) : (
                 unavailableProds.slice(0, 5).map((p) => (
@@ -130,7 +131,7 @@ export default function DashboardPage() {
                     <div className="w-9 h-9 rounded-lg bg-sand flex items-center justify-center text-lg shrink-0">
                       {p.fotoUrl ? (
                         <img src={p.fotoUrl} alt={p.nombre} className="w-full h-full object-cover rounded-lg" />
-                      ) : '🥟'}
+                      ) : <span className="icon text-[20px] text-muted">lunch_dining</span>}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-sm font-bold truncate">{p.nombre}</div>

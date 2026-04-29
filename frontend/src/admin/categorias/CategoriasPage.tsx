@@ -91,6 +91,7 @@ export default function CategoriasPage() {
   }
 
   const categorias = query.data ?? []
+  const nextOrden = localCats.length > 0 ? Math.max(...localCats.map((c) => c.orden)) + 1 : 0
 
   return (
     <AdminLayout>
@@ -103,7 +104,7 @@ export default function CategoriasPage() {
         </div>
         <button
           onClick={openNew}
-          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] border-none bg-terra text-white font-sans text-[13.5px] font-semibold cursor-pointer shadow-[0_2px_8px_rgba(196,82,42,0.3)] shrink-0 transition-opacity hover:opacity-90"
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-[10px] border-none bg-terra text-white font-sans text-sm font-semibold cursor-pointer shadow-[0_2px_8px_rgba(196,82,42,0.3)] shrink-0 transition-opacity hover:opacity-90"
         >
           <span className="icon icon-fill text-[18px]">add_circle</span>
           <span className="hidden sm:inline">Nueva categoría</span>
@@ -121,7 +122,7 @@ export default function CategoriasPage() {
                 <thead>
                   <tr className="bg-gold-light">
                     {['', 'Nombre', 'Orden', 'Descuentos', 'Estado', 'Activar / Desactivar', 'Acciones'].map((h) => (
-                      <th key={h || 'empty'} className={`px-4 py-3 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap ${h === '' ? 'w-10' : 'w-auto'}`}>
+                      <th key={h || 'empty'} className={`px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap ${h === '' ? 'w-10' : 'w-auto'}`}>
                         {h}
                       </th>
                     ))}
@@ -153,7 +154,7 @@ export default function CategoriasPage() {
                               .sort((a, b) => a.cantidadMinima - b.cantidadMinima)
                               .map((d) => (
                                 <span key={d.id} className="text-xs font-semibold text-brown whitespace-nowrap">
-                                  {d.cantidadMinima}+ doc: {d.porcentaje}%
+                                  {d.cantidadMinima}+: {d.porcentaje}%
                                 </span>
                               ))}
                           </div>
@@ -214,6 +215,7 @@ export default function CategoriasPage() {
         onSave={handleSave}
         initial={modal.editing}
         loading={crear.isPending || editar.isPending}
+        nextOrden={nextOrden}
       />
 
       {toast && (

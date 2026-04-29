@@ -6,8 +6,9 @@ import LogoMark from '../shared/components/LogoMark'
 
 const NAV = [
   { path: '/admin', label: 'Inicio', icon: 'dashboard' },
-  { path: '/admin/categorias', label: 'Categorías', icon: 'category' },
+  { path: '/admin/categorias', label: 'Categorias', icon: 'category' },
   { path: '/admin/productos', label: 'Productos', icon: 'inventory_2' },
+  { path: '/admin/banner', label: 'Banner', icon: 'campaign' },
 ]
 
 interface Props {
@@ -31,7 +32,7 @@ export default function AdminLayout({ children }: Props) {
           <LogoMark size={36} />
           <div>
             <div className="font-display text-base font-extrabold text-gold-light leading-none">Huerto</div>
-            <div className="text-[10px] text-[#C49060] font-semibold tracking-widest uppercase mt-0.5">Admin</div>
+            <div className="text-xs text-[#C49060] font-semibold tracking-widest uppercase mt-0.5">Admin</div>
           </div>
         </div>
       </div>
@@ -117,9 +118,10 @@ export default function AdminLayout({ children }: Props) {
         >
           <button
             onClick={() => setSidebarOpen(true)}
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#2C1208', display: 'flex', alignItems: 'center' }}
+            aria-label="Abrir menu de navegacion"
+            className="bg-transparent border-none cursor-pointer text-espresso flex items-center justify-center min-w-[44px] min-h-[44px]"
           >
-            <span className="icon" style={{ fontSize: 26 }}>menu</span>
+            <span className="icon text-[26px]">menu</span>
           </button>
           <LogoMark size={28} />
           <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 800, color: '#2C1208' }}>Huerto Admin</span>

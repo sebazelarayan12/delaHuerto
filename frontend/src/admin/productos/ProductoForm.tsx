@@ -8,11 +8,10 @@ import ImageUpload from '../../shared/components/ImageUpload'
 import Toggle from '../../shared/components/Toggle'
 
 const schema = z.object({
-  categoriaId: z.coerce.number().min(1, 'Seleccioná una categoría'),
+  categoriaId: z.coerce.number().min(1, 'Selecciona una categoria'),
   nombre: z.string().min(1, 'El nombre es requerido'),
   descripcion: z.string().optional(),
   precio: z.coerce.number().positive('El precio debe ser mayor a 0'),
-  precioUnidad: z.coerce.number().positive().optional().or(z.literal('')),
   disponible: z.boolean().default(true),
   orden: z.coerce.number().default(0),
 })
@@ -26,9 +25,10 @@ interface Props {
   initial?: ProductoAdmin | null
   categorias: CategoriaAdmin[]
   loading?: boolean
+  nextOrden?: number
 }
 
-export default function ProductoForm({ open, onClose, onSave, initial, categorias, loading }: Props) {
+export default function ProductoForm({ open, onClose, onSave, initial, categorias, loading, nextOrden = 0 }: Props) {
   const [foto, setFoto] = useState<File | null>(null)
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -38,11 +38,10 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
           nombre: initial.nombre,
           descripcion: initial.descripcion ?? '',
           precio: parseFloat(initial.precio),
-          precioUnidad: initial.precioUnidad ? parseFloat(initial.precioUnidad) : undefined,
           disponible: initial.disponible,
           orden: initial.orden,
         }
-      : { nombre: '', orden: 0, disponible: true, descripcion: '', precio: undefined },
+      : { nombre: '', orden: nextOrden, disponible: true, descripcion: '', precio: undefined },
   })
 
   const disponible = watch('disponible')
@@ -97,35 +96,25 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3.5 mb-4">
-            <div>
-              <label htmlFor="prod-precio" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Precio por docena</label>
-              <input id="prod-precio" type="number" step="0.01" placeholder="5500" {...register('precio')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
-              {errors.precio && <span className="text-xs text-red-600 mt-1 block">{errors.precio.message}</span>}
-            </div>
-            <div>
-              <label htmlFor="prod-precio-unidad" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Precio por unidad (opcional)</label>
-              <input id="prod-precio-unidad" type="number" step="0.01" placeholder="500" {...register('precioUnidad')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
-            </div>
+          <div className="mb-4">
+            <label htmlFor="prod-precio" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Precio</label>
+            <input id="prod-precio" type="number" step="0.01" placeholder="5500" {...register('precio')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
+            {errors.precio && <span className="text-xs text-red-600 mt-1 block">{errors.precio.message}</span>}
           </div>
 
-          <div className="grid grid-cols-2 gap-3.5 mb-4">
-            <div>
-              <label htmlFor="prod-orden" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Orden</label>
-              <input id="prod-orden" type="number" min="0" {...register('orden')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
-            </div>
-            <div>
-              <label htmlFor="prod-disponible" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Disponible</label>
-              <div className="flex items-center gap-2.5 mt-1 h-[44px]">
-                <Toggle
-                  checked={disponible}
-                  onChange={() => setValue('disponible', !disponible)}
-                  label={disponible ? 'Marcar no disponible' : 'Marcar disponible'}
-                />
-                <span className={`text-[13px] font-semibold ${disponible ? 'text-green-700' : 'text-muted'}`}>
-                  {disponible ? 'Disponible' : 'No disponible'}
-                </span>
-              </div>
+          <input type="hidden" {...register('orden')} />
+
+          <div className="mb-4">
+            <label htmlFor="prod-disponible" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Disponible</label>
+            <div className="flex items-center gap-2.5 mt-1 h-[44px]">
+              <Toggle
+                checked={disponible}
+                onChange={() => setValue('disponible', !disponible)}
+                label={disponible ? 'Marcar no disponible' : 'Marcar disponible'}
+              />
+              <span className={`text-[13px] font-semibold ${disponible ? 'text-green-700' : 'text-muted'}`}>
+                {disponible ? 'Disponible' : 'No disponible'}
+              </span>
             </div>
           </div>
 

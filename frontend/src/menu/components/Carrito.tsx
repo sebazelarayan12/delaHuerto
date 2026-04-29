@@ -32,12 +32,13 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
               Tu pedido
             </div>
             <div className="text-xs text-gold mt-0.5 font-semibold">
-              {cantidadTotal} docena{cantidadTotal !== 1 ? 's' : ''}
+              {cantidadTotal} articulo{cantidadTotal !== 1 ? 's' : ''}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="bg-white/10 border-none rounded-full w-9 h-9 cursor-pointer text-gold-light flex items-center justify-center hover:bg-white/20 transition-colors"
+            aria-label="Cerrar carrito"
+            className="bg-white/10 border-none rounded-full w-11 h-11 cursor-pointer text-gold-light flex items-center justify-center hover:bg-white/20 transition-colors"
           >
             <span className="icon text-[20px]">close</span>
           </button>
@@ -46,7 +47,7 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
         <div className="flex-1 overflow-y-auto py-2">
           {items.length === 0 ? (
             <div className="text-center py-[60px] px-6 text-muted">
-              <div className="text-[48px] mb-3">🫙</div>
+              <span className="icon text-[48px] text-muted block mb-3">shopping_cart</span>
               <div className="font-semibold">El carrito está vacío</div>
               <div className="text-[13px] mt-1">Agregá productos desde el menú</div>
             </div>
@@ -64,19 +65,21 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
                     {fmt(item.precio)} c/u · Subtotal: {fmt(item.precio * item.cantidad)}
                   </div>
                 </div>
-                <div className="flex items-center bg-terra rounded-full overflow-hidden h-8 scale-90 origin-right">
+                <div className="flex items-center bg-terra rounded-full overflow-hidden h-11">
                   <button
                     onClick={() => onDecrementar(item.productoId)}
-                    className="w-8 h-8 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
+                    aria-label={`Reducir cantidad de ${item.nombre}`}
+                    className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
                   >
                     −
                   </button>
-                  <span className="min-w-[22px] text-center text-white text-sm font-bold">
+                  <span className="min-w-[22px] text-center text-white text-sm font-bold tabular-nums">
                     {item.cantidad}
                   </span>
                   <button
                     onClick={() => onIncrementar(item.productoId)}
-                    className="w-8 h-8 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
+                    aria-label={`Aumentar cantidad de ${item.nombre}`}
+                    className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
                   >
                     +
                   </button>

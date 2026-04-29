@@ -25,14 +25,15 @@ interface Props {
   onSave: (data: FormData, tiers: { cantidadMinima: number; porcentaje: number }[]) => void
   initial?: CategoriaAdmin | null
   loading?: boolean
+  nextOrden?: number
 }
 
-export default function CategoriaForm({ open, onClose, onSave, initial, loading }: Props) {
+export default function CategoriaForm({ open, onClose, onSave, initial, loading, nextOrden = 0 }: Props) {
   const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: initial
       ? { nombre: initial.nombre, orden: initial.orden, activa: initial.activa }
-      : { nombre: '', orden: 0, activa: true },
+      : { nombre: '', orden: nextOrden, activa: true },
   })
 
   const activa = watch('activa')
@@ -109,29 +110,19 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
             {errors.nombre && <span className="text-xs text-red-600 mt-1 block">{errors.nombre.message}</span>}
           </div>
 
-          <div className="grid grid-cols-2 gap-3.5 mb-5">
-            <div>
-              <label htmlFor="cat-orden" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Orden</label>
-              <input
-                id="cat-orden"
-                type="number"
-                min="0"
-                {...register('orden')}
-                className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+          <input type="hidden" {...register('orden')} />
+
+          <div className="mb-5">
+            <label htmlFor="cat-activa" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Estado</label>
+            <div className="flex items-center gap-2.5 mt-1 h-[44px]">
+              <Toggle
+                checked={activa}
+                onChange={() => setValue('activa', !activa)}
+                label={activa ? 'Desactivar categoria' : 'Activar categoria'}
               />
-            </div>
-            <div>
-              <label htmlFor="cat-activa" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Estado</label>
-              <div className="flex items-center gap-2.5 mt-1 h-[44px]">
-                <Toggle
-                  checked={activa}
-                  onChange={() => setValue('activa', !activa)}
-                  label={activa ? 'Desactivar categoría' : 'Activar categoría'}
-                />
-                <span className={`text-[13px] font-semibold ${activa ? 'text-green-700' : 'text-muted'}`}>
-                  {activa ? 'Activa' : 'Inactiva'}
-                </span>
-              </div>
+              <span className={`text-[13px] font-semibold ${activa ? 'text-green-700' : 'text-muted'}`}>
+                {activa ? 'Activa' : 'Inactiva'}
+              </span>
             </div>
           </div>
 
@@ -159,7 +150,7 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading 
                       <input
                         type="number"
                         min="1"
-                        placeholder="Min. docenas"
+                        placeholder="Cantidad min."
                         value={tier.cantidadMinima}
                         onChange={(e) => updateTier(idx, 'cantidadMinima', e.target.value)}
                         className="w-full px-3 py-2 border-[1.5px] border-sand-deep rounded-lg font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"

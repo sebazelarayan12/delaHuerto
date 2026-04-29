@@ -1,17 +1,19 @@
 import LogoMark from '../../shared/components/LogoMark'
+import type { Banner } from '../hooks/useBanner'
 
 interface Props {
   cantidadTotal: number
   total: number
   activeCat: number | null
   categorias: { id: number; nombre: string }[]
+  banner?: Banner | null
   onOpenCarrito: () => void
   onScrollToCategory: (id: number) => void
 }
 
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
-export default function MenuHeader({ cantidadTotal, total, activeCat, categorias, onOpenCarrito, onScrollToCategory }: Props) {
+export default function MenuHeader({ cantidadTotal, total, activeCat, categorias, banner, onOpenCarrito, onScrollToCategory }: Props) {
   return (
     <header className="bg-gradient-to-br from-[#2C1208] to-[#5A2010] pt-5 px-4 sticky top-0 z-40">
       <div className="flex items-center justify-between pb-4">
@@ -40,11 +42,13 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         )}
       </div>
 
-      <div className="bg-gold -mx-4 px-4 pt-[7px] pb-2 text-espresso text-center">
-        <div className="text-xs font-bold tracking-[0.02em] mb-1.5">Descuento en compras por mayor!</div>
-        <div className="text-[11.5px] font-bold">+5 docenas: 5% de descuento</div>
-        <div className="text-[11.5px] font-bold">+10 docenas: 25% de descuento</div>
-      </div>
+      {banner?.activo && (
+        <div className="bg-gold -mx-4 px-4 pt-[7px] pb-2 text-espresso text-center">
+          <div className="text-xs font-bold tracking-[0.02em] mb-1.5">{banner.titulo}</div>
+          {banner.linea1 && <div className="text-xs font-bold">{banner.linea1}</div>}
+          {banner.linea2 && <div className="text-xs font-bold">{banner.linea2}</div>}
+        </div>
+      )}
 
       <nav className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
         {categorias.map((c) => (
