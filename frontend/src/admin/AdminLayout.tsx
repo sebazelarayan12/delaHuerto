@@ -118,9 +118,9 @@ export default function AdminLayout({ children }: Props) {
           <button
             onClick={() => setSidebarOpen(true)}
             aria-label="Abrir menu de navegacion"
-            style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: '#2C1208', display: 'flex', alignItems: 'center', minWidth: 44, minHeight: 44, justifyContent: 'center' }}
+            className="bg-transparent border-none cursor-pointer text-espresso flex items-center justify-center min-w-[44px] min-h-[44px]"
           >
-            <span className="icon" style={{ fontSize: 26 }}>menu</span>
+            <span className="icon text-[26px]">menu</span>
           </button>
           <LogoMark size={28} />
           <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 800, color: '#2C1208' }}>Huerto Admin</span>

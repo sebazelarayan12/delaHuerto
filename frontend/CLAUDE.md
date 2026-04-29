@@ -83,8 +83,7 @@ Este archivo gobierna el agente que trabaja dentro de `frontend/`. Toda tarea de
   - `--color-cream: #FDF6EC` — fondo principal
   - `--color-sand: #F3E8D8` — fondo secundario
   - `--color-gold: #D4920A` — acentos
-- SIEMPRE usar los tokens CSS definidos en `@theme` o clases Tailwind del proyecto.
-- La mayoria de los componentes usan inline styles con los valores de la paleta hardcodeados — esto es intencional para mayor control visual. Respetar ese patron en componentes existentes.
+- SIEMPRE usar los tokens CSS definidos en `@theme` o clases Tailwind del proyecto. NUNCA usar inline styles con valores hex hardcodeados — usar clases Tailwind (`bg-terra`, `text-espresso`, etc.) para que los tokens se mantengan sincronizados.
 - NUNCA introducir colores hex fuera de la paleta sin aprobacion.
 - SIEMPRE verificar que el diseno sea responsive (menu publico en mobile, admin usable en tablet/desktop).
 - SIEMPRE disenar mobile first: los estilos base aplican a mobile y se escalan hacia arriba con breakpoints (`sm:`, `md:`, `lg:`). Nunca disenar para desktop y adaptar hacia abajo. Toda pantalla debe tener version mobile y desktop funcionales.
