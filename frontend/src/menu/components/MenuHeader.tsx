@@ -43,10 +43,15 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
       </div>
 
       {banner?.activo && (
-        <div className="bg-gold -mx-4 px-4 pt-[7px] pb-2 text-espresso text-center">
-          <div className="text-xs font-bold tracking-[0.02em] mb-1.5">{banner.titulo}</div>
-          {banner.linea1 && <div className="text-xs font-bold">{banner.linea1}</div>}
-          {banner.linea2 && <div className="text-xs font-bold">{banner.linea2}</div>}
+        <div className="-mx-4 px-4 py-2.5 flex items-start gap-3 bg-white/5 border-t border-b border-white/[0.07]">
+          <div className="w-0.5 self-stretch bg-gold rounded-full shrink-0 min-h-[36px]" />
+          <div className="flex flex-col gap-1">
+            <div className="font-display italic text-[12.5px] text-gold-light leading-snug">{banner.titulo}</div>
+            <div className="flex flex-col gap-px">
+              {banner.linea1 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea1}</div>}
+              {banner.linea2 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea2}</div>}
+            </div>
+          </div>
         </div>
       )}
 
