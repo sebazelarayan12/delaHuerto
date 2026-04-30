@@ -16,28 +16,14 @@ export default function CategoriaSection({ categoria, items, onAgregar, onIncrem
 
   return (
     <section id={`cat-${categoria.id}`}>
-      <div
-        style={{
-          padding: '18px 16px 12px',
-          background: '#FDF6EC',
-          borderBottom: '1px solid #F3E8D8',
-        }}
-      >
-        <div
-          style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 22,
-            fontWeight: 800,
-            color: '#2C1208',
-            lineHeight: 1.2,
-          }}
-        >
+      <div className="pt-[18px] px-4 pb-3 bg-cream border-b border-sand">
+        <div className="font-display text-[22px] font-extrabold text-espresso leading-[1.2]">
           {categoria.nombre}
         </div>
       </div>
-      <div>
+      <div className="bg-ivory px-3 pt-2.5 pb-3 flex flex-col gap-2.5">
         {categoria.productos.length === 0 ? (
-          <div style={{ padding: '24px 16px', textAlign: 'center', color: '#9A7A66', fontSize: 14, background: '#FFFDF9', borderBottom: '1px solid #F3E8D8' }}>
+          <div className="py-8 px-4 text-center text-muted text-sm bg-white rounded-2xl shadow-[0_2px_8px_rgba(44,18,8,0.05)]">
             No hay productos disponibles para esta categoría en este momento.
           </div>
         ) : categoria.productos.map((p) => (

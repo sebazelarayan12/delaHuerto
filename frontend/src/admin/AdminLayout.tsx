@@ -32,7 +32,7 @@ export default function AdminLayout({ children }: Props) {
           <LogoMark size={36} />
           <div>
             <div className="font-display text-base font-extrabold text-gold-light leading-none">Huerto</div>
-            <div className="text-xs text-[#C49060] font-semibold tracking-widest uppercase mt-0.5">Admin</div>
+            <div className="text-xs text-gold-muted font-semibold tracking-widest uppercase mt-0.5">Admin</div>
           </div>
         </div>
       </div>
@@ -62,6 +62,7 @@ export default function AdminLayout({ children }: Props) {
             <div className="text-[13px] font-bold text-white">Admin</div>
           </div>
         </div>
+
         <button
           onClick={logout}
           className="flex items-center gap-2.5 w-full px-3 py-2.5 rounded-[10px] border-none cursor-pointer font-sans text-sm font-semibold bg-transparent text-red-400/70 hover:text-red-400 transition-colors duration-150"
@@ -74,10 +75,10 @@ export default function AdminLayout({ children }: Props) {
   )
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Manrope', sans-serif", background: '#FDF6EC', color: '#2C1208' }}>
+    <div className="flex min-h-screen font-sans bg-cream text-espresso">
 
       {/* Sidebar desktop */}
-      <div className="hidden lg:flex" style={{ position: 'sticky', top: 0, height: '100vh', flexShrink: 0 }}>
+      <div className="hidden lg:flex sticky top-0 h-screen shrink-0">
         {Sidebar}
       </div>
 
@@ -85,37 +86,24 @@ export default function AdminLayout({ children }: Props) {
       {sidebarOpen && (
         <div
           role="presentation"
-          className="lg:hidden"
+          className="lg:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setSidebarOpen(false)}
           onKeyDown={(e) => { if (e.key === 'Escape') setSidebarOpen(false) }}
-          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 40 }}
         />
       )}
 
       {/* Sidebar mobile drawer */}
       <div
-        className="lg:hidden"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          bottom: 0,
-          zIndex: 50,
-          transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.25s ease',
-        }}
+        className={`lg:hidden fixed top-0 left-0 bottom-0 z-50 transition-transform duration-[250ms] ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
       >
         {Sidebar}
       </div>
 
       {/* Main */}
-      <main style={{ flex: 1, overflow: 'auto', minWidth: 0 }}>
+      <main className="flex-1 overflow-auto min-w-0">
 
         {/* Top bar mobile */}
-        <div
-          className="flex lg:hidden items-center gap-3 px-4 py-3"
-          style={{ borderBottom: '1px solid #E2CFB5', background: '#FDF6EC', position: 'sticky', top: 0, zIndex: 30 }}
-        >
+        <div className="flex lg:hidden items-center gap-3 px-4 py-3 border-b border-sand-deep bg-cream sticky top-0 z-30">
           <button
             onClick={() => setSidebarOpen(true)}
             aria-label="Abrir menu de navegacion"
@@ -124,7 +112,7 @@ export default function AdminLayout({ children }: Props) {
             <span className="icon text-[26px]">menu</span>
           </button>
           <LogoMark size={28} />
-          <span style={{ fontFamily: "'Playfair Display', serif", fontSize: 15, fontWeight: 800, color: '#2C1208' }}>Huerto Admin</span>
+          <span className="font-display text-[15px] font-extrabold text-espresso">Huerto Admin</span>
         </div>
 
         {children}

@@ -50,12 +50,12 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         </div>
       )}
 
-      <nav className="flex gap-2 overflow-x-auto py-3 no-scrollbar">
+      <nav className="-mx-4 flex gap-2 overflow-x-auto py-3 px-4 no-scrollbar">
         {categorias.map((c) => (
           <button
             key={c.id}
             onClick={() => onScrollToCategory(c.id)}
-            className={`shrink-0 px-4 py-[7px] rounded-full text-[13px] font-semibold cursor-pointer whitespace-nowrap border-[1.5px] transition-colors duration-200 ${activeCat === c.id ? 'bg-terra text-white border-terra' : 'bg-ivory text-brown border-sand-deep hover:bg-sand'}`}
+            className={`shrink-0 px-5 py-2 rounded-full text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-all duration-200 ${activeCat === c.id ? 'bg-terra text-white shadow-[0_2px_10px_rgba(196,82,42,0.45)] scale-[1.04]' : 'bg-white/10 text-white/75 border border-white/10 hover:bg-white/20 hover:text-white'}`}
           >
             {c.nombre}
           </button>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useMenu } from './hooks/useMenu'
+import type { Categoria } from './hooks/useMenu'
 import { useCarrito } from './hooks/useCarrito'
 import { useBanner } from './hooks/useBanner'
 import { calcularDescuentoParaCantidad } from './helpers/descuentos.helper'
@@ -8,6 +9,8 @@ import Carrito from './components/Carrito'
 import FormularioPedido from './components/FormularioPedido'
 import MenuHeader from './components/MenuHeader'
 import CartFab from './components/CartFab'
+
+const EMPTY_CATS: { id: number; nombre: string }[] = []
 
 export default function MenuPage() {
   const { data: categorias, isLoading, isError, refetch } = useMenu()
@@ -35,15 +38,17 @@ export default function MenuPage() {
     }
     return { montoDescuento: descuento, total: subtotal - descuento }
   }, [items, categorias, subtotal])
+
+  const productoMap = useMemo(() => {
+    if (!categorias) return new Map<number, Categoria['productos'][number]>()
+    return new Map(categorias.flatMap((c) => c.productos).map((p) => [p.id, p]))
+  }, [categorias])
+
   const [carritoOpen, setCarritoOpen] = useState(false)
   const [formularioOpen, setFormularioOpen] = useState(false)
   const [activeCat, setActiveCat] = useState<number | null>(null)
 
-  useEffect(() => {
-    if (categorias?.length && activeCat === null) {
-      setActiveCat(categorias[0].id)
-    }
-  }, [categorias, activeCat])
+  const effectiveActiveCat = activeCat ?? categorias?.[0]?.id ?? null
 
   useEffect(() => {
     const onScroll = () => {
@@ -76,8 +81,8 @@ export default function MenuPage() {
   }
 
   const handleAgregar = (productoId: number) => {
-    const cat = categorias?.flatMap((c) => c.productos).find((p) => p.id === productoId)
-    if (cat) agregar(cat)
+    const prod = productoMap.get(productoId)
+    if (prod) agregar(prod)
   }
 
   return (
@@ -86,18 +91,25 @@ export default function MenuPage() {
       <MenuHeader
         cantidadTotal={cantidadTotal}
         total={total}
-        activeCat={activeCat}
-        categorias={categorias ?? []}
+        activeCat={effectiveActiveCat}
+        categorias={categorias ?? EMPTY_CATS}
         banner={banner}
         onOpenCarrito={() => setCarritoOpen(true)}
         onScrollToCategory={scrollToCategory}
       />
 
-      <div className="bg-gradient-to-br from-[#3D1A0A] to-[#6B2D15] px-4 py-5">
-        <div className="font-display text-lg font-extrabold text-gold-light leading-snug">
-          Hechas con amor
+      <div className="relative overflow-hidden px-4 pt-4 pb-3.5 bg-[#F7EFE2] border-b border-sand-deep">
+        <div className="absolute -right-3 -top-3 w-[60px] h-[60px] rounded-full bg-terra/[0.07]" />
+        <div className="absolute right-4 -bottom-3 w-9 h-9 rounded-full bg-gold/10" />
+        <div className="font-artisan text-[24px] font-black text-espresso leading-[1.1] mb-1.5 relative z-10">
+          Hechas con <span className="italic text-terra">amor</span>
         </div>
-        <div className="text-xs text-[#C49060] mt-1 font-medium">
+        <div className="flex items-center gap-1.5 mb-1.5 relative z-10">
+          <div className="flex-1 h-px bg-gold opacity-40" />
+          <div className="w-1 h-1 rounded-full bg-gold opacity-60" />
+          <div className="flex-1 h-px bg-gold opacity-40" />
+        </div>
+        <div className="text-[10px] font-semibold text-brown tracking-[0.08em] uppercase relative z-10">
           Masa casera · Estilo tucumanas
         </div>
       </div>
@@ -134,16 +146,16 @@ export default function MenuPage() {
           />
         ))}
 
-        <div style={{ marginTop: 'auto', paddingTop: 16, paddingBottom: cantidadTotal > 0 ? 88 : 16, paddingLeft: 16, paddingRight: 16, textAlign: 'center', background: '#2C1208' }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#FBF1D8', marginBottom: 6 }}>
+        <div className={`mt-auto pt-4 ${cantidadTotal > 0 ? 'pb-[88px]' : 'pb-4'} px-4 text-center bg-espresso`}>
+          <div className="font-display text-lg font-extrabold text-gold-light mb-1.5">
             Huerto Empanadas
           </div>
-          <div style={{ fontSize: 12, color: '#C49060', marginBottom: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-            <span className="icon" style={{ fontSize: 14 }}>location_on</span>
+          <div className="text-xs text-gold-muted mb-1 flex items-center justify-center gap-1">
+            <span className="icon text-sm">location_on</span>
             Don bosco, San Miguel de Tucuman
           </div>
-          <div style={{ fontSize: 12, color: '#C49060', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
-            <span className="icon" style={{ fontSize: 14 }}>schedule</span>
+          <div className="text-xs text-gold-muted flex items-center justify-center gap-1">
+            <span className="icon text-sm">schedule</span>
             Lun a Sab · 10 a 21hs
           </div>
         </div>

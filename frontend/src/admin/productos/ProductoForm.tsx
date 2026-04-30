@@ -50,7 +50,7 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
 
   return (
     <div
-      className="fixed inset-0 bg-[#2C1208]/50 z-50 flex items-center justify-center p-5 font-sans"
+      className="fixed inset-0 bg-espresso/50 z-50 flex items-center justify-center p-5 font-sans"
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
