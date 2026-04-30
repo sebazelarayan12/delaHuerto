@@ -81,6 +81,12 @@ export class ProductosService {
     return DtoMapper.toProductoDTO(producto)
   }
 
+  static async reorderProducts(ordenes: { id: number; orden: number }[]) {
+    await Promise.all(
+      ordenes.map(({ id, orden }) => prisma.producto.update({ where: { id }, data: { orden } }))
+    )
+  }
+
   static async deleteProduct(id: number) {
     const existing = await prisma.producto.findUnique({ where: { id } })
     if (!existing) throw new NotFoundError('Producto no encontrado')

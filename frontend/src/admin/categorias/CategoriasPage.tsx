@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import AdminLayout from '../AdminLayout'
 import { useCategorias } from './hooks/useCategorias'
 import type { CategoriaAdmin } from './hooks/useCategorias'
@@ -43,17 +44,11 @@ export default function CategoriasPage() {
     const ordenes = localCats.map((c, i) => ({ id: c.id, orden: i }))
     try {
       await reordenar.mutateAsync(ordenes)
-      showToast('Orden actualizado')
-    } catch (e) {
-      showToast('Error al reordenar', true)
+      toast.success('Orden actualizado')
+    } catch {
+      toast.error('Error al reordenar')
       setLocalCats([...originalOrder])
     }
-  }
-  const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null)
-
-  const showToast = (msg: string, error = false) => {
-    setToast({ msg, error })
-    setTimeout(() => setToast(null), 3000)
   }
 
   const handleSave = async (
@@ -70,11 +65,11 @@ export default function CategoriasPage() {
         savedId = (res.data as { id: number }).id
       }
       await syncDescuentos.mutateAsync({ id: savedId, tiers })
-      showToast(modal.editing ? 'Categoría actualizada' : 'Categoría creada')
+      toast.success(modal.editing ? 'Categoria actualizada' : 'Categoria creada')
       setModal({ open: false, editing: null })
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al guardar'
-      showToast(msg, true)
+      toast.error(msg)
     }
   }
 
@@ -185,10 +180,10 @@ export default function CategoriasPage() {
                               if (confirm(`¿Eliminar definitivamente la categoría "${cat.nombre}"? Esta acción no se puede deshacer.`)) {
                                 try {
                                   await eliminar.mutateAsync(cat.id)
-                                  showToast('Categoría eliminada')
+                                  toast.success('Categoria eliminada')
                                 } catch (e: unknown) {
                                   const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al eliminar'
-                                  showToast(msg, true)
+                                  toast.error(msg)
                                 }
                               }
                             }}
@@ -218,14 +213,6 @@ export default function CategoriasPage() {
         nextOrden={nextOrden}
       />
 
-      {toast && (
-        <div className={`fixed bottom-6 right-6 bg-white rounded-xl px-4 py-3 shadow-[0_8px_24px_rgba(44,18,8,0.15)] flex items-center gap-2 font-sans text-sm font-semibold z-50 border-l-[3px] ${toast.error ? 'border-red-600' : 'border-green-700'}`}>
-          <span className={`icon icon-fill text-[18px] ${toast.error ? 'text-red-600' : 'text-green-700'}`}>
-            {toast.error ? 'error' : 'check_circle'}
-          </span>
-          {toast.msg}
-        </div>
-      )}
     </AdminLayout>
   )
 }

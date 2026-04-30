@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import type { Producto } from '../hooks/useMenu'
+import Lightbox from './Lightbox'
 
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
@@ -12,23 +14,34 @@ interface Props {
 
 export default function ProductoCard({ producto, cantidad, onAgregar, onIncrementar, onDecrementar }: Props) {
   const precio = parseFloat(producto.precio as unknown as string)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
 
   return (
     <div className="flex gap-3 p-3.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(44,18,8,0.11)]">
       <div className="w-[88px] h-[88px] shrink-0 rounded-2xl overflow-hidden bg-sand">
         {producto.fotoUrl ? (
-          <img
-            src={producto.fotoUrl}
-            alt={producto.nombre}
-            loading="lazy"
-            className="w-full h-full object-cover block transition-transform duration-300 hover:scale-110"
-          />
+          <button
+            onClick={() => setLightboxOpen(true)}
+            className="w-full h-full border-none p-0 bg-transparent cursor-zoom-in"
+            aria-label={`Ver foto de ${producto.nombre}`}
+          >
+            <img
+              src={producto.fotoUrl}
+              alt={producto.nombre}
+              loading="lazy"
+              className="w-full h-full object-cover block transition-transform duration-300 hover:scale-110"
+            />
+          </button>
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="icon text-[36px] text-muted">lunch_dining</span>
           </div>
         )}
       </div>
+
+      {lightboxOpen && producto.fotoUrl && (
+        <Lightbox src={producto.fotoUrl} alt={producto.nombre} onClose={() => setLightboxOpen(false)} />
+      )}
 
       <div className="flex-1 min-w-0 flex flex-col gap-1">
         <div className="text-[15px] font-bold text-espresso leading-snug whitespace-nowrap overflow-hidden text-ellipsis">

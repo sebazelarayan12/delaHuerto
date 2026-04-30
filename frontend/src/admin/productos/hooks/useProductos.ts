@@ -77,5 +77,13 @@ export function useProductos() {
     },
   })
 
-  return { query, crear, editar, toggleDisponible, eliminar }
+  const reordenar = useMutation({
+    mutationFn: (ordenes: { id: number; orden: number }[]) =>
+      api.put('/api/admin/productos/reorder', { ordenes }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['productos'] })
+    },
+  })
+
+  return { query, crear, editar, toggleDisponible, eliminar, reordenar }
 }

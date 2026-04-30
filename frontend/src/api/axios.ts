@@ -10,3 +10,14 @@ api.interceptors.request.use((req) => {
   if (token) req.headers.Authorization = `Bearer ${token}`
   return req
 })
+
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('empanadas_admin_token')
+      window.location.href = '/admin/login'
+    }
+    return Promise.reject(error)
+  }
+)

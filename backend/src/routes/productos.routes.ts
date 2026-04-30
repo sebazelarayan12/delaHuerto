@@ -35,6 +35,13 @@ admin.post('/', async (c) => {
   return c.json(producto, 201)
 })
 
+admin.put('/reorder', async (c) => {
+  const body = await c.req.json<{ ordenes: { id: number; orden: number }[] }>()
+  if (!Array.isArray(body?.ordenes)) return c.json({ error: 'ordenes requerido' }, 400)
+  await ProductosService.reorderProducts(body.ordenes)
+  return c.json({ ok: true })
+})
+
 admin.put('/:id', async (c) => {
   const id = parseInt(c.req.param('id'))
   const formData = await c.req.formData()
