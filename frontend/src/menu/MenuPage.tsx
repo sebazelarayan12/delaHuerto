@@ -98,11 +98,18 @@ export default function MenuPage() {
         onScrollToCategory={scrollToCategory}
       />
 
-      <div className="bg-gradient-to-br from-[#3D1A0A] to-[#6B2D15] px-4 py-5">
-        <div className="font-display text-lg font-extrabold text-gold-light leading-snug">
-          Hechas con amor
+      <div className="relative overflow-hidden px-4 pt-4 pb-3.5 bg-[#F7EFE2] border-b border-sand-deep">
+        <div className="absolute -right-3 -top-3 w-[60px] h-[60px] rounded-full bg-terra/[0.07]" />
+        <div className="absolute right-4 -bottom-3 w-9 h-9 rounded-full bg-gold/10" />
+        <div className="font-artisan text-[24px] font-black text-espresso leading-[1.1] mb-1.5 relative z-10">
+          Hechas con <span className="italic text-terra">amor</span>
         </div>
-        <div className="text-xs text-gold-muted mt-1 font-medium">
+        <div className="flex items-center gap-1.5 mb-1.5 relative z-10">
+          <div className="flex-1 h-px bg-gold opacity-40" />
+          <div className="w-1 h-1 rounded-full bg-gold opacity-60" />
+          <div className="flex-1 h-px bg-gold opacity-40" />
+        </div>
+        <div className="text-[10px] font-semibold text-brown tracking-[0.08em] uppercase relative z-10">
           Masa casera · Estilo tucumanas
         </div>
       </div>
