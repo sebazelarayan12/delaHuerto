@@ -21,7 +21,7 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') onClose() }}
-      className={`fixed inset-0 bg-[#2C1208]/55 z-50 flex justify-end max-w-[430px] mx-auto transition-opacity duration-300 ease-in-out ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed inset-0 bg-espresso/55 z-50 flex justify-end max-w-[430px] mx-auto transition-opacity duration-300 ease-in-out ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
       <div
         className={`w-[92%] max-w-[400px] h-full bg-ivory flex flex-col overflow-hidden transition-transform duration-[350ms] ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? 'translate-x-0' : 'translate-x-full'}`}

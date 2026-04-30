@@ -52,7 +52,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
             <button
               onClick={onAgregar}
               aria-label={`Agregar ${producto.nombre}`}
-              className="w-11 h-11 rounded-full bg-terra text-white text-[22px] flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-colors duration-150 hover:bg-[#A0401E] border-none cursor-pointer"
+              className="w-11 h-11 rounded-full bg-terra text-white text-[22px] flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-colors duration-150 hover:bg-terra-dark border-none cursor-pointer"
             >
               <span className="icon text-[20px]">add</span>
             </button>

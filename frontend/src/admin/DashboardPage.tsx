@@ -44,10 +44,10 @@ export default function DashboardPage() {
     : 0
 
   const KPIS = [
-    { label: 'Productos activos', value: activeProds, icon: 'inventory_2', color: '#C4522A' },
-    { label: 'Categorías activas', value: activeCats, icon: 'category', color: '#D4920A' },
-    { label: 'Total productos', value: prods.length, icon: 'grid_view', color: '#7A4020' },
-    { label: 'Precio prom. / docena', value: fmt(avgPrice), icon: 'payments', color: '#5A8A5A' },
+    { label: 'Productos activos', value: activeProds, icon: 'inventory_2', barClass: 'bg-terra', textClass: 'text-terra' },
+    { label: 'Categorías activas', value: activeCats, icon: 'category', barClass: 'bg-gold', textClass: 'text-gold' },
+    { label: 'Total productos', value: prods.length, icon: 'grid_view', barClass: 'bg-brown', textClass: 'text-brown' },
+    { label: 'Precio prom. / docena', value: fmt(avgPrice), icon: 'payments', barClass: 'bg-[#5A8A5A]', textClass: 'text-[#5A8A5A]' },
   ]
 
   return (
@@ -79,9 +79,9 @@ export default function DashboardPage() {
                 key={k.label}
                 className="bg-white rounded-xl p-4 shadow-[0_2px_8px_rgba(44,18,8,0.06)] relative overflow-hidden"
               >
-                <div style={{ background: k.color }} className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" />
+                <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-xl ${k.barClass}`} />
                 <div className="flex items-center gap-1.5 mb-2">
-                  <span className="icon icon-fill text-[20px]" style={{ color: k.color }}>{k.icon}</span>
+                  <span className={`icon icon-fill text-[20px] ${k.textClass}`}>{k.icon}</span>
                   <span className="text-xs font-semibold text-muted uppercase tracking-[0.06em] leading-tight">{k.label}</span>
                 </div>
                 <div className="font-display text-[26px] font-extrabold text-espresso">{k.value}</div>

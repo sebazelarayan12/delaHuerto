@@ -92,7 +92,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
       role="presentation"
       onClick={(e) => { if (e.target === e.currentTarget) handleClose() }}
       onKeyDown={(e) => { if (e.key === 'Escape') handleClose() }}
-      className={`fixed inset-0 bg-[#2C1208]/60 z-50 flex items-end justify-center max-w-[430px] mx-auto transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed inset-0 bg-espresso/60 z-50 flex items-end justify-center max-w-[430px] mx-auto transition-opacity duration-300 ${open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}
     >
       <div
         className={`w-full bg-ivory rounded-t-[24px] max-h-[calc(100dvh-40px)] flex flex-col transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] ${open ? 'translate-y-0' : 'translate-y-full'}`}
@@ -125,7 +125,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
             <div className="flex-1 overflow-y-auto px-5 pt-5 pb-8">
               <div className="bg-sand rounded-[14px] px-3.5 py-3 mb-5">
               {items.map((item) => (
-                <div key={item.productoId} className="flex justify-between text-[13px] color-brown mb-1">
+                <div key={item.productoId} className="flex justify-between text-[13px] text-brown mb-1">
                   <span className="font-semibold">{item.nombre} × {item.cantidad}</span>
                   <span>{fmt(item.precio * item.cantidad)}</span>
                 </div>
@@ -166,9 +166,9 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                 <input type="text" placeholder="Av. Corrientes 1234, CABA" {...register('direccion')} className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] text-espresso bg-cream outline-none focus:border-terra" />
               </Field>
               <Field label="Fecha de entrega" error={errors.fechaEntrega?.message}>
-                <div style={{ position: 'relative' }}>
+                <div className="relative">
                   {FECHAS_DISPONIBLES.length === 0 ? (
-                    <p className="text-[13px] px-1" style={{ color: '#C4522A' }}>
+                    <p className="text-[13px] px-1 text-terra">
                       No hay fechas de entrega disponibles por el momento.
                     </p>
                   ) : (
@@ -176,8 +176,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                       <button
                         type="button"
                         onClick={() => setCalendarOpen(prev => !prev)}
-                        className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] bg-cream outline-none text-left flex items-center gap-2"
-                        style={{ color: fechaSeleccionada ? '#2C1208' : '#9E8C7E' }}
+                        className={`w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] bg-cream outline-none text-left flex items-center gap-2 ${fechaSeleccionada ? 'text-espresso' : 'text-muted'}`}
                       >
                         <span className="icon text-[20px]">calendar_month</span>
                         {fechaSeleccionada ? formatFechaCorta(fechaSeleccionada) : 'Selecciona una fecha'}

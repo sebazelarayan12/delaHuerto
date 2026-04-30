@@ -57,30 +57,27 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
   return (
     <div
       ref={ref}
-      className="absolute left-0 right-0 bg-[#FDF6EC] border-[1.5px] border-[#E8D8C4] rounded-2xl px-3 py-3.5 z-10 shadow-[0_8px_24px_rgba(44,18,8,0.12)]"
-      style={{ top: 'calc(100% + 6px)' }}
+      className="absolute left-0 right-0 top-[calc(100%+6px)] bg-cream border-[1.5px] border-sand-deep rounded-2xl px-3 py-3.5 z-10 shadow-[0_8px_24px_rgba(44,18,8,0.12)]"
     >
       {/* Header de navegacion */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+      <div className="flex items-center justify-between mb-3">
         <button
           type="button"
           onClick={irMesAnterior}
           disabled={!hayMesAnterior}
-          className="bg-transparent border-0 p-[4px_8px] rounded-lg text-[#2C1208] text-[18px]"
-          style={{ cursor: hayMesAnterior ? 'pointer' : 'default', opacity: hayMesAnterior ? 1 : 0.3 }}
+          className={`bg-transparent border-0 p-[4px_8px] rounded-lg text-espresso text-[18px] ${hayMesAnterior ? 'cursor-pointer opacity-100' : 'cursor-default opacity-30'}`}
           aria-label="Mes anterior"
         >
           &#8249;
         </button>
-        <span style={{ fontWeight: 700, fontSize: 14, color: '#2C1208' }}>
+        <span className="font-bold text-sm text-espresso">
           {MESES[mes]} {anio}
         </span>
         <button
           type="button"
           onClick={irMesSiguiente}
           disabled={!hayMesSiguiente}
-          className="bg-transparent border-0 p-[4px_8px] rounded-lg text-[#2C1208] text-[18px]"
-          style={{ cursor: hayMesSiguiente ? 'pointer' : 'default', opacity: hayMesSiguiente ? 1 : 0.3 }}
+          className={`bg-transparent border-0 p-[4px_8px] rounded-lg text-espresso text-[18px] ${hayMesSiguiente ? 'cursor-pointer opacity-100' : 'cursor-default opacity-30'}`}
           aria-label="Mes siguiente"
         >
           &#8250;
@@ -88,16 +85,16 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
       </div>
 
       {/* Cabecera dias semana */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2, marginBottom: 4 }}>
+      <div className="grid grid-cols-7 gap-0.5 mb-1">
         {DIAS_SEMANA.map(dia => (
-          <div key={dia} style={{ textAlign: 'center', fontSize: 12, fontWeight: 600, color: '#9E8C7E', padding: '2px 0' }}>
+          <div key={dia} className="text-center text-xs font-semibold text-muted py-0.5">
             {dia}
           </div>
         ))}
       </div>
 
       {/* Grilla de dias */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+      <div className="grid grid-cols-7 gap-0.5">
         {celdas.map(({ key, date }) => {
           if (date === null) return <div key={key} />
 
@@ -110,14 +107,13 @@ export default function SelectorFechaEntrega({ fechasDisponibles, selected, onSe
               type="button"
               disabled={!disponible}
               onClick={() => disponible && onSelect(date)}
-              className="rounded-lg text-[13px] p-[6px_2px] text-center transition-[background] duration-[150ms]"
-              style={{
-                background: isSelected ? '#C4522A' : disponible ? '#FDF0EB' : 'transparent',
-                border: disponible && !isSelected ? '1.5px solid #F0C8B0' : '1.5px solid transparent',
-                color: isSelected ? '#fff' : disponible ? '#C4522A' : '#C4B5A8',
-                cursor: disponible ? 'pointer' : 'default',
-                fontWeight: disponible ? 700 : 400,
-              }}
+              className={`rounded-lg text-[13px] p-[6px_2px] text-center transition-[background] duration-[150ms] border-[1.5px] ${
+                isSelected
+                  ? 'bg-terra text-white border-transparent font-bold cursor-pointer'
+                  : disponible
+                  ? 'bg-[#FDF0EB] text-terra border-[#F0C8B0] font-bold cursor-pointer'
+                  : 'bg-transparent text-[#C4B5A8] border-transparent font-normal cursor-default'
+              }`}
               aria-label={disponible ? `Seleccionar ${date.toLocaleDateString('es-AR')}` : undefined}
               aria-pressed={isSelected}
             >
