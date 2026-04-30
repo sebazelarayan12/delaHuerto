@@ -44,7 +44,7 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-2">
+        <div className="flex-1 overflow-y-auto py-2 bg-ivory">
           {items.length === 0 ? (
             <div className="text-center py-[60px] px-6 text-muted">
               <span className="icon text-[48px] text-muted block mb-3">shopping_cart</span>
@@ -52,45 +52,47 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
               <div className="text-[13px] mt-1">Agregá productos desde el menú</div>
             </div>
           ) : (
-            items.map((item) => (
-              <div
-                key={item.productoId}
-                className="flex items-center gap-3 px-5 py-3 border-b border-sand"
-              >
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-bold text-espresso overflow-hidden text-ellipsis whitespace-nowrap">
-                    {item.nombre}
+            <div className="px-2 py-1.5 flex flex-col gap-2">
+              {items.map((item) => (
+                <div
+                  key={item.productoId}
+                  className="flex items-center gap-3 px-4 py-3 bg-white rounded-2xl shadow-[0_2px_8px_rgba(44,18,8,0.06)]"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-bold text-espresso overflow-hidden text-ellipsis whitespace-nowrap">
+                      {item.nombre}
+                    </div>
+                    <div className="text-xs text-muted mt-0.5">
+                      {fmt(item.precio)} c/u · Subtotal: {fmt(item.precio * item.cantidad)}
+                    </div>
                   </div>
-                  <div className="text-xs text-muted mt-0.5">
-                    {fmt(item.precio)} c/u · Subtotal: {fmt(item.precio * item.cantidad)}
+                  <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.3)]">
+                    <button
+                      onClick={() => onDecrementar(item.productoId)}
+                      aria-label={`Reducir cantidad de ${item.nombre}`}
+                      className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                    >
+                      −
+                    </button>
+                    <span className="min-w-[22px] text-center text-white text-sm font-bold tabular-nums">
+                      {item.cantidad}
+                    </span>
+                    <button
+                      onClick={() => onIncrementar(item.productoId)}
+                      aria-label={`Aumentar cantidad de ${item.nombre}`}
+                      className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
-                <div className="flex items-center bg-terra rounded-full overflow-hidden h-11">
-                  <button
-                    onClick={() => onDecrementar(item.productoId)}
-                    aria-label={`Reducir cantidad de ${item.nombre}`}
-                    className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
-                  >
-                    −
-                  </button>
-                  <span className="min-w-[22px] text-center text-white text-sm font-bold tabular-nums">
-                    {item.cantidad}
-                  </span>
-                  <button
-                    onClick={() => onIncrementar(item.productoId)}
-                    aria-label={`Aumentar cantidad de ${item.nombre}`}
-                    className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
 
         {items.length > 0 && (
-          <div className="pt-4 px-5 pb-7 border-t-2 border-sand bg-cream">
+          <div className="pt-4 px-5 pb-7 bg-white shadow-[0_-6px_20px_rgba(44,18,8,0.07)] border-t border-sand">
             {montoDescuento > 0 && (
               <>
                 <div className="flex justify-between text-[13px] text-muted mb-1.5">
@@ -105,13 +107,13 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
             )}
             <div className="flex justify-between items-baseline mb-4">
               <span className="text-sm font-semibold text-brown">Total</span>
-              <span className="font-display text-[26px] font-extrabold text-terra">
+              <span className="font-display text-[28px] font-extrabold text-terra">
                 {fmt(total)}
               </span>
             </div>
             <button
               onClick={onConfirmar}
-              className="w-full p-4 bg-terra border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer shadow-[0_4px_16px_rgba(196,82,42,0.4)] transition-colors duration-200 hover:bg-terra-dark"
+              className="w-full p-4 bg-terra border-none rounded-2xl text-white font-sans text-base font-bold cursor-pointer shadow-[0_4px_16px_rgba(196,82,42,0.4)] transition-all duration-200 hover:bg-terra-dark active:scale-[0.98]"
             >
               Confirmar pedido →
             </button>

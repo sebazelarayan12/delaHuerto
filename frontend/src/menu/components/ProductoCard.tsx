@@ -14,14 +14,14 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
   const precio = parseFloat(producto.precio as unknown as string)
 
   return (
-    <div className="flex gap-3 px-4 py-3.5 border-b border-sand bg-ivory">
-      <div className="w-[88px] h-[88px] shrink-0 rounded-[14px] overflow-hidden bg-sand">
+    <div className="flex gap-3 p-3.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(44,18,8,0.11)]">
+      <div className="w-[88px] h-[88px] shrink-0 rounded-2xl overflow-hidden bg-sand">
         {producto.fotoUrl ? (
           <img
             src={producto.fotoUrl}
             alt={producto.nombre}
             loading="lazy"
-            className="w-full h-full object-cover block"
+            className="w-full h-full object-cover block transition-transform duration-300 hover:scale-110"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
@@ -52,16 +52,16 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
             <button
               onClick={onAgregar}
               aria-label={`Agregar ${producto.nombre}`}
-              className="w-11 h-11 rounded-full bg-terra text-white text-[22px] flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-colors duration-150 hover:bg-terra-dark border-none cursor-pointer"
+              className="w-11 h-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer"
             >
               <span className="icon text-[20px]">add</span>
             </button>
           ) : (
-            <div className="flex items-center bg-terra rounded-full overflow-hidden h-11">
+            <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.35)]">
               <button
                 onClick={onDecrementar}
                 aria-label="Reducir cantidad"
-                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
+                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
               >
                 −
               </button>
@@ -71,7 +71,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
               <button
                 onClick={onIncrementar}
                 aria-label="Aumentar cantidad"
-                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center"
+                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
               >
                 +
               </button>
