@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router'
+import { Toaster } from 'sonner'
 import MenuPage from './menu/MenuPage'
 import LoginPage from './admin/LoginPage'
 import DashboardPage from './admin/DashboardPage'
@@ -11,6 +12,7 @@ import TestBanner from './shared/components/TestBanner'
 export default function App() {
   return (
     <>
+      <Toaster position="bottom-right" richColors />
       <TestBanner />
       <BrowserRouter>
       <Routes>

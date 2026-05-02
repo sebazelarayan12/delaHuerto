@@ -1,4 +1,5 @@
-import { useReducer } from 'react'
+import { useReducer, useState, useEffect } from 'react'
+import { toast } from 'sonner'
 import AdminLayout from '../AdminLayout'
 import { useProductos } from './hooks/useProductos'
 import type { ProductoAdmin } from './hooks/useProductos'
@@ -13,7 +14,6 @@ type State = {
   editing: ProductoAdmin | null
   search: string
   filterCat: number | ''
-  toast: { msg: string; error?: boolean } | null
 }
 
 type Action =
@@ -22,8 +22,6 @@ type Action =
   | { type: 'CLOSE_MODAL' }
   | { type: 'SET_SEARCH'; payload: string }
   | { type: 'SET_FILTER'; payload: number | '' }
-  | { type: 'SHOW_TOAST'; payload: { msg: string; error?: boolean } }
-  | { type: 'CLEAR_TOAST' }
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -32,23 +30,60 @@ function reducer(state: State, action: Action): State {
     case 'CLOSE_MODAL': return { ...state, modalOpen: false, editing: null }
     case 'SET_SEARCH': return { ...state, search: action.payload }
     case 'SET_FILTER': return { ...state, filterCat: action.payload }
-    case 'SHOW_TOAST': return { ...state, toast: action.payload }
-    case 'CLEAR_TOAST': return { ...state, toast: null }
     default: return state
   }
 }
 
-const initialState: State = { modalOpen: false, editing: null, search: '', filterCat: '', toast: null }
+const initialState: State = { modalOpen: false, editing: null, search: '', filterCat: '' }
 
 export default function ProductosPage() {
-  const { query, crear, editar, toggleDisponible, eliminar } = useProductos()
+  const { query, crear, editar, toggleDisponible, eliminar, reordenar } = useProductos()
   const { query: catQuery } = useCategorias()
   const [state, dispatch] = useReducer(reducer, initialState)
-  const { modalOpen, editing, search, filterCat, toast } = state
+  const { modalOpen, editing, search, filterCat } = state
 
-  const showToast = (msg: string, error = false) => {
-    dispatch({ type: 'SHOW_TOAST', payload: { msg, error } })
-    setTimeout(() => dispatch({ type: 'CLEAR_TOAST' }), 3000)
+  const [localProductos, setLocalProductos] = useState<ProductoAdmin[]>([])
+  const [draggedId, setDraggedId] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (query.data) {
+      setLocalProductos([...query.data].sort((a, b) => a.orden - b.orden))
+    }
+  }, [query.data])
+
+  const hasFilters = search !== '' || filterCat !== ''
+
+  const handleDragStart = (e: React.DragEvent, id: number) => {
+    setDraggedId(id)
+    e.dataTransfer.effectAllowed = 'move'
+  }
+
+  const handleDragOver = (e: React.DragEvent, targetId: number) => {
+    e.preventDefault()
+    if (draggedId === null || draggedId === targetId) return
+    const draggedIdx = localProductos.findIndex((p) => p.id === draggedId)
+    const targetIdx = localProductos.findIndex((p) => p.id === targetId)
+    const newProds = [...localProductos]
+    const [draggedProd] = newProds.splice(draggedIdx, 1)
+    newProds.splice(targetIdx, 0, draggedProd)
+    setLocalProductos(newProds)
+  }
+
+  const handleDragEnd = async () => {
+    if (draggedId === null) return
+    setDraggedId(null)
+    const originalOrder = [...(query.data ?? [])].sort((a, b) => a.orden - b.orden)
+    const changed = localProductos.some((p, i) => p.id !== originalOrder[i]?.id)
+    if (!changed) return
+
+    const ordenes = localProductos.map((p, i) => ({ id: p.id, orden: i }))
+    try {
+      await reordenar.mutateAsync(ordenes)
+      toast.success('Orden actualizado')
+    } catch {
+      toast.error('Error al reordenar')
+      setLocalProductos([...originalOrder])
+    }
   }
 
   const handleSave = async (
@@ -67,15 +102,15 @@ export default function ProductosPage() {
     try {
       if (editing) {
         await editar.mutateAsync({ id: editing.id, formData: fd })
-        showToast('Producto actualizado')
+        toast.success('Producto actualizado')
       } else {
         await crear.mutateAsync(fd)
-        showToast('Producto creado')
+        toast.success('Producto creado')
       }
       dispatch({ type: 'CLOSE_MODAL' })
     } catch (e: unknown) {
       const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al guardar'
-      showToast(msg, true)
+      toast.error(msg)
     }
   }
 
@@ -86,15 +121,14 @@ export default function ProductosPage() {
   const openEdit = (prod: ProductoAdmin) => dispatch({ type: 'OPEN_EDIT', payload: prod })
   const openNew = () => dispatch({ type: 'OPEN_NEW' })
 
-  const allProductos = query.data ?? []
-  const productos = allProductos.filter((p) => {
+  const productos = localProductos.filter((p) => {
     const matchSearch = p.nombre.toLowerCase().includes(search.toLowerCase())
     const matchCat = filterCat === '' || p.categoriaId === filterCat
     return matchSearch && matchCat
   })
 
   const categorias = catQuery.data ?? []
-  const nextOrden = allProductos.length > 0 ? Math.max(...allProductos.map((p) => p.orden)) + 1 : 0
+  const nextOrden = localProductos.length > 0 ? Math.max(...localProductos.map((p) => p.orden)) + 1 : 0
 
   return (
     <AdminLayout>
@@ -115,7 +149,6 @@ export default function ProductosPage() {
         </button>
       </div>
 
-      {/* Filtros: stack en mobile, fila en sm+ */}
       <div className="px-4 lg:px-8 pt-5 pb-2 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <span className="icon absolute left-3 top-1/2 -translate-y-1/2 text-muted text-[18px]">search</span>
@@ -132,12 +165,18 @@ export default function ProductosPage() {
           onChange={(e) => dispatch({ type: 'SET_FILTER', payload: e.target.value === '' ? '' : Number(e.target.value) })}
           className="w-full sm:w-56 px-3 py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-white outline-none"
         >
-          <option value="">Todas las categorías</option>
+          <option value="">Todas las categorias</option>
           {categorias.map((c) => (
             <option key={c.id} value={c.id}>{c.nombre}</option>
           ))}
         </select>
       </div>
+
+      {!hasFilters && (
+        <p className="px-4 lg:px-8 pb-1 text-xs text-muted">
+          Arrasta las filas para cambiar el orden
+        </p>
+      )}
 
       <div className="px-4 lg:px-8 pb-8 pt-2">
         {query.isLoading ? (
@@ -148,8 +187,8 @@ export default function ProductosPage() {
               <table className="w-full border-collapse font-sans min-w-[640px]">
                 <thead>
                   <tr className="bg-gold-light">
-                    {['Foto', 'Nombre', 'Categoría', 'Precio', 'Estado', 'Disponible', 'Acciones'].map((h) => (
-                      <th key={h} className="px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap">
+                    {[!hasFilters ? '' : null, 'Foto', 'Nombre', 'Categoria', 'Precio', 'Estado', 'Disponible', 'Acciones'].filter(Boolean).map((h, i) => (
+                      <th key={h || `empty-${i}`} className={`px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap ${h === '' ? 'w-10' : 'w-auto'}`}>
                         {h}
                       </th>
                     ))}
@@ -157,7 +196,19 @@ export default function ProductosPage() {
                 </thead>
                 <tbody>
                   {productos.map((prod, i) => (
-                    <tr key={prod.id} className={i < productos.length - 1 ? 'border-b border-sand' : ''}>
+                    <tr
+                      key={prod.id}
+                      draggable={!hasFilters}
+                      onDragStart={!hasFilters ? (e) => handleDragStart(e, prod.id) : undefined}
+                      onDragOver={!hasFilters ? (e) => handleDragOver(e, prod.id) : undefined}
+                      onDragEnd={!hasFilters ? handleDragEnd : undefined}
+                      className={`transition-all duration-200 ${i < productos.length - 1 ? 'border-b border-sand' : ''} ${draggedId === prod.id ? 'bg-ivory opacity-60' : 'bg-transparent'} ${!hasFilters ? 'cursor-grab' : ''}`}
+                    >
+                      {!hasFilters && (
+                        <td className="px-4 py-3 w-10">
+                          <span className="icon text-sand-deep text-[20px]">drag_indicator</span>
+                        </td>
+                      )}
                       <td className="px-4 py-3">
                         <div className="w-11 h-11 rounded-lg overflow-hidden bg-sand flex items-center justify-center text-[20px]">
                           {prod.fotoUrl ? (
@@ -188,13 +239,13 @@ export default function ProductosPage() {
                           </button>
                           <button
                             onClick={async () => {
-                              if (confirm(`¿Eliminar definitivamente el producto "${prod.nombre}"? Esta acción no se puede deshacer.`)) {
+                              if (confirm(`¿Eliminar definitivamente el producto "${prod.nombre}"? Esta accion no se puede deshacer.`)) {
                                 try {
                                   await eliminar.mutateAsync(prod.id)
-                                  showToast('Producto eliminado')
+                                  toast.success('Producto eliminado')
                                 } catch (e: unknown) {
                                   const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al eliminar'
-                                  showToast(msg, true)
+                                  toast.error(msg)
                                 }
                               }
                             }}
@@ -229,15 +280,6 @@ export default function ProductosPage() {
         loading={crear.isPending || editar.isPending}
         nextOrden={nextOrden}
       />
-
-      {toast && (
-        <div className={`fixed bottom-6 right-6 bg-white rounded-xl px-4 py-3 shadow-[0_8px_24px_rgba(44,18,8,0.15)] flex items-center gap-2 font-sans text-sm font-semibold z-50 border-l-[3px] ${toast.error ? 'border-red-600' : 'border-green-700'}`}>
-          <span className={`icon icon-fill text-[18px] ${toast.error ? 'text-red-600' : 'text-green-700'}`}>
-            {toast.error ? 'error' : 'check_circle'}
-          </span>
-          {toast.msg}
-        </div>
-      )}
     </AdminLayout>
   )
 }
