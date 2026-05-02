@@ -148,11 +148,11 @@ export default function MenuPage() {
 
         <div className={`mt-auto pt-4 ${cantidadTotal > 0 ? 'pb-[88px]' : 'pb-4'} px-4 text-center bg-espresso`}>
           <div className="font-display text-lg font-extrabold text-gold-light mb-1.5">
-            Huerto Empanadas
+            De la Huerto Empanadas
           </div>
           <div className="text-xs text-gold-muted mb-1 flex items-center justify-center gap-1">
             <span className="icon text-sm">location_on</span>
-            Don bosco, San Miguel de Tucuman
+            Don Bosco 2839, San Miguel de Tucuman
           </div>
           <div className="text-xs text-gold-muted flex items-center justify-center gap-1">
             <span className="icon text-sm">schedule</span>

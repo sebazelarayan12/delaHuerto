@@ -22,7 +22,7 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
           <LogoMark />
           <div>
             <div className="font-display text-[22px] font-extrabold text-gold-light leading-[1.1]">
-              Huerto
+              De la Huerto
             </div>
             <div className="text-[12px] font-semibold text-gold tracking-[0.18em] uppercase mt-0.5">
               Empanadas caseras

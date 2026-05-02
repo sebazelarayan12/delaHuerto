@@ -5,9 +5,11 @@ interface Props {
   text: string
   className?: string
   typeSpeed?: number
+  backSpeed?: number
+  backDelay?: number
 }
 
-export default function TypewriterText({ text, className, typeSpeed = 45 }: Props) {
+export default function TypewriterText({ text, className, typeSpeed = 45, backSpeed = 28, backDelay = 2800 }: Props) {
   const el = useRef<HTMLSpanElement>(null)
 
   useEffect(() => {
@@ -16,13 +18,22 @@ export default function TypewriterText({ text, className, typeSpeed = 45 }: Prop
     const typed = new Typed(el.current, {
       strings: [text],
       typeSpeed,
+      backSpeed,
+      backDelay,
+      startDelay: 300,
       showCursor: true,
       cursorChar: '|',
-      loop: false,
+      loop: true,
     })
 
     return () => typed.destroy()
-  }, [text, typeSpeed])
+  }, [text, typeSpeed, backSpeed, backDelay])
 
-  return <span ref={el} className={className} />
+  // Wrapper block keeps the typed.js cursor span inside this element,
+  // not as a sibling flex item in the parent flex-col container.
+  return (
+    <p className={className}>
+      <span ref={el} />
+    </p>
+  )
 }
