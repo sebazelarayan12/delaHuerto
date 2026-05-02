@@ -1,4 +1,5 @@
 import LogoMark from '../../shared/components/LogoMark'
+import TypewriterText from './TypewriterText'
 import type { Banner } from '../hooks/useBanner'
 
 interface Props {
@@ -46,7 +47,7 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         <div className="-mx-4 px-4 py-2.5 flex items-start gap-3 bg-white/5 border-t border-b border-white/[0.07]">
           <div className="w-0.5 self-stretch bg-gold rounded-full shrink-0 min-h-[36px]" />
           <div className="flex flex-col gap-1">
-            <div className="font-display italic text-[12.5px] text-gold-light leading-snug">{banner.titulo}</div>
+            <TypewriterText text={banner.titulo} className="font-display italic text-[12.5px] text-gold-light leading-snug" />
             <div className="flex flex-col gap-px">
               {banner.linea1 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea1}</div>}
               {banner.linea2 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea2}</div>}
