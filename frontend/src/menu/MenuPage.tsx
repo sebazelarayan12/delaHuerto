@@ -162,8 +162,10 @@ export default function MenuPage() {
         </div>
       </main>
 
-      <WhatsAppFab />
-      <CartFab cantidadTotal={cantidadTotal} total={total} onClick={() => setCarritoOpen(true)} />
+      <div className="fixed bottom-6 right-4 z-50 flex items-center gap-2.5">
+        <WhatsAppFab />
+        <CartFab cantidadTotal={cantidadTotal} total={total} onClick={() => setCarritoOpen(true)} />
+      </div>
 
       <Carrito
         open={carritoOpen}
