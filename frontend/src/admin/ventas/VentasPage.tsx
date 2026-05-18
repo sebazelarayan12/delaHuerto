@@ -37,8 +37,8 @@ export default function VentasPage() {
   const { query, registrar, cancelar } = useVentas(desde || undefined, hasta || undefined)
   const ventas = query.data ?? []
 
-  const handleRegistrar = (items: ItemVentaInput[], notas?: string) => {
-    registrar.mutate({ items, notas }, { onSuccess: () => setFormOpen(false) })
+  const handleRegistrar = (items: ItemVentaInput[], notas?: string, fecha?: string) => {
+    registrar.mutate({ items, notas, fecha }, { onSuccess: () => setFormOpen(false) })
   }
 
   const handleCancelar = (id: number) => {

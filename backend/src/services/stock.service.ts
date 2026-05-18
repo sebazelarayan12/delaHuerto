@@ -28,13 +28,15 @@ export class StockService {
       throw new HttpError(409, `Stock insuficiente: disponible ${producto.stock}, ajuste ${cantidad}`)
     }
 
+    const disponibleUpdate = nuevoStock <= 0 ? { disponible: false } : { disponible: true }
+
     const [ajuste] = await prisma.$transaction([
       prisma.ajusteStock.create({
         data: { productoId, cantidad, motivo },
       }),
       prisma.producto.update({
         where: { id: productoId },
-        data: { stock: { increment: cantidad } },
+        data: { stock: { increment: cantidad }, ...disponibleUpdate },
       }),
     ])
     return ajuste

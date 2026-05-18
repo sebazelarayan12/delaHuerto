@@ -1,4 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import type { AxiosError } from 'axios'
 import { api } from '../../../api/axios'
 
 interface ProductoResumen {
@@ -45,13 +47,18 @@ export function useVentas(desde?: string, hasta?: string) {
   })
 
   const registrar = useMutation({
-    mutationFn: ({ items, notas }: { items: ItemVentaInput[]; notas?: string }) =>
-      api.post<VentaAdmin>('/api/admin/ventas', { items, notas }),
+    mutationFn: ({ items, notas, fecha }: { items: ItemVentaInput[]; notas?: string; fecha?: string }) =>
+      api.post<VentaAdmin>('/api/admin/ventas', { items, notas, fecha }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['ventas', 'admin'] })
       qc.invalidateQueries({ queryKey: ['stock', 'admin'] })
       qc.invalidateQueries({ queryKey: ['productos'] })
       qc.invalidateQueries({ queryKey: ['dashboard', 'admin'] })
+    },
+    onError: (error) => {
+      const axiosError = error as AxiosError<{ error: string }>
+      const msg = axiosError.response?.data?.error ?? 'Error al registrar la venta'
+      toast.error(msg)
     },
   })
 

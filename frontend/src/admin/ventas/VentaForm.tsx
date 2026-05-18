@@ -1,7 +1,8 @@
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
+import { api } from '../../api/axios'
 import type { ProductoAdmin } from '../productos/hooks/useProductos'
 import type { ItemVentaInput } from './hooks/useVentas'
 
@@ -14,23 +15,26 @@ const itemSchema = z.object({
 const ventaSchema = z.object({
   items: z.array(itemSchema).min(1, { message: 'Agregar al menos un producto' }),
   notas: z.string().optional(),
+  fecha: z.string(),
 })
 
 type VentaFormData = z.infer<typeof ventaSchema>
 
 interface Props {
   onClose: () => void
-  onSave: (items: ItemVentaInput[], notas?: string) => void
+  onSave: (items: ItemVentaInput[], notas?: string, fecha?: string) => void
   loading: boolean
 }
 
 export default function VentaForm({ onClose, onSave, loading }: Props) {
-  const qc = useQueryClient()
-  const productos = qc.getQueryData<ProductoAdmin[]>(['productos', 'admin']) ?? []
+  const { data: productos = [] } = useQuery<ProductoAdmin[]>({
+    queryKey: ['productos', 'admin'],
+    queryFn: async () => (await api.get<ProductoAdmin[]>('/api/admin/productos')).data,
+  })
 
   const form = useForm<VentaFormData>({
     resolver: zodResolver(ventaSchema),
-    defaultValues: { items: [{ productoId: 0, cantidad: 1, precioUnitario: 0 }], notas: '' },
+    defaultValues: { items: [{ productoId: 0, cantidad: 1, precioUnitario: 0 }], notas: '', fecha: new Date().toISOString().split('T')[0] },
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -56,7 +60,8 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
         cantidad: Number(i.cantidad),
         precioUnitario: Number(i.precioUnitario),
       })),
-      data.notas || undefined
+      data.notas || undefined,
+      data.fecha || undefined
     )
   }
 
@@ -167,6 +172,18 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
           <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-terra/5 border border-terra/20">
             <span className="text-sm font-bold text-brown uppercase tracking-[0.06em]">Total</span>
             <span className="font-display text-[22px] font-extrabold text-terra">{fmt(total)}</span>
+          </div>
+
+          <div>
+            <label htmlFor="venta-fecha" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">
+              Fecha
+            </label>
+            <input
+              id="venta-fecha"
+              type="date"
+              {...form.register('fecha')}
+              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+            />
           </div>
 
           <div>

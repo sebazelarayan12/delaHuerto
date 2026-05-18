@@ -33,7 +33,7 @@ export class VentasService {
     })
   }
 
-  static async createVenta(items: ItemInput[], notas?: string) {
+  static async createVenta(items: ItemInput[], notas?: string, fecha?: string) {
     return prisma.$transaction(async (tx) => {
       const productoIds = items.map((i) => i.productoId)
       const productos = await tx.producto.findMany({
@@ -54,7 +54,7 @@ export class VentasService {
       const total = items.reduce((acc, i) => acc + i.precioUnitario * i.cantidad, 0)
 
       const venta = await tx.venta.create({
-        data: { total, notas },
+        data: { total, notas, ...(fecha ? { fecha: new Date(fecha) } : {}) },
       })
 
       await tx.itemVenta.createMany({
@@ -67,12 +67,17 @@ export class VentasService {
       })
 
       await Promise.all(
-        items.map((i) =>
-          tx.producto.update({
+        items.map((i) => {
+          const prod = productos.find((p) => p.id === i.productoId)!
+          const nuevoStock = prod.stock - i.cantidad
+          return tx.producto.update({
             where: { id: i.productoId },
-            data: { stock: { decrement: i.cantidad } },
+            data: {
+              stock: { decrement: i.cantidad },
+              ...(nuevoStock <= 0 ? { disponible: false } : {}),
+            },
           })
-        )
+        })
       )
 
       return tx.venta.findUnique({
@@ -100,7 +105,7 @@ export class VentasService {
         venta.items.map((item) =>
           tx.producto.update({
             where: { id: item.productoId },
-            data: { stock: { increment: item.cantidad } },
+            data: { stock: { increment: item.cantidad }, disponible: true },
           })
         )
       )

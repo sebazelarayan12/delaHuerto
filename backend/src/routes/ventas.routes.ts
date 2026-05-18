@@ -13,6 +13,7 @@ const itemSchema = z.object({
 const ventaSchema = z.object({
   items: z.array(itemSchema).min(1, { message: 'agregar al menos un producto' }),
   notas: z.string().optional(),
+  fecha: z.string().optional(),
 })
 
 const admin = new Hono()
@@ -25,9 +26,9 @@ admin.get('/', async (c) => {
 })
 
 admin.post('/', zValidator('json', ventaSchema), async (c) => {
-  const { items, notas } = c.req.valid('json')
+  const { items, notas, fecha } = c.req.valid('json')
   console.log(`[ventas] registrar venta — ${items.length} items`)
-  const venta = await VentasService.createVenta(items, notas)
+  const venta = await VentasService.createVenta(items, notas, fecha)
   return c.json(venta, 201)
 })
 
