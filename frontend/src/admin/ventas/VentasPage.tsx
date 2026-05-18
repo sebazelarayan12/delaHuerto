@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { toast } from 'sonner'
 import AdminLayout from '../AdminLayout'
 import { useVentas } from './hooks/useVentas'
 import VentaForm from './VentaForm'
@@ -38,7 +39,12 @@ export default function VentasPage() {
   const ventas = query.data ?? []
 
   const handleRegistrar = (items: ItemVentaInput[], notas?: string, fecha?: string) => {
-    registrar.mutate({ items, notas, fecha }, { onSuccess: () => setFormOpen(false) })
+    registrar.mutate({ items, notas, fecha }, {
+      onSuccess: () => {
+        setFormOpen(false)
+        toast.success('Venta registrada')
+      },
+    })
   }
 
   const handleCancelar = (id: number) => {
