@@ -53,6 +53,8 @@ export function useStock() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['stock', 'admin'] })
       qc.invalidateQueries({ queryKey: ['dashboard', 'admin'] })
+      qc.invalidateQueries({ queryKey: ['productos', 'admin'] })
+      qc.invalidateQueries({ queryKey: ['categorias'] })
     },
   })
 
