@@ -154,7 +154,7 @@ export default function VentasPage() {
             </div>
 
             {query.isLoading ? (
-              <div className="text-center py-10 text-muted text-sm">Cargando...</div>
+              <div className="text-center py-10 text-muted text-sm">Cargando…</div>
             ) : ventas.length === 0 ? (
               <div className="text-center py-10 text-muted text-sm flex flex-col items-center gap-2">
                 <span className="icon icon-fill text-[36px] text-sand-deep">point_of_sale</span>
@@ -219,7 +219,7 @@ function VentaRow({ venta, onCancelar }: { venta: VentaAdmin; onCancelar: () => 
 
         <button
           onClick={onCancelar}
-          className="w-8 h-8 flex items-center justify-center rounded-lg border-[1.5px] border-red-200 bg-transparent cursor-pointer text-red-600 hover:bg-red-50 shrink-0"
+          className="size-8 flex items-center justify-center rounded-lg border-[1.5px] border-red-200 bg-transparent cursor-pointer text-red-600 hover:bg-red-50 shrink-0"
           title="Cancelar venta"
         >
           <span className="icon text-[16px]">delete</span>

@@ -119,7 +119,7 @@ function AjusteModal({ producto, onClose, onSave, loading }: AjusteModalProps) {
             {historialOpen && (
               <div className="px-4 pb-4">
                 {historial.isLoading ? (
-                  <p className="text-xs text-muted text-center py-3">Cargando...</p>
+                  <p className="text-xs text-muted text-center py-3">Cargando…</p>
                 ) : !historial.data?.length ? (
                   <p className="text-xs text-muted text-center py-3">Sin ajustes registrados</p>
                 ) : (
@@ -212,7 +212,7 @@ export default function StockPage() {
 
         <div className="px-4 lg:px-8 py-5">
           {query.isLoading ? (
-            <div className="text-center py-12 text-muted text-sm">Cargando stock...</div>
+            <div className="text-center py-12 text-muted text-sm">Cargando stock…</div>
           ) : filtrados.length === 0 ? (
             <div className="text-center py-12 text-muted text-sm">
               {busqueda ? 'Sin resultados para esa busqueda' : 'Sin productos'}

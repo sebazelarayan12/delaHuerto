@@ -80,7 +80,7 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
         <form id="venta-form" onSubmit={form.handleSubmit(onSubmit)} className="overflow-y-auto flex-1 px-6 py-5 flex flex-col gap-4">
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-bold uppercase tracking-[0.08em] text-brown">Productos</label>
+              <span className="text-xs font-bold uppercase tracking-[0.08em] text-brown">Productos</span>
               <button
                 type="button"
                 onClick={() => append({ productoId: 0, cantidad: 1, precioUnitario: 0 })}
@@ -141,7 +141,7 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
                           <button
                             type="button"
                             onClick={() => remove(index)}
-                            className="w-8 h-8 flex items-center justify-center rounded-lg border-[1.5px] border-red-200 bg-transparent cursor-pointer text-red-600 hover:bg-red-50 shrink-0"
+                            className="size-8 flex items-center justify-center rounded-lg border-[1.5px] border-red-200 bg-transparent cursor-pointer text-red-600 hover:bg-red-50 shrink-0"
                           >
                             <span className="icon text-[16px]">delete</span>
                           </button>
