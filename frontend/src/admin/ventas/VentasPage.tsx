@@ -1,9 +1,12 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { toast } from 'sonner'
 import AdminLayout from '../AdminLayout'
 import { useVentas } from './hooks/useVentas'
 import VentaForm from './VentaForm'
 import type { VentaAdmin, ItemVentaInput } from './hooks/useVentas'
+import { Sparkline } from '../../shared/components/Sparkline'
+import { TendenciaChart } from './TendenciaChart'
+import { getDailyRevenue } from '../shared/revenueHelpers'
 
 const fmt = (n: number | string) => '$' + parseFloat(String(n)).toLocaleString('es-AR', { minimumFractionDigits: 0 })
 
@@ -16,15 +19,27 @@ interface RevenueCardProps {
   count: number
   barClass: string
   textClass: string
+  color: string
+  sparkDays: 7 | 30
+  todas: VentaAdmin[]
 }
 
-function RevenueCard({ label, revenue, count, barClass, textClass }: RevenueCardProps) {
+function RevenueCard({ label, revenue, count, barClass, textClass, color, sparkDays, todas }: RevenueCardProps) {
+  const sparkData = useMemo(() => getDailyRevenue(todas, sparkDays), [todas, sparkDays])
+
   return (
     <div className="bg-white rounded-xl p-4 shadow-[0_2px_8px_rgba(44,18,8,0.06)] relative overflow-hidden">
       <div className={`absolute top-0 left-0 right-0 h-1 rounded-t-xl ${barClass}`} />
       <div className="text-xs font-semibold text-muted uppercase tracking-[0.06em] mb-1">{label}</div>
-      <div className={`font-display text-[22px] font-extrabold ${textClass}`}>{fmt(revenue)}</div>
-      <div className="text-xs text-muted mt-0.5">{count} {count === 1 ? 'venta' : 'ventas'}</div>
+      <div className="flex items-flex-end justify-between">
+        <div>
+          <div className={`font-display text-[22px] font-extrabold ${textClass}`}>{fmt(revenue)}</div>
+          <div className="text-xs text-muted mt-0.5">{count} {count === 1 ? 'venta' : 'ventas'}</div>
+        </div>
+        <div className="flex items-end">
+          <Sparkline data={sparkData} color={color} width={88} height={40} />
+        </div>
+      </div>
     </div>
   )
 }
@@ -71,10 +86,10 @@ export default function VentasPage() {
   const countMes = todas.filter((v) => new Date(v.fecha) >= mesInicio).length
 
   const REVENUE_CARDS = [
-    { label: 'Hoy', revenue: revenueHoy, count: countHoy, barClass: 'bg-terra', textClass: 'text-terra' },
-    { label: 'Esta semana', revenue: revenueSemana, count: countSemana, barClass: 'bg-gold', textClass: 'text-gold' },
-    { label: 'Este mes', revenue: revenueMes, count: countMes, barClass: 'bg-brown', textClass: 'text-brown' },
-    { label: 'Total', revenue: revenueTotal, count: todas.length, barClass: 'bg-[#5A8A5A]', textClass: 'text-[#5A8A5A]' },
+    { label: 'Hoy', revenue: revenueHoy, count: countHoy, barClass: 'bg-terra', textClass: 'text-terra', color: '#C4522A', sparkDays: 7 as const },
+    { label: 'Esta semana', revenue: revenueSemana, count: countSemana, barClass: 'bg-gold', textClass: 'text-gold', color: '#D4920A', sparkDays: 7 as const },
+    { label: 'Este mes', revenue: revenueMes, count: countMes, barClass: 'bg-brown', textClass: 'text-brown', color: '#7A4020', sparkDays: 30 as const },
+    { label: 'Total', revenue: revenueTotal, count: todas.length, barClass: 'bg-[#5A8A5A]', textClass: 'text-[#5A8A5A]', color: '#5A8A5A', sparkDays: 30 as const },
   ]
 
   const exportCSV = () => {
@@ -122,9 +137,11 @@ export default function VentasPage() {
           {/* Revenue cards */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4">
             {REVENUE_CARDS.map((c) => (
-              <RevenueCard key={c.label} {...c} />
+              <RevenueCard key={c.label} {...c} todas={todas} />
             ))}
           </div>
+
+          <TendenciaChart ventas={todas} />
 
           {/* Historial */}
           <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
