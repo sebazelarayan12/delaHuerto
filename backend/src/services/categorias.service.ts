@@ -1,5 +1,5 @@
 import { prisma } from '../db.js'
-import { ConflictError, NotFoundError } from '../utils/errors.js'
+import { ConflictError, HttpError, NotFoundError } from '../utils/errors.js'
 import { DtoMapper } from '../utils/dto.js'
 
 export class CategoriasService {
@@ -42,7 +42,14 @@ export class CategoriasService {
   static async deleteCategory(id: number) {
     const categoria = await prisma.categoria.findUnique({ where: { id } })
     if (!categoria) throw new NotFoundError('Categoria no encontrada')
-    return prisma.categoria.update({ where: { id }, data: { activa: false } })
+
+    const count = await prisma.producto.count({ where: { categoriaId: id } })
+    if (count > 0) {
+      throw new HttpError(409, `Esta categoria tiene ${count} producto(s). Eliminalos o movelos antes.`)
+    }
+
+    await prisma.descuentoCategoria.deleteMany({ where: { categoriaId: id } })
+    return prisma.categoria.delete({ where: { id } })
   }
 
   static async reorderCategories(ordenes: { id: number; orden: number }[]) {
