@@ -11,7 +11,7 @@ export default function CartFab({ cantidadTotal, total, onClick }: Props) {
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-6 right-4 bg-terra border-none rounded-full py-3.5 pr-5 pl-4 flex items-center gap-2.5 text-white font-sans text-[15px] font-bold cursor-pointer z-50 shadow-[0_6px_20px_rgba(196,82,42,0.5)] transition-all duration-200 hover:scale-105 hover:bg-terra-dark"
+      className="bg-terra border-none rounded-full py-3.5 pr-5 pl-4 flex items-center gap-2.5 text-white font-sans text-[15px] font-bold cursor-pointer shadow-[0_6px_20px_rgba(196,82,42,0.5)] transition-all duration-200 hover:-translate-y-0.5 hover:scale-105 hover:bg-terra-dark active:scale-[0.97]"
     >
       <span className="icon text-[22px]">shopping_bag</span>
       <span>Ver carrito</span>
