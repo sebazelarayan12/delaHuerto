@@ -1,4 +1,3 @@
-const DIAS_ENTREGA = [5, 6] as const // Viernes, Sabado
 const DIAS_ANTICIPACION = 2
 const HORA_CORTE = 14
 
@@ -24,10 +23,6 @@ export function getFechasDisponibles(): readonly Date[] {
 
   for (let i = 1; i <= 60; i++) {
     const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i)
-    const day = candidate.getDay()
-
-    if (!(DIAS_ENTREGA as readonly number[]).includes(day)) continue
-
     const cutoff = new Date(
       candidate.getFullYear(),
       candidate.getMonth(),

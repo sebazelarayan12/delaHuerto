@@ -11,6 +11,8 @@ const productoSchema = z.object({
   precioUnidad: z.coerce.number().positive().optional(),
   disponible: z.preprocess((v) => v === 'true' || v === true, z.boolean()).default(true),
   orden: z.coerce.number().default(0),
+  stock: z.coerce.number().int().min(0).optional(),
+  stockMinimo: z.coerce.number().int().min(0).optional(),
 })
 
 const admin = new Hono()

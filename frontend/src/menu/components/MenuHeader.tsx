@@ -56,7 +56,7 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         </div>
       )}
 
-      <nav className="-mx-4 flex gap-2 overflow-x-auto py-3 px-4 no-scrollbar">
+      <nav className="-mx-4 flex gap-2 overflow-x-auto md:flex-wrap md:overflow-x-visible md:justify-center py-3 px-4 no-scrollbar">
         {categorias.map((c) => (
           <button
             key={c.id}
