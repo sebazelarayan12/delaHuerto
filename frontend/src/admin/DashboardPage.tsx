@@ -1,10 +1,13 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
+import { toast } from 'sonner'
 import { api } from '../api/axios'
 import AdminLayout from './AdminLayout'
 import type { Categoria } from '../menu/hooks/useMenu'
 import { useVentas } from './ventas/hooks/useVentas'
+import type { ItemVentaInput } from './ventas/hooks/useVentas'
+import VentaForm from './ventas/VentaForm'
 import { getDailyRevenue } from './shared/revenueHelpers'
 import { Sparkline } from '../shared/components/Sparkline'
 import { TopProductos } from './dashboard/TopProductos'
@@ -33,13 +36,13 @@ export default function DashboardPage() {
     queryFn: async () => (await api.get<AdminProducto[]>('/api/admin/productos')).data,
   })
 
-  const { query: ventasQuery } = useVentas()
+  const { query: ventasQuery, registrar } = useVentas()
   const todas = ventasQuery.data ?? []
 
   const greeting = useMemo(() => {
     const h = new Date().getHours()
     if (h < 12) return 'Buen dia'
-    if (h < 19) return 'Buena tarde'
+    if (h < 19) return 'Buenas tardes'
     return 'Buenas noches'
   }, [])
 
@@ -56,6 +59,16 @@ export default function DashboardPage() {
     .reduce((s, v) => s + parseFloat(v.total), 0)
 
   const sparklineHoy = useMemo(() => getDailyRevenue(todas, 14), [todas])
+
+  const [formOpen, setFormOpen] = useState(false)
+  const handleRegistrar = (items: ItemVentaInput[], notas?: string, fecha?: string) => {
+    registrar.mutate({ items, notas, fecha }, {
+      onSuccess: () => {
+        setFormOpen(false)
+        toast.success('Venta registrada')
+      },
+    })
+  }
 
   const KPIS = [
     { label: 'Productos activos', value: activeProds, icon: 'inventory_2', barClass: 'bg-terra', textClass: 'text-terra', sparkline: null, color: '' },
@@ -174,6 +187,21 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <button
+        onClick={() => setFormOpen(true)}
+        className="fixed bottom-6 right-6 inline-flex items-center gap-2 bg-terra text-white px-5 py-3 rounded-full border-none font-sans text-sm font-semibold cursor-pointer shadow-[0_4px_16px_rgba(196,82,42,0.45)] hover:bg-terra-dark transition-colors z-40"
+      >
+        <span className="icon icon-fill text-[20px]">point_of_sale</span>
+        Registrar venta
+      </button>
+
+      {formOpen && (
+        <VentaForm
+          onClose={() => setFormOpen(false)}
+          onSave={handleRegistrar}
+          loading={registrar.isPending}
+        />
+      )}
     </AdminLayout>
   )
 }
