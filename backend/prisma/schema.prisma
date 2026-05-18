@@ -40,18 +40,56 @@ model Banner {
 }
 
 model Producto {
-  id           Int       @id @default(autoincrement())
-  categoriaId  Int       @map("categoria_id")
-  categoria    Categoria @relation(fields: [categoriaId], references: [id])
+  id           Int           @id @default(autoincrement())
+  categoriaId  Int           @map("categoria_id")
+  categoria    Categoria     @relation(fields: [categoriaId], references: [id])
   nombre       String
   descripcion  String?
-  precio       Decimal   @db.Decimal(10, 2)
-  precioUnidad Decimal?  @db.Decimal(10, 2) @map("precio_unidad")
-  fotoUrl      String?   @map("foto_url")
-  fotoPublicId String?   @map("foto_public_id")
-  disponible   Boolean   @default(true)
-  orden        Int       @default(0)
-  creadoEn     DateTime  @default(now()) @map("creado_en")
+  precio       Decimal       @db.Decimal(10, 2)
+  precioUnidad Decimal?      @db.Decimal(10, 2) @map("precio_unidad")
+  fotoUrl      String?       @map("foto_url")
+  fotoPublicId String?       @map("foto_public_id")
+  disponible   Boolean       @default(true)
+  orden        Int           @default(0)
+  stock        Int           @default(0)
+  stockMinimo  Int           @default(0) @map("stock_minimo")
+  creadoEn     DateTime      @default(now()) @map("creado_en")
+  items        ItemVenta[]
+  ajustes      AjusteStock[]
 
   @@map("productos")
+}
+
+model Venta {
+  id       Int         @id @default(autoincrement())
+  fecha    DateTime    @default(now())
+  total    Decimal     @db.Decimal(10, 2)
+  notas    String?
+  items    ItemVenta[]
+  creadaEn DateTime    @default(now()) @map("creada_en")
+
+  @@map("ventas")
+}
+
+model ItemVenta {
+  id             Int      @id @default(autoincrement())
+  ventaId        Int      @map("venta_id")
+  venta          Venta    @relation(fields: [ventaId], references: [id], onDelete: Cascade)
+  productoId     Int      @map("producto_id")
+  producto       Producto @relation(fields: [productoId], references: [id])
+  cantidad       Int
+  precioUnitario Decimal  @db.Decimal(10, 2) @map("precio_unitario")
+
+  @@map("items_venta")
+}
+
+model AjusteStock {
+  id         Int      @id @default(autoincrement())
+  productoId Int      @map("producto_id")
+  producto   Producto @relation(fields: [productoId], references: [id])
+  cantidad   Int
+  motivo     String
+  fecha      DateTime @default(now())
+
+  @@map("ajustes_stock")
 }

@@ -18,7 +18,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
 
   return (
     <div className="flex gap-3 p-3.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(44,18,8,0.11)]">
-      <div className="w-[88px] h-[88px] shrink-0 rounded-2xl overflow-hidden bg-sand">
+      <div className="w-[88px] h-[88px] md:w-[110px] md:h-[110px] shrink-0 rounded-2xl overflow-hidden bg-sand">
         {producto.fotoUrl ? (
           <button
             onClick={() => setLightboxOpen(true)}
@@ -44,11 +44,11 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
       )}
 
       <div className="flex-1 min-w-0 flex flex-col gap-1">
-        <div className="text-[15px] font-bold text-espresso leading-snug whitespace-nowrap overflow-hidden text-ellipsis">
+        <div className="text-[15px] md:text-[16px] font-bold text-espresso leading-snug whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal">
           {producto.nombre}
         </div>
         {producto.descripcion && (
-          <div className="text-[13px] text-muted leading-relaxed line-clamp-2">
+          <div className="text-[13px] text-muted leading-relaxed line-clamp-2 md:line-clamp-3">
             {producto.descripcion}
           </div>
         )}

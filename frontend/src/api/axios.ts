@@ -14,7 +14,8 @@ api.interceptors.request.use((req) => {
 api.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (error.response?.status === 401) {
+    const isLoginRequest = error.config?.url?.includes('/api/auth/login')
+    if (!isLoginRequest && error.response?.status === 401) {
       localStorage.removeItem('empanadas_admin_token')
       window.location.href = '/admin/login'
     }

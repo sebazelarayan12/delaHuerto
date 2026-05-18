@@ -64,6 +64,12 @@ desktop.ini
 .superpowers/
 
 # ──────────────────────────────────────────────
+# Playwright
+# ──────────────────────────────────────────────
+frontend/test-results/
+frontend/playwright-report/
+
+# ──────────────────────────────────────────────
 # Railway
 # ──────────────────────────────────────────────
 railpack-plan.json

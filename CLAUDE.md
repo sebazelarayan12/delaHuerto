@@ -175,7 +175,7 @@ Esto le dice a Prisma "esta migracion ya esta aplicada, no la corras de nuevo".
 
 ## Git
 
-- **NUNCA hacer `git push` a menos que el usuario lo pida explicitamente.** Hacer commits locales esta permitido, pero no pushear sin instruccion directa.
+- **NUNCA hacer `git commit` ni `git push` a menos que el usuario lo pida explicitamente.** Cero commits sin instruccion directa — sin excepciones.
 - Usar **conventional commits**: `feat:`, `fix:`, `chore:`, `refactor:`, `docs:`
 - Describir el *por qué* del cambio, no solo el *qué*
 - No mezclar cambios no relacionados en un mismo commit

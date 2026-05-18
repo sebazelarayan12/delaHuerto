@@ -11,6 +11,7 @@ export default function CategoriasPage() {
   const [modal, setModal] = useState<{ open: boolean; editing: CategoriaAdmin | null }>({ open: false, editing: null })
   const [localCats, setLocalCats] = useState<CategoriaAdmin[]>([])
   const [draggedId, setDraggedId] = useState<number | null>(null)
+  const [confirmDelete, setConfirmDelete] = useState<CategoriaAdmin | null>(null)
 
   useEffect(() => {
     if (query.data) {
@@ -176,17 +177,7 @@ export default function CategoriasPage() {
                             <span className="icon text-[17px]">edit</span>
                           </button>
                           <button
-                            onClick={async () => {
-                              if (confirm(`¿Eliminar definitivamente la categoría "${cat.nombre}"? Esta acción no se puede deshacer.`)) {
-                                try {
-                                  await eliminar.mutateAsync(cat.id)
-                                  toast.success('Categoria eliminada')
-                                } catch (e: unknown) {
-                                  const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al eliminar'
-                                  toast.error(msg)
-                                }
-                              }
-                            }}
+                            onClick={() => setConfirmDelete(cat)}
                             className="inline-flex items-center justify-center w-[34px] h-[34px] rounded-lg border-[1.5px] border-red-200 bg-transparent cursor-pointer text-red-600 transition-colors hover:bg-red-50"
                             title="Eliminar"
                           >
@@ -213,6 +204,52 @@ export default function CategoriasPage() {
         nextOrden={nextOrden}
       />
 
+      {confirmDelete && (
+        <div
+          className="fixed inset-0 bg-espresso/50 z-50 flex items-center justify-center p-5 font-sans"
+          role="presentation"
+          onClick={(e) => { if (e.target === e.currentTarget) setConfirmDelete(null) }}
+          onKeyDown={(e) => { if (e.key === 'Escape') setConfirmDelete(null) }}
+        >
+          <div className="bg-white rounded-[18px] w-full max-w-[380px] shadow-[0_20px_60px_rgba(44,18,8,0.2)] p-6 flex flex-col gap-4">
+            <div className="flex items-start gap-3">
+              <span className="icon icon-fill text-[28px] text-red-600 shrink-0">warning</span>
+              <div>
+                <h3 className="text-base font-extrabold text-espresso">Eliminar categoria</h3>
+                <p className="text-sm text-muted mt-1">
+                  "{confirmDelete.nombre}" se eliminara definitivamente. Si tiene productos asociados, se mostrara un aviso y no se eliminara.
+                </p>
+              </div>
+            </div>
+            <div className="flex justify-end gap-2.5">
+              <button
+                onClick={() => setConfirmDelete(null)}
+                className="px-4 py-2.5 rounded-[10px] border-[1.5px] border-sand-deep bg-transparent font-sans text-sm font-semibold text-brown cursor-pointer hover:bg-sand"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={async () => {
+                  const cat = confirmDelete
+                  setConfirmDelete(null)
+                  try {
+                    await eliminar.mutateAsync(cat.id)
+                    toast.success(`"${cat.nombre}" eliminada`)
+                  } catch (e: unknown) {
+                    const msg = (e as { response?: { data?: { error?: string } } })?.response?.data?.error ?? 'Error al eliminar'
+                    toast.error(msg)
+                  }
+                }}
+                disabled={eliminar.isPending}
+                className={`px-4 py-2.5 rounded-[10px] border-none font-sans text-sm font-semibold text-white flex items-center gap-1.5 cursor-pointer ${eliminar.isPending ? 'bg-red-300 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700'}`}
+              >
+                <span className="icon text-[17px]">delete</span>
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   )
 }

@@ -6,6 +6,8 @@ import DashboardPage from './admin/DashboardPage'
 import CategoriasPage from './admin/categorias/CategoriasPage'
 import ProductosPage from './admin/productos/ProductosPage'
 import BannerPage from './admin/banner/BannerPage'
+import StockPage from './admin/stock/StockPage'
+import VentasPage from './admin/ventas/VentasPage'
 import ProtectedRoute from './shared/components/ProtectedRoute'
 import TestBanner from './shared/components/TestBanner'
 
@@ -47,6 +49,22 @@ export default function App() {
           element={
             <ProtectedRoute>
               <BannerPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/stock"
+          element={
+            <ProtectedRoute>
+              <StockPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/ventas"
+          element={
+            <ProtectedRoute>
+              <VentasPage />
             </ProtectedRoute>
           }
         />
