@@ -32,8 +32,11 @@ admin.post('/', async (c) => {
   const parsed = productoSchema.safeParse(rawData)
   if (!parsed.success) return c.json({ error: 'Datos inválidos', details: parsed.error.issues }, 400)
 
+  const data = { ...parsed.data }
+  if ((data.stock ?? 0) <= 0) data.disponible = false
+
   const file = formData.get('foto')
-  const producto = await ProductosService.createProduct(parsed.data, file instanceof File ? file : null)
+  const producto = await ProductosService.createProduct(data, file instanceof File ? file : null)
   return c.json(producto, 201)
 })
 

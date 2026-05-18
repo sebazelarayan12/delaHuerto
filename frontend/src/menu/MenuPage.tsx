@@ -9,6 +9,7 @@ import Carrito from './components/Carrito'
 import FormularioPedido from './components/FormularioPedido'
 import MenuHeader from './components/MenuHeader'
 import CartFab from './components/CartFab'
+import WhatsAppFab from './components/WhatsAppFab'
 
 const EMPTY_CATS: { id: number; nombre: string }[] = []
 
@@ -161,6 +162,7 @@ export default function MenuPage() {
         </div>
       </main>
 
+      <WhatsAppFab />
       <CartFab cantidadTotal={cantidadTotal} total={total} onClick={() => setCarritoOpen(true)} />
 
       <Carrito
