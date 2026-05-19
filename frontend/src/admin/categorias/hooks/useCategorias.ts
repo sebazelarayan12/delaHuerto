@@ -47,7 +47,10 @@ export function useCategorias() {
 
   const eliminar = useMutation({
     mutationFn: (id: number) => api.delete(`/api/admin/categorias/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['categorias'] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['categorias'] })
+      qc.invalidateQueries({ queryKey: ['stock', 'admin'] })
+    },
   })
 
   const reordenar = useMutation({

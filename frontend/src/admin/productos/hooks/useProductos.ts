@@ -74,6 +74,7 @@ export function useProductos() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['productos'] })
       qc.invalidateQueries({ queryKey: ['categorias'] })
+      qc.invalidateQueries({ queryKey: ['stock', 'admin'] })
     },
   })
 

@@ -130,10 +130,11 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
         >
           {/* Nombre */}
           <div className="flex flex-col gap-[6px]">
-            <label className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
+            <label htmlFor="nombre" className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
               Nombre del cliente
             </label>
             <input
+              id="nombre"
               type="text"
               placeholder="Ej: Maria Garcia"
               {...form.register('nombre')}
@@ -147,10 +148,11 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
           {/* Telefono + Direccion */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-[14px]">
             <div className="flex flex-col gap-[6px]">
-              <label className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
+              <label htmlFor="telefono" className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
                 Telefono
               </label>
               <input
+                id="telefono"
                 type="tel"
                 placeholder="Opcional"
                 {...form.register('telefono')}
@@ -158,10 +160,11 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
               />
             </div>
             <div className="flex flex-col gap-[6px]">
-              <label className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
+              <label htmlFor="direccion" className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
                 Direccion
               </label>
               <input
+                id="direccion"
                 type="text"
                 placeholder="Opcional"
                 {...form.register('direccion')}
@@ -172,10 +175,11 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
 
           {/* Fecha entrega */}
           <div className="flex flex-col gap-[6px]">
-            <label className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
+            <label htmlFor="fechaEntrega" className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
               Fecha de entrega
             </label>
             <input
+              id="fechaEntrega"
               type="date"
               min={todayStr}
               {...form.register('fechaEntrega')}
@@ -196,10 +200,11 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
 
           {/* Notas */}
           <div className="flex flex-col gap-[6px]">
-            <label className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
+            <label htmlFor="notas" className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
               Notas (opcional)
             </label>
             <textarea
+              id="notas"
               placeholder="Observaciones del pedido..."
               rows={2}
               {...form.register('notas')}
@@ -211,9 +216,9 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
           {/* Productos */}
           <div>
             <div className="flex justify-between items-center mb-2">
-              <label className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
+              <span className="text-[12px] font-extrabold uppercase tracking-[0.1em]" style={{ color: '#7A4020' }}>
                 Productos del pedido
-              </label>
+              </span>
               <button
                 type="button"
                 onClick={() => append({ productoId: 0, cantidad: 1, precioUnitario: 0 })}
