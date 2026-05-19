@@ -45,7 +45,7 @@ export default function DeliveryDays() {
         </span>
       </div>
 
-      <div className="px-4 py-4">
+      <div className="p-4">
         <div className="flex flex-wrap gap-2">
           {LABELS.map((label, i) => (
             <button

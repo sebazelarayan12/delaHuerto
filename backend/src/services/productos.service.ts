@@ -1,11 +1,12 @@
 import { prisma } from '../db.js'
-import { ConflictError, HttpError, NotFoundError } from '../utils/errors.js'
+import { ConflictError, NotFoundError } from '../utils/errors.js'
 import { uploadImage, deleteImage } from '../lib/cloudinary.js'
 import { DtoMapper } from '../utils/dto.js'
 
 export class ProductosService {
   static async getAdminProducts() {
     const productos = await prisma.producto.findMany({
+      where: { eliminado: false },
       orderBy: { orden: 'asc' },
       include: { categoria: true },
     })
@@ -91,18 +92,6 @@ export class ProductosService {
     const existing = await prisma.producto.findUnique({ where: { id } })
     if (!existing) throw new NotFoundError('Producto no encontrado')
 
-    const [ventas, ajustes] = await Promise.all([
-      prisma.itemVenta.count({ where: { productoId: id } }),
-      prisma.ajusteStock.count({ where: { productoId: id } }),
-    ])
-
-    if (ventas > 0 || ajustes > 0) {
-      throw new HttpError(409, 'Este producto tiene historial de ventas o ajustes de stock. Desactivalo desde el panel en lugar de eliminarlo.')
-    }
-
-    if (existing.fotoPublicId) {
-      await deleteImage(existing.fotoPublicId).catch(() => {})
-    }
-    return prisma.producto.delete({ where: { id } })
+    await prisma.producto.update({ where: { id }, data: { eliminado: true } })
   }
 }

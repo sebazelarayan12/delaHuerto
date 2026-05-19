@@ -83,7 +83,7 @@ export default function DashboardPage() {
       <div>
         <div className="px-4 lg:px-8 pt-6 lg:pt-8 flex justify-between items-start border-b border-sand-deep pb-5">
           <div>
-            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 34, fontWeight: 800, color: '#2C1208', lineHeight: 1.2, margin: 0 }}>
+            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 34, fontWeight: 600, color: '#2C1208', lineHeight: 1.2, margin: 0 }}>
               {greeting}
             </h1>
             <p className="text-sm text-muted mt-1">
@@ -171,7 +171,7 @@ export default function DashboardPage() {
                 ) : (
                   unavailableProds.slice(0, 5).map((p) => (
                     <div key={p.id} className="flex items-center gap-2.5 px-4 py-2.5 border-t border-sand">
-                      <div className="w-9 h-9 rounded-lg bg-sand flex items-center justify-center text-lg shrink-0">
+                      <div className="size-9 rounded-lg bg-sand flex items-center justify-center text-lg shrink-0">
                         {p.fotoUrl ? (
                           <img src={p.fotoUrl} alt={p.nombre} className="w-full h-full object-cover rounded-lg" />
                         ) : <span className="icon text-[20px] text-muted">lunch_dining</span>}

@@ -11,6 +11,7 @@ import { bannerPublicRoutes, bannerAdminRoutes } from './routes/banner.routes.js
 import { stockAdminRoutes } from './routes/stock.routes.js'
 import { ventasAdminRoutes } from './routes/ventas.routes.js'
 import { dashboardAdminRoutes } from './routes/dashboard.routes.js'
+import { pedidosAdminRoutes } from './routes/pedidos.routes.js'
 import { HttpError } from './utils/errors.js'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -41,6 +42,7 @@ app.route('/api/admin/banner', bannerAdminRoutes)
 app.route('/api/admin/stock', stockAdminRoutes)
 app.route('/api/admin/ventas', ventasAdminRoutes)
 app.route('/api/admin/dashboard', dashboardAdminRoutes)
+app.route('/api/admin/pedidos', pedidosAdminRoutes)
 
 app.get('/health', async (c) => {
   try {

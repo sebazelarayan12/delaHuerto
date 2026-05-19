@@ -8,6 +8,7 @@ import ProductosPage from './admin/productos/ProductosPage'
 import BannerPage from './admin/banner/BannerPage'
 import StockPage from './admin/stock/StockPage'
 import VentasPage from './admin/ventas/VentasPage'
+import PedidosPage from './admin/pedidos/PedidosPage'
 import ProtectedRoute from './shared/components/ProtectedRoute'
 import TestBanner from './shared/components/TestBanner'
 
@@ -65,6 +66,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <VentasPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/pedidos"
+          element={
+            <ProtectedRoute>
+              <PedidosPage />
             </ProtectedRoute>
           }
         />
