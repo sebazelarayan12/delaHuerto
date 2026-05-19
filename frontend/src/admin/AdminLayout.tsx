@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { useNavigate, useLocation } from 'react-router'
 
 import LogoMark from '../shared/components/LogoMark'
+import ErrorBoundary from '../shared/components/ErrorBoundary'
 
 const NAV = [
   { path: '/admin', label: 'Inicio', icon: 'dashboard' },
@@ -118,7 +119,9 @@ export default function AdminLayout({ children }: Props) {
           <span className="font-display text-[15px] font-extrabold text-espresso">Huerto Admin</span>
         </div>
 
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </main>
     </div>
   )
