@@ -1,14 +1,17 @@
 import { prisma } from '../db.js'
-import { ConflictError, HttpError, NotFoundError } from '../utils/errors.js'
+import { ConflictError, NotFoundError } from '../utils/errors.js'
 import { DtoMapper } from '../utils/dto.js'
 
 export class CategoriasService {
   static async getPublicCategories() {
     const categorias = await prisma.categoria.findMany({
-      where: { activa: true },
+      where: { activa: true, eliminado: false },
       orderBy: { orden: 'asc' },
       include: {
-        productos: { orderBy: { orden: 'asc' } },
+        productos: {
+          where: { disponible: true, eliminado: false },
+          orderBy: { orden: 'asc' },
+        },
         descuentos: true,
       },
     })
@@ -17,6 +20,7 @@ export class CategoriasService {
 
   static async getAdminCategories() {
     const categorias = await prisma.categoria.findMany({
+      where: { eliminado: false },
       orderBy: { orden: 'asc' },
       include: { descuentos: true },
     })
@@ -43,13 +47,10 @@ export class CategoriasService {
     const categoria = await prisma.categoria.findUnique({ where: { id } })
     if (!categoria) throw new NotFoundError('Categoria no encontrada')
 
-    const count = await prisma.producto.count({ where: { categoriaId: id } })
-    if (count > 0) {
-      throw new HttpError(409, `Esta categoria tiene ${count} producto(s). Eliminalos o movelos antes.`)
-    }
-
-    await prisma.descuentoCategoria.deleteMany({ where: { categoriaId: id } })
-    return prisma.categoria.delete({ where: { id } })
+    await prisma.$transaction([
+      prisma.producto.updateMany({ where: { categoriaId: id }, data: { eliminado: true } }),
+      prisma.categoria.update({ where: { id }, data: { eliminado: true } }),
+    ])
   }
 
   static async reorderCategories(ordenes: { id: number; orden: number }[]) {

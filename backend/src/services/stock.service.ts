@@ -4,6 +4,7 @@ import { NotFoundError, HttpError } from '../utils/errors.js'
 export class StockService {
   static async getProductsWithStock() {
     const productos = await prisma.producto.findMany({
+      where: { eliminado: false },
       orderBy: { nombre: 'asc' },
       select: {
         id: true,

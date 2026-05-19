@@ -12,6 +12,7 @@ model Categoria {
   nombre     String
   orden      Int                  @default(0)
   activa     Boolean              @default(true)
+  eliminado  Boolean              @default(false)
   productos  Producto[]
   descuentos DescuentoCategoria[]
   creadaEn   DateTime             @default(now()) @map("creada_en")
@@ -50,12 +51,14 @@ model Producto {
   fotoUrl      String?       @map("foto_url")
   fotoPublicId String?       @map("foto_public_id")
   disponible   Boolean       @default(true)
+  eliminado    Boolean       @default(false)
   orden        Int           @default(0)
   stock        Int           @default(0)
   stockMinimo  Int           @default(0) @map("stock_minimo")
   creadoEn     DateTime      @default(now()) @map("creado_en")
   items        ItemVenta[]
   ajustes      AjusteStock[]
+  itemsPedido  ItemPedido[]
 
   @@map("productos")
 }
@@ -66,9 +69,47 @@ model Venta {
   total    Decimal     @db.Decimal(10, 2)
   notas    String?
   items    ItemVenta[]
+  pedido   Pedido?
   creadaEn DateTime    @default(now()) @map("creada_en")
 
   @@map("ventas")
+}
+
+enum EstadoPedido {
+  pendiente
+  por_entregar
+  entregado
+  cancelado
+}
+
+model Pedido {
+  id            Int           @id @default(autoincrement())
+  estado        EstadoPedido  @default(pendiente)
+  nombre        String
+  telefono      String?
+  direccion     String?
+  notas         String?
+  fechaEntrega  DateTime      @map("fecha_entrega")
+  total         Decimal       @db.Decimal(10, 2)
+  ventaId       Int?          @unique @map("venta_id")
+  venta         Venta?        @relation(fields: [ventaId], references: [id])
+  items         ItemPedido[]
+  creadoEn      DateTime      @default(now()) @map("creado_en")
+  actualizadoEn DateTime      @updatedAt @map("actualizado_en")
+
+  @@map("pedidos")
+}
+
+model ItemPedido {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int      @map("pedido_id")
+  pedido         Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  productoId     Int      @map("producto_id")
+  producto       Producto @relation(fields: [productoId], references: [id])
+  cantidad       Int
+  precioUnitario Decimal  @db.Decimal(10, 2) @map("precio_unitario")
+
+  @@map("items_pedido")
 }
 
 model ItemVenta {
