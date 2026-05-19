@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { toast } from 'sonner'
 import AdminLayout from '../AdminLayout'
 import { usePedidos } from './hooks/usePedidos'
+import type { PedidoAdmin, CreatePedidoInput } from './hooks/usePedidos'
 import PedidoCard from './PedidoCard'
 import PedidoForm from './PedidoForm'
+import AvisoCard from './AvisoCard'
 import { ESTADO_META, fmtPedidoDate, fmtDeliveryDate } from './helpers/pedido.helpers'
-import type { CreatePedidoInput } from './hooks/usePedidos'
 
 const fmt = (n: number | string) =>
   '$' + parseFloat(String(n)).toLocaleString('es-AR', { minimumFractionDigits: 0 })
@@ -37,7 +38,34 @@ export default function PedidosPage() {
 
   const activos = pedidos
     .filter((p) => p.estado === 'pendiente' || p.estado === 'por_entregar')
-    .sort((a, b) => new Date(b.creadoEn).getTime() - new Date(a.creadoEn).getTime())
+    .sort((a, b) => {
+      if (!a.fechaEntrega) return 1
+      if (!b.fechaEntrega) return -1
+      return new Date(a.fechaEntrega).getTime() - new Date(b.fechaEntrega).getTime()
+    })
+
+  const sumItems = (arr: PedidoAdmin[]) =>
+    arr.reduce((s, p) => s + p.items.reduce((ss, it) => ss + it.cantidad, 0), 0)
+
+  const buildBreakdown = (arr: PedidoAdmin[]) => {
+    const map = new Map<number, { qty: number; name: string }>()
+    arr.forEach((p) => {
+      p.items.forEach((it) => {
+        const prev = map.get(it.productoId)
+        map.set(it.productoId, { qty: (prev?.qty ?? 0) + it.cantidad, name: it.producto.nombre })
+      })
+    })
+    return [...map.entries()]
+      .map(([productoId, { qty, name }]) => ({ productoId, qty, name }))
+      .sort((a, b) => b.qty - a.qty)
+  }
+
+  const pendientes = pedidos.filter((p) => p.estado === 'pendiente')
+  const porEntregar = pedidos.filter((p) => p.estado === 'por_entregar')
+  const productosPorPagar = sumItems(pendientes)
+  const productosPorEntregar = sumItems(porEntregar)
+  const desglosePorPagar = buildBreakdown(pendientes)
+  const desglosePorEntregar = buildBreakdown(porEntregar)
 
   const historial = pedidos
     .filter((p) => p.estado === 'entregado' || p.estado === 'cancelado')
@@ -88,6 +116,44 @@ export default function PedidosPage() {
       </div>
 
       <div className="px-4 lg:px-8 py-6 flex flex-col gap-5">
+        {/* Aviso pendientes */}
+        {(productosPorPagar > 0 || productosPorEntregar > 0) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <AvisoCard
+              icon="payments"
+              label="Pendientes por pagar"
+              total={productosPorPagar}
+              pedidosCount={pendientes.length}
+              breakdown={desglosePorPagar}
+              accent={{
+                bg: 'var(--color-gold-light)',
+                border: '#F0DDA8',
+                iconBg: 'var(--color-gold)',
+                labelColor: 'var(--color-gold)',
+                chipBg: 'rgba(212,146,10,0.12)',
+                chipText: '#8a5d04',
+                chipBorder: 'rgba(212,146,10,0.22)',
+              }}
+            />
+            <AvisoCard
+              icon="local_shipping"
+              label="Pendientes por entregar"
+              total={productosPorEntregar}
+              pedidosCount={porEntregar.length}
+              breakdown={desglosePorEntregar}
+              accent={{
+                bg: 'var(--color-terra-light)',
+                border: '#E8C8B8',
+                iconBg: 'var(--color-terra)',
+                labelColor: 'var(--color-terra-dark)',
+                chipBg: 'rgba(196,107,71,0.12)',
+                chipText: 'var(--color-terra-dark)',
+                chipBorder: 'rgba(196,107,71,0.22)',
+              }}
+            />
+          </div>
+        )}
+
         {/* Activos */}
         <div>
           <div className="flex items-center gap-[10px] mb-[14px]">
