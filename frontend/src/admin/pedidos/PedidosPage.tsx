@@ -32,7 +32,7 @@ export default function PedidosPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
 
-  const { query, crearPedido, cambiarEstado } = usePedidos()
+  const { query, crearPedido, cambiarEstado, eliminarPedido } = usePedidos()
   const pedidos = query.data ?? []
 
   const activos = pedidos
@@ -156,7 +156,7 @@ export default function PedidosPage() {
                   <table className="w-full border-collapse text-sm">
                     <thead style={{ background: '#F3E8D8' }}>
                       <tr>
-                        {['Cliente', 'Items', 'Total', 'Estado', 'Entrega', 'Fecha'].map((h) => (
+                        {['Cliente', 'Items', 'Total', 'Estado', 'Entrega', 'Fecha', ''].map((h) => (
                           <th
                             key={h}
                             className="text-left whitespace-nowrap"
@@ -216,6 +216,17 @@ export default function PedidosPage() {
                               <span className="text-[12.5px] font-semibold text-muted">
                                 {fmtPedidoDate(p.creadoEn)}
                               </span>
+                            </td>
+                            <td style={{ padding: '10px 18px', verticalAlign: 'middle' }}>
+                              {p.estado === 'cancelado' && (
+                                <button
+                                  onClick={() => eliminarPedido.mutate(p.id)}
+                                  className="inline-flex items-center justify-center size-8 rounded-lg border border-red-200 bg-red-50 text-red-600 cursor-pointer transition-colors hover:bg-red-100"
+                                  title="Eliminar pedido"
+                                >
+                                  <span className="icon" style={{ fontSize: 16 }}>delete</span>
+                                </button>
+                              )}
                             </td>
                           </tr>
                         )
