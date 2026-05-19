@@ -11,6 +11,7 @@ import VentaForm from './ventas/VentaForm'
 import { getDailyRevenue } from './shared/revenueHelpers'
 import { Sparkline } from '../shared/components/Sparkline'
 import { TopProductos } from './dashboard/TopProductos'
+import DeliveryDays from './dashboard/DeliveryDays'
 
 interface AdminProducto {
   id: number
@@ -126,6 +127,8 @@ export default function DashboardPage() {
             ))}
           </div>
 
+          <DeliveryDays />
+
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 lg:gap-5">
             <TopProductos ventas={todas} />
 
@@ -138,6 +141,7 @@ export default function DashboardPage() {
                   {[
                     { label: 'Gestionar categorias', icon: 'category', path: '/admin/categorias' },
                     { label: 'Gestionar productos', icon: 'inventory_2', path: '/admin/productos' },
+                    { label: 'Gestionar stock', icon: 'inventory', path: '/admin/stock' },
                   ].map((l) => (
                     <button
                       key={l.path}

@@ -1,5 +1,14 @@
-const DIAS_ANTICIPACION = 2
-const HORA_CORTE = 14
+const DELIVERY_DAYS_KEY = 'huerto_delivery_days'
+const DEFAULT_DELIVERY_DAYS: boolean[] = [true, true, true, true, true, true, false]
+
+function getDeliveryDays(): boolean[] {
+  try {
+    const raw = localStorage.getItem(DELIVERY_DAYS_KEY)
+    const parsed = raw ? JSON.parse(raw) : null
+    if (Array.isArray(parsed) && parsed.length === 7) return parsed
+  } catch {}
+  return DEFAULT_DELIVERY_DAYS
+}
 
 function getNowAR(): Date {
   const formatter = new Intl.DateTimeFormat('en-CA', {
@@ -19,18 +28,14 @@ function getNowAR(): Date {
 
 export function getFechasDisponibles(): readonly Date[] {
   const now = getNowAR()
+  const deliveryDays = getDeliveryDays()
   const available: Date[] = []
 
-  for (let i = 1; i <= 60; i++) {
+  for (let i = 0; i <= 60; i++) {
     const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i)
-    const cutoff = new Date(
-      candidate.getFullYear(),
-      candidate.getMonth(),
-      candidate.getDate() - DIAS_ANTICIPACION,
-      HORA_CORTE, 0, 0
-    )
-
-    if (now < cutoff) {
+    // getDay(): 0=Dom,1=Lun...6=Sab → (day+6)%7 → 0=Lun,6=Dom
+    const dayIndex = (candidate.getDay() + 6) % 7
+    if (deliveryDays[dayIndex]) {
       available.push(candidate)
     }
   }
