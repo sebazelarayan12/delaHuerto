@@ -62,7 +62,7 @@ export default function Pagination({ currentPage, totalPages, onPageChange, tota
 
         {range.map((item, i) =>
           item === '...' ? (
-            <span key={`ellipsis-${i}`} className={`${BTN_BASE} text-muted select-none`}>
+            <span key={`ellipsis-after-${range[i - 1]}`} className={`${BTN_BASE} text-muted select-none`}>
               •••
             </span>
           ) : (

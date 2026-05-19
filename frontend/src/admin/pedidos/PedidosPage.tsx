@@ -98,7 +98,7 @@ export default function PedidosPage() {
       {/* Header */}
       <div className="px-4 lg:px-8 pt-6 lg:pt-8 flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-sand-deep pb-5">
         <div>
-          <h1 className="font-display text-[28px] lg:text-[34px] font-extrabold text-espresso leading-none">
+          <h1 className="font-display text-[28px] lg:text-[34px] font-semibold text-espresso leading-none">
             Pedidos
           </h1>
           <p className="text-sm text-muted mt-2 font-medium">
@@ -226,7 +226,7 @@ export default function PedidosPage() {
                           <th
                             key={h}
                             className="text-left whitespace-nowrap"
-                            style={{ padding: '14px 18px', fontSize: 11.5, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#7A4020' }}
+                            style={{ padding: '14px 18px', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#7A4020' }}
                           >
                             {h}
                           </th>
@@ -275,7 +275,7 @@ export default function PedidosPage() {
                                   {fmtDeliveryDate(deliveryYmd)}
                                 </span>
                               ) : (
-                                <span className="text-[12.5px] text-muted">—</span>
+                                <span className="text-[12.5px] text-muted">-</span>
                               )}
                             </td>
                             <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
