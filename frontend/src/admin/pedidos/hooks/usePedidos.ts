@@ -50,6 +50,7 @@ export function usePedidos() {
       const res = await api.get<PedidoAdmin[]>('/api/admin/pedidos')
       return res.data
     },
+    refetchInterval: 30_000,
   })
 
   const crearPedido = useMutation({

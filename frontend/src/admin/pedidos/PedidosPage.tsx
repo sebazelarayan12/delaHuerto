@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import AdminLayout from '../AdminLayout'
 import { usePedidos } from './hooks/usePedidos'
@@ -6,10 +6,9 @@ import type { PedidoAdmin, CreatePedidoInput } from './hooks/usePedidos'
 import PedidoCard from './PedidoCard'
 import PedidoForm from './PedidoForm'
 import AvisoCard from './AvisoCard'
-import { ESTADO_META, fmtPedidoDate, fmtDeliveryDate } from './helpers/pedido.helpers'
+import HistorialSection from './HistorialSection'
 
-const fmt = (n: number | string) =>
-  '$' + parseFloat(String(n)).toLocaleString('es-AR', { minimumFractionDigits: 0 })
+type FiltroActivos = 'todos' | 'pendiente' | 'por_entregar'
 
 function EmptyActivos() {
   return (
@@ -31,7 +30,7 @@ function EmptyActivos() {
 
 export default function PedidosPage() {
   const [formOpen, setFormOpen] = useState(false)
-  const [historyOpen, setHistoryOpen] = useState(false)
+  const [filtroActivos, setFiltroActivos] = useState<FiltroActivos>('todos')
 
   const { query, crearPedido, cambiarEstado, eliminarPedido } = usePedidos()
   const pedidos = query.data ?? []
@@ -71,6 +70,19 @@ export default function PedidosPage() {
     .filter((p) => p.estado === 'entregado' || p.estado === 'cancelado')
     .sort((a, b) => new Date(b.creadoEn).getTime() - new Date(a.creadoEn).getTime())
 
+  const activosFiltrados =
+    filtroActivos === 'todos'
+      ? activos
+      : activos.filter((p) => p.estado === filtroActivos)
+
+  const activeCount = pendientes.length + porEntregar.length
+
+  useEffect(() => {
+    const base = 'Pedidos — Huerto Admin'
+    document.title = activeCount > 0 ? `(${activeCount}) ${base}` : base
+    return () => { document.title = 'Huerto Admin' }
+  }, [activeCount])
+
   const handleCrear = (data: CreatePedidoInput) => {
     crearPedido.mutate(data, { onSuccess: () => setFormOpen(false) })
   }
@@ -91,6 +103,10 @@ export default function PedidosPage() {
     cambiarEstado.mutate({ id, estado: 'cancelado' }, {
       onSuccess: () => toast.success('Pedido cancelado'),
     })
+  }
+
+  const handleCardFiltro = (key: 'pendiente' | 'por_entregar') => {
+    setFiltroActivos(prev => prev === key ? 'todos' : key)
   }
 
   return (
@@ -118,6 +134,8 @@ export default function PedidosPage() {
       <div className="px-4 lg:px-8 py-6 flex flex-col gap-5">
         {/* Aviso pendientes */}
         {(productosPorPagar > 0 || productosPorEntregar > 0) && (
+          <div className="flex flex-col gap-2">
+            <span className="text-[11px] font-semibold text-muted tracking-wide">Haz click para filtrar</span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <AvisoCard
               icon="payments"
@@ -125,6 +143,8 @@ export default function PedidosPage() {
               total={productosPorPagar}
               pedidosCount={pendientes.length}
               breakdown={desglosePorPagar}
+              onClick={() => handleCardFiltro('pendiente')}
+              isActive={filtroActivos === 'pendiente'}
               accent={{
                 bg: 'var(--color-gold-light)',
                 border: '#F0DDA8',
@@ -141,6 +161,8 @@ export default function PedidosPage() {
               total={productosPorEntregar}
               pedidosCount={porEntregar.length}
               breakdown={desglosePorEntregar}
+              onClick={() => handleCardFiltro('por_entregar')}
+              isActive={filtroActivos === 'por_entregar'}
               accent={{
                 bg: 'var(--color-terra-light)',
                 border: '#E8C8B8',
@@ -151,6 +173,7 @@ export default function PedidosPage() {
                 chipBorder: 'rgba(196,107,71,0.22)',
               }}
             />
+          </div>
           </div>
         )}
 
@@ -167,13 +190,29 @@ export default function PedidosPage() {
             >
               {activos.length}
             </span>
+            {filtroActivos !== 'todos' && (
+              <button
+                type="button"
+                onClick={() => setFiltroActivos('todos')}
+                className="ml-1 text-[11px] font-bold text-muted border border-sand-deep rounded-full px-2 py-0.5 cursor-pointer hover:text-terra hover:border-terra transition-colors font-sans"
+              >
+                Limpiar filtro
+              </button>
+            )}
           </div>
 
           {activos.length === 0 ? (
             <EmptyActivos />
+          ) : activosFiltrados.length === 0 ? (
+            <div
+              className="py-6 text-center text-sm font-medium text-muted bg-white"
+              style={{ border: '1.5px dashed #E2CFB5', borderRadius: 16 }}
+            >
+              No hay pedidos con ese filtro
+            </div>
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-              {activos.map((p) => (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {activosFiltrados.map((p) => (
                 <PedidoCard
                   key={p.id}
                   pedido={p}
@@ -187,123 +226,10 @@ export default function PedidosPage() {
         </div>
 
         {/* Historial */}
-        <div>
-          <button
-            type="button"
-            onClick={() => setHistoryOpen((o) => !o)}
-            className="w-full flex items-center justify-between border-none cursor-pointer font-sans rounded-[10px] px-4 py-3"
-            style={{ background: '#F3E8D8' }}
-          >
-            <span className="flex items-center gap-[10px]">
-              <span className="font-display font-extrabold text-[16px] text-espresso">Historial</span>
-              <span className="text-[12px] font-semibold text-muted">
-                {historial.length} {historial.length === 1 ? 'pedido' : 'pedidos'}
-              </span>
-            </span>
-            <span className="icon text-brown" style={{ fontSize: 22 }}>
-              {historyOpen ? 'expand_less' : 'expand_more'}
-            </span>
-          </button>
-
-          {historyOpen && (
-            <div className="mt-3">
-              {historial.length === 0 ? (
-                <div
-                  className="py-6 text-center text-sm font-medium text-muted bg-white"
-                  style={{ border: '1.5px solid #F3E8D8', borderRadius: 12 }}
-                >
-                  Aun no hay pedidos en el historial
-                </div>
-              ) : (
-                <div
-                  className="overflow-x-auto bg-[#FFFDF9]"
-                  style={{ borderRadius: 18, border: '1.5px solid #F3E8D8' }}
-                >
-                  <table className="w-full border-collapse text-sm">
-                    <thead style={{ background: '#F3E8D8' }}>
-                      <tr>
-                        {['Cliente', 'Items', 'Total', 'Estado', 'Entrega', 'Fecha', ''].map((h) => (
-                          <th
-                            key={h}
-                            className="text-left whitespace-nowrap"
-                            style={{ padding: '14px 18px', fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#7A4020' }}
-                          >
-                            {h}
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {historial.map((p) => {
-                        const meta = ESTADO_META[p.estado]
-                        const itemSummary = p.items
-                          .map((it) => `${it.cantidad}x ${it.producto.nombre}`)
-                          .join(', ')
-                        const deliveryYmd = p.fechaEntrega ? p.fechaEntrega.split('T')[0] : ''
-                        return (
-                          <tr
-                            key={p.id}
-                            className="transition-colors hover:bg-cream"
-                            style={{ borderTop: '1px solid #F3E8D8' }}
-                          >
-                            <td style={{ padding: '14px 18px', color: '#2C1208', verticalAlign: 'middle' }}>
-                              <span className="font-bold text-[14px]">{p.nombre}</span>
-                            </td>
-                            <td style={{ padding: '14px 18px', color: '#2C1208', verticalAlign: 'middle' }}>
-                              <span
-                                className="text-[13px] inline-block max-w-[260px] overflow-hidden text-ellipsis whitespace-nowrap"
-                                style={{ color: '#7A4020' }}
-                                title={itemSummary}
-                              >
-                                {itemSummary}
-                              </span>
-                            </td>
-                            <td style={{ padding: '14px 18px', color: '#2C1208', verticalAlign: 'middle' }}>
-                              <span className="font-bold">{fmt(p.total)}</span>
-                            </td>
-                            <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
-                              <span
-                                className="px-[10px] py-[3px] rounded-full text-[12px] font-bold inline-flex items-center gap-1"
-                                style={{ background: meta.bg, color: meta.text, border: `1px solid ${meta.border}` }}
-                              >
-                                {meta.label}
-                              </span>
-                            </td>
-                            <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
-                              {deliveryYmd ? (
-                                <span className="text-[12.5px] font-bold" style={{ color: '#A0401E' }}>
-                                  {fmtDeliveryDate(deliveryYmd)}
-                                </span>
-                              ) : (
-                                <span className="text-[12.5px] text-muted">-</span>
-                              )}
-                            </td>
-                            <td style={{ padding: '14px 18px', verticalAlign: 'middle' }}>
-                              <span className="text-[12.5px] font-semibold text-muted">
-                                {fmtPedidoDate(p.creadoEn)}
-                              </span>
-                            </td>
-                            <td style={{ padding: '10px 18px', verticalAlign: 'middle' }}>
-                              {p.estado === 'cancelado' && (
-                                <button
-                                  onClick={() => eliminarPedido.mutate(p.id)}
-                                  className="inline-flex items-center justify-center size-8 rounded-lg border border-red-200 bg-red-50 text-red-600 cursor-pointer transition-colors hover:bg-red-100"
-                                  title="Eliminar pedido"
-                                >
-                                  <span className="icon" style={{ fontSize: 16 }}>delete</span>
-                                </button>
-                              )}
-                            </td>
-                          </tr>
-                        )
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
+        <HistorialSection
+          historial={historial}
+          onEliminar={(id) => eliminarPedido.mutate(id)}
+        />
       </div>
 
       {formOpen && (
