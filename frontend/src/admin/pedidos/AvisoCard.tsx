@@ -21,15 +21,23 @@ interface AvisoCardProps {
   pedidosCount: number
   breakdown: BreakdownItem[]
   accent: AvisoAccent
+  onClick?: () => void
+  isActive?: boolean
 }
 
-export default function AvisoCard({ icon, label, total, pedidosCount, breakdown, accent }: AvisoCardProps) {
-  return (
-    <div
-      aria-label={`${label}: ${total} ${total === 1 ? 'producto' : 'productos'}`}
-      className="flex flex-col rounded-[14px] p-[14px_16px]"
-      style={{ background: accent.bg, border: `1.5px solid ${accent.border}`, gap: 12 }}
-    >
+export default function AvisoCard({ icon, label, total, pedidosCount, breakdown, accent, onClick, isActive }: AvisoCardProps) {
+  const sharedClassName = `flex flex-col rounded-[14px] p-[14px_16px] transition-all${onClick ? ' cursor-pointer w-full text-left' : ''}`
+  const sharedStyle = {
+    background: accent.bg,
+    border: isActive ? `2px solid ${accent.iconBg}` : `1.5px solid ${accent.border}`,
+    gap: 12,
+    boxShadow: isActive ? `0 4px 16px ${accent.iconBg}40` : undefined,
+    transform: isActive ? 'translateY(-1px)' : undefined,
+  }
+  const ariaLabel = `${label}: ${total} ${total === 1 ? 'producto' : 'productos'}`
+
+  const body = (
+    <>
       <div className="flex items-center gap-3">
         <div
           className="flex items-center justify-center shrink-0 text-white rounded-[12px]"
@@ -96,6 +104,27 @@ export default function AvisoCard({ icon, label, total, pedidosCount, breakdown,
           ))}
         </div>
       )}
+    </>
+  )
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        aria-pressed={isActive}
+        aria-label={ariaLabel}
+        onClick={onClick}
+        className={sharedClassName}
+        style={{ appearance: 'none', ...sharedStyle }}
+      >
+        {body}
+      </button>
+    )
+  }
+
+  return (
+    <div aria-label={ariaLabel} className={sharedClassName} style={sharedStyle}>
+      {body}
     </div>
   )
 }
