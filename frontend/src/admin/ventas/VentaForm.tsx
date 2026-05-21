@@ -15,7 +15,6 @@ const itemSchema = z.object({
 const ventaSchema = z.object({
   items: z.array(itemSchema).min(1, { message: 'Agregar al menos un producto' }),
   notas: z.string().optional(),
-  fecha: z.string(),
 })
 
 type VentaFormData = z.infer<typeof ventaSchema>
@@ -34,7 +33,7 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
 
   const form = useForm<VentaFormData>({
     resolver: zodResolver(ventaSchema),
-    defaultValues: { items: [{ productoId: 0, cantidad: 1, precioUnitario: 0 }], notas: '', fecha: new Date().toISOString().split('T')[0] },
+    defaultValues: { items: [{ productoId: 0, cantidad: 1, precioUnitario: 0 }], notas: '' },
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -60,8 +59,7 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
         cantidad: Number(i.cantidad),
         precioUnitario: Number(i.precioUnitario),
       })),
-      data.notas || undefined,
-      data.fecha || undefined
+      data.notas || undefined
     )
   }
 
@@ -76,7 +74,7 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
     >
       <div className="bg-white rounded-[18px] w-full max-w-[600px] shadow-[0_20px_60px_rgba(44,18,8,0.2)] overflow-hidden max-h-[90vh] flex flex-col">
         <div className="py-5 px-6 border-b border-sand flex items-center justify-between shrink-0">
-          <h2 className="text-lg font-extrabold text-espresso">Registrar venta</h2>
+          <h2 className="text-lg font-semibold text-espresso">Registrar venta</h2>
           <button onClick={onClose} className="bg-transparent border-none cursor-pointer text-muted flex items-center transition-colors hover:text-brown">
             <span className="icon">close</span>
           </button>
@@ -172,18 +170,6 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
           <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-terra/5 border border-terra/20">
             <span className="text-sm font-bold text-brown uppercase tracking-[0.06em]">Total</span>
             <span className="font-display text-[22px] font-extrabold text-terra">{fmt(total)}</span>
-          </div>
-
-          <div>
-            <label htmlFor="venta-fecha" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">
-              Fecha
-            </label>
-            <input
-              id="venta-fecha"
-              type="date"
-              {...form.register('fecha')}
-              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
-            />
           </div>
 
           <div>
