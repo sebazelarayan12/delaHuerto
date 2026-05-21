@@ -8,7 +8,7 @@ export default function ProductoCardSkeleton() {
         <div className="h-3 rounded-lg bg-sand animate-pulse w-2/3" />
         <div className="mt-auto flex items-center justify-between pt-1.5">
           <div className="h-5 rounded-lg bg-sand animate-pulse w-1/4" />
-          <div className="w-11 h-11 rounded-full bg-sand animate-pulse" />
+          <div className="size-11 rounded-full bg-sand animate-pulse" />
         </div>
       </div>
     </div>

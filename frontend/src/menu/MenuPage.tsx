@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import { LazyMotion, domMax } from 'motion/react'
 import { useMenu } from './hooks/useMenu'
 import type { Categoria } from './hooks/useMenu'
 import { useCarrito } from './hooks/useCarrito'
@@ -88,6 +89,7 @@ export default function MenuPage() {
   }
 
   return (
+    <LazyMotion features={domMax}>
     <div className="w-full max-w-[430px] md:max-w-3xl lg:max-w-6xl min-h-screen bg-cream relative mx-auto flex flex-col">
 
       <MenuHeader
@@ -101,6 +103,7 @@ export default function MenuPage() {
       />
 
       <div className="relative overflow-hidden px-4 pt-4 pb-3.5 bg-[#F7EFE2] border-b border-sand-deep">
+        <div className="grain-overlay absolute inset-0 opacity-[0.06]" />
         <div className="absolute -right-3 -top-3 size-[60px] rounded-full bg-terra/[0.07]" />
         <div className="absolute right-4 -bottom-3 size-9 rounded-full bg-gold/10" />
         <div className="font-artisan text-[24px] font-black text-espresso leading-[1.1] mb-1.5 relative z-10">
@@ -158,17 +161,20 @@ export default function MenuPage() {
           />
         ))}
 
-        <div className={`mt-auto pt-4 ${cantidadTotal > 0 ? 'pb-[88px]' : 'pb-4'} px-4 text-center bg-espresso`}>
-          <div className="font-display text-lg font-extrabold text-gold-light mb-1.5">
-            De la Huerto Empanadas
-          </div>
-          <div className="text-xs text-gold-muted mb-1 flex items-center justify-center gap-1">
-            <span className="icon text-sm">location_on</span>
-            Don Bosco 2839, San Miguel de Tucuman
-          </div>
-          <div className="text-xs text-gold-muted flex items-center justify-center gap-1">
-            <span className="icon text-sm">schedule</span>
-            Lun a Sab · 10 a 21hs
+        <div className={`relative mt-auto pt-4 ${cantidadTotal > 0 ? 'pb-[88px]' : 'pb-4'} px-4 text-center bg-espresso overflow-hidden`}>
+          <div className="diamond-pattern absolute inset-0 opacity-[0.06]" />
+          <div className="relative z-10">
+            <div className="font-display text-lg font-extrabold text-gold-light mb-1.5">
+              De la Huerto Empanadas
+            </div>
+            <div className="text-xs text-gold-muted mb-1 flex items-center justify-center gap-1">
+              <span className="icon text-sm">location_on</span>
+              Don Bosco 2839, San Miguel de Tucuman
+            </div>
+            <div className="text-xs text-gold-muted flex items-center justify-center gap-1">
+              <span className="icon text-sm">schedule</span>
+              Lun a Sab · 10 a 21hs
+            </div>
           </div>
         </div>
       </main>
@@ -201,5 +207,6 @@ export default function MenuPage() {
         onSuccess={vaciar}
       />
     </div>
+    </LazyMotion>
   )
 }

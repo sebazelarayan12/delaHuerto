@@ -1,8 +1,14 @@
 import { useState } from 'react'
+import * as m from 'motion/react-m'
 import type { Producto } from '../hooks/useMenu'
 import Lightbox from './Lightbox'
 
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const } },
+}
 
 interface Props {
   producto: Producto
@@ -17,7 +23,10 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
   return (
-    <div className="flex gap-3 p-3.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(44,18,8,0.11)]">
+    <m.div
+      variants={cardVariants}
+      className="flex gap-3 p-3.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(196,82,42,0.14)]"
+    >
       <div className="w-[88px] h-[88px] md:w-[110px] md:h-[110px] shrink-0 rounded-2xl overflow-hidden bg-sand">
         {producto.fotoUrl ? (
           <button
@@ -53,8 +62,8 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
           </div>
         )}
         <div className="mt-auto flex items-center justify-between pt-1.5">
-          <div>
-            <div className="text-[17px] font-extrabold text-terra tabular-nums">{fmt(precio)}</div>
+          <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-terra-light border border-terra/20 text-[13px] font-extrabold text-terra tabular-nums">
+            {fmt(precio)}
           </div>
 
           {!producto.disponible ? (
@@ -92,6 +101,6 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
           )}
         </div>
       </div>
-    </div>
+    </m.div>
   )
 }
