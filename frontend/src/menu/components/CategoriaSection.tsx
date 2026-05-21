@@ -23,8 +23,10 @@ export default function CategoriaSection({ categoria, items, onAgregar, onIncrem
       </div>
       <div className="bg-ivory px-3 pt-2.5 pb-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
         {categoria.productos.length === 0 ? (
-          <div className="py-8 px-4 text-center text-muted text-sm bg-white rounded-2xl shadow-[0_2px_8px_rgba(44,18,8,0.05)]">
-            No hay productos disponibles para esta categoría en este momento.
+          <div className="col-span-full py-10 flex flex-col items-center gap-2 text-center">
+            <span className="icon text-[40px] text-sand-deep">restaurant_menu</span>
+            <div className="font-artisan text-[17px] font-semibold text-brown italic">Volvemos pronto</div>
+            <div className="text-[13px] text-muted">Sin stock hoy, revisa mas tarde</div>
           </div>
         ) : categoria.productos.map((p) => (
           <ProductoCard

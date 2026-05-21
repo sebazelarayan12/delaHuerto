@@ -1,3 +1,5 @@
+import { useState, useEffect, useRef } from 'react'
+
 interface Props {
   cantidadTotal: number
   total: number
@@ -7,7 +9,21 @@ interface Props {
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
 export default function CartFab({ cantidadTotal, total, onClick }: Props) {
+  const [bouncing, setBouncing] = useState(false)
+  const prevCount = useRef(cantidadTotal)
+
+  useEffect(() => {
+    if (cantidadTotal > prevCount.current) {
+      setBouncing(true)
+      const t = setTimeout(() => setBouncing(false), 400)
+      prevCount.current = cantidadTotal
+      return () => clearTimeout(t)
+    }
+    prevCount.current = cantidadTotal
+  }, [cantidadTotal])
+
   if (cantidadTotal === 0) return null
+
   return (
     <button
       onClick={onClick}
@@ -15,7 +31,10 @@ export default function CartFab({ cantidadTotal, total, onClick }: Props) {
     >
       <span className="icon text-[22px]">shopping_bag</span>
       <span>Ver carrito</span>
-      <div className="bg-gold text-espresso rounded-full min-w-[24px] h-6 flex items-center justify-center text-[13px] font-extrabold px-1.5">
+      <div
+        style={bouncing ? { animation: 'badgeBounce 0.4s ease-in-out' } : undefined}
+        className="bg-gold text-espresso rounded-full min-w-[24px] h-6 flex items-center justify-center text-[13px] font-extrabold px-1.5"
+      >
         {cantidadTotal}
       </div>
       <span className="ml-1 font-semibold">{fmt(total)}</span>

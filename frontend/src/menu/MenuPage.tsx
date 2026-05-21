@@ -10,6 +10,7 @@ import FormularioPedido from './components/FormularioPedido'
 import MenuHeader from './components/MenuHeader'
 import CartFab from './components/CartFab'
 import WhatsAppFab from './components/WhatsAppFab'
+import ProductoCardSkeleton from './components/ProductoCardSkeleton'
 
 const EMPTY_CATS: { id: number; nombre: string }[] = []
 
@@ -100,14 +101,14 @@ export default function MenuPage() {
       />
 
       <div className="relative overflow-hidden px-4 pt-4 pb-3.5 bg-[#F7EFE2] border-b border-sand-deep">
-        <div className="absolute -right-3 -top-3 w-[60px] h-[60px] rounded-full bg-terra/[0.07]" />
-        <div className="absolute right-4 -bottom-3 w-9 h-9 rounded-full bg-gold/10" />
+        <div className="absolute -right-3 -top-3 size-[60px] rounded-full bg-terra/[0.07]" />
+        <div className="absolute right-4 -bottom-3 size-9 rounded-full bg-gold/10" />
         <div className="font-artisan text-[24px] font-black text-espresso leading-[1.1] mb-1.5 relative z-10">
           Hechas con <span className="italic text-terra">amor</span>
         </div>
         <div className="flex items-center gap-1.5 mb-1.5 relative z-10">
           <div className="flex-1 h-px bg-gold opacity-40" />
-          <div className="w-1 h-1 rounded-full bg-gold opacity-60" />
+          <div className="size-1 rounded-full bg-gold opacity-60" />
           <div className="flex-1 h-px bg-gold opacity-40" />
         </div>
         <div className="text-[10px] font-semibold text-brown tracking-[0.08em] uppercase relative z-10">
@@ -117,9 +118,19 @@ export default function MenuPage() {
 
       <main className="flex-1 flex flex-col">
         {isLoading && (
-          <div className="text-center py-[60px] px-6 text-muted">
-            <span className="icon text-[32px] text-muted block mb-2">lunch_dining</span>
-            <div className="font-semibold">Cargando menú…</div>
+          <div className="flex-1">
+            {['sk-a', 'sk-b'].map((s) => (
+              <div key={s}>
+                <div className="pt-[18px] px-4 pb-3 bg-cream border-b border-sand">
+                  <div className="h-7 w-40 rounded-lg bg-sand animate-pulse" />
+                </div>
+                <div className="bg-ivory px-3 pt-2.5 pb-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                  {['c1', 'c2', 'c3'].map((c) => (
+                    <ProductoCardSkeleton key={`${s}-${c}`} />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         )}
 

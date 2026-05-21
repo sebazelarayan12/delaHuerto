@@ -16,12 +16,12 @@ const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
 export default function MenuHeader({ cantidadTotal, total, activeCat, categorias, banner, onOpenCarrito, onScrollToCategory }: Props) {
   return (
-    <header className="bg-gradient-to-br from-[#2C1208] to-[#5A2010] pt-5 px-4 sticky top-0 z-40">
+    <header className="bg-gradient-to-br from-espresso to-header-end pt-5 px-4 sticky top-0 z-40">
       <div className="flex items-center justify-between pb-4">
         <div className="flex items-center gap-2.5">
           <LogoMark />
           <div>
-            <div className="font-display text-[22px] font-extrabold text-gold-light leading-[1.1]">
+            <div className="font-artisan text-[22px] font-extrabold text-gold-light leading-[1.1]">
               De la Huerto
             </div>
             <div className="text-[12px] font-semibold text-gold tracking-[0.18em] uppercase mt-0.5">
@@ -35,7 +35,7 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
             onClick={onOpenCarrito}
             className="flex items-center gap-2 bg-white/10 border border-white/15 rounded-full py-2 pr-3.5 pl-2.5 cursor-pointer text-white font-sans transition-colors duration-200 hover:bg-white/20"
           >
-            <span className="bg-terra rounded-full w-[22px] h-[22px] flex items-center justify-center text-xs font-extrabold">
+            <span className="bg-terra rounded-full size-[22px] flex items-center justify-center text-xs font-extrabold">
               {cantidadTotal}
             </span>
             <span className="text-[13px] font-semibold">{fmt(total)}</span>

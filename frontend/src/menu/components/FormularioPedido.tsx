@@ -52,6 +52,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
   const [dupError, setDupError] = useState(false)
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
+  const [step, setStep] = useState<1 | 2>(1)
 
   const { register, handleSubmit, setValue, formState: { errors }, control } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -84,6 +85,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
     setDupError(false)
     setFechaSeleccionada(null)
     setCalendarOpen(false)
+    setStep(1)
     onClose()
   }
 
@@ -105,50 +107,76 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
           <>
             <div className="px-5 pt-2 pb-4 flex justify-between items-start border-b border-sand-deep shrink-0">
               <div>
-                <h2 className="font-display text-lg font-extrabold text-espresso">
-                  Datos del pedido
+                <h2 className="font-display text-lg font-semibold text-espresso">
+                  {step === 1 ? 'Tu pedido' : 'Tus datos'}
                 </h2>
                 <p className="text-[13px] text-muted mt-0.5">
-                  Completá tus datos para WhatsApp
+                  Paso {step} de 2
                 </p>
+              </div>
+              <div className="flex items-center gap-2">
+                {step === 2 && (
+                  <button
+                    type="button"
+                    onClick={() => setStep(1)}
+                    aria-label="Volver al resumen"
+                    className="bg-sand border-none rounded-full size-11 flex items-center justify-center cursor-pointer text-brown shrink-0"
+                  >
+                    <span className="icon text-[20px]">arrow_back</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  aria-label="Cerrar formulario"
+                  className="bg-sand border-none rounded-full size-11 flex items-center justify-center cursor-pointer text-brown shrink-0"
+                >
+                  <span className="icon text-[20px]">close</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Paso 1 — resumen del pedido */}
+            <div className={step === 1 ? 'flex-1 overflow-y-auto px-5 pt-5 pb-8 flex flex-col gap-5' : 'hidden'}>
+              <div className="bg-sand rounded-[14px] px-3.5 py-3">
+                {items.map((item) => (
+                  <div key={item.productoId} className="flex justify-between text-[13px] text-brown mb-1">
+                    <span className="font-semibold">{item.nombre} × {item.cantidad}</span>
+                    <span>{fmt(item.precio * item.cantidad)}</span>
+                  </div>
+                ))}
+                {montoDescuento > 0 && (
+                  <>
+                    <div className="flex justify-between pt-2 border-t border-sand-deep mt-1">
+                      <span className="text-muted text-[13px]">Subtotal</span>
+                      <span className="text-muted text-[13px]">{fmt(subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between mt-1">
+                      <span className="text-green-700 text-[13px] font-semibold">Descuento</span>
+                      <span className="text-green-700 text-[13px] font-semibold">-{fmt(montoDescuento)}</span>
+                    </div>
+                  </>
+                )}
+                <div className={`flex justify-between pt-2 mt-1 ${montoDescuento > 0 ? '' : 'border-t border-sand-deep'}`}>
+                  <span className="font-extrabold text-espresso text-sm">Total</span>
+                  <span className="font-extrabold text-terra text-sm">{fmt(total)}</span>
+                </div>
               </div>
               <button
                 type="button"
-                onClick={handleClose}
-                aria-label="Cerrar formulario"
-                className="bg-sand border-none rounded-full w-11 h-11 flex items-center justify-center cursor-pointer text-brown shrink-0"
+                onClick={() => setStep(2)}
+                className="w-full p-4 bg-terra border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(196,82,42,0.4)] transition-all duration-200 hover:bg-terra-dark"
               >
-                <span className="icon text-[20px]">close</span>
+                Continuar con mis datos
+                <span className="icon text-[20px]">arrow_forward</span>
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-5 pt-5 pb-8">
-              <div className="bg-sand rounded-[14px] px-3.5 py-3 mb-5">
-              {items.map((item) => (
-                <div key={item.productoId} className="flex justify-between text-[13px] text-brown mb-1">
-                  <span className="font-semibold">{item.nombre} × {item.cantidad}</span>
-                  <span>{fmt(item.precio * item.cantidad)}</span>
-                </div>
-              ))}
-              {montoDescuento > 0 && (
-                <>
-                  <div className="flex justify-between pt-2 border-t border-sand-deep mt-1">
-                    <span className="text-muted text-[13px]">Subtotal</span>
-                    <span className="text-muted text-[13px]">{fmt(subtotal)}</span>
-                  </div>
-                  <div className="flex justify-between mt-1">
-                    <span className="text-green-700 text-[13px] font-semibold">Descuento</span>
-                    <span className="text-green-700 text-[13px] font-semibold">-{fmt(montoDescuento)}</span>
-                  </div>
-                </>
-              )}
-              <div className={`flex justify-between pt-2 mt-1 ${montoDescuento > 0 ? '' : 'border-t border-sand-deep'}`}>
-                <span className="font-extrabold text-espresso text-sm">Total</span>
-                <span className="font-extrabold text-terra text-sm">{fmt(total)}</span>
-              </div>
-            </div>
-
-            <form onSubmit={handleSubmit(onSubmit)}>
+            {/* Paso 2 — formulario (siempre montado para preservar estado de RHF) */}
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className={step === 2 ? 'flex-1 overflow-y-auto px-5 pt-5 pb-8' : 'hidden'}
+            >
               <Field label="Nombre y apellido" error={errors.nombre?.message}>
                 <input type="text" placeholder="María González" {...register('nombre')} className="w-full px-3.5 py-3 border-[1.5px] border-sand-deep rounded-xl font-sans text-[15px] text-espresso bg-cream outline-none focus:border-terra" />
               </Field>
@@ -206,18 +234,17 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
 
               <button
                 type="submit"
-                className="w-full p-4 bg-[#25D366] border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2.5 shadow-[0_4px_16px_rgba(37,211,102,0.4)] mb-2 transition-transform duration-200 hover:scale-[1.02]"
+                className="w-full p-4 bg-whatsapp border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2.5 shadow-[0_4px_16px_rgba(37,211,102,0.4)] mb-2 transition-transform duration-200 hover:scale-[1.02]"
               >
                 <WhatsAppIcon />
                 Enviar pedido por WhatsApp
               </button>
             </form>
-          </div>
           </>
         ) : (
           <div className="px-7 pt-10 pb-8 text-center flex-1 overflow-y-auto">
             <span className="icon icon-fill text-[64px] text-terra block mb-4">celebration</span>
-            <h2 className="font-display text-2xl font-extrabold text-espresso mb-2">
+            <h2 className="font-display text-2xl font-semibold text-espresso mb-2">
               ¡Pedido enviado!
             </h2>
             <p className="text-muted leading-relaxed mb-7">
@@ -264,11 +291,11 @@ function RadioPill({ id, value, label, icon, register, name, checked }: {
         id={`p-${id}`}
         value={value}
         {...register(name)}
-        className="absolute opacity-0 w-0 h-0"
+        className="absolute opacity-0 size-0"
       />
       <label
         htmlFor={`p-${id}`}
-        className={`flex items-center justify-center gap-1.5 py-2.5 px-2 border-[1.5px] rounded-xl cursor-pointer text-sm font-semibold transition-all duration-150 ${checked ? 'border-terra text-terra bg-[#FDF0EB] ring-1 ring-terra' : 'border-sand-deep text-muted bg-cream hover:bg-sand'}`}
+        className={`w-full flex items-center justify-center gap-1.5 py-2.5 px-2 border-[1.5px] rounded-xl cursor-pointer text-sm font-semibold transition-all duration-150 ${checked ? 'border-terra text-terra bg-terra-light ring-1 ring-terra' : 'border-sand-deep text-muted bg-cream hover:bg-sand'}`}
       >
         <span className="icon text-[18px]">{icon}</span>
         {label}

@@ -48,7 +48,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
           {producto.nombre}
         </div>
         {producto.descripcion && (
-          <div className="text-[13px] text-muted leading-relaxed line-clamp-2 md:line-clamp-3">
+          <div className="text-[13px] text-brown leading-relaxed line-clamp-2 md:line-clamp-3">
             {producto.descripcion}
           </div>
         )}
@@ -65,7 +65,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
             <button
               onClick={onAgregar}
               aria-label={`Agregar ${producto.nombre}`}
-              className="w-11 h-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer"
+              className="size-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer"
             >
               <span className="icon text-[20px]">add</span>
             </button>
@@ -74,7 +74,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
               <button
                 onClick={onDecrementar}
                 aria-label="Reducir cantidad"
-                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
               >
                 −
               </button>
@@ -84,7 +84,7 @@ export default function ProductoCard({ producto, cantidad, onAgregar, onIncremen
               <button
                 onClick={onIncrementar}
                 aria-label="Aumentar cantidad"
-                className="w-11 h-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
               >
                 +
               </button>
