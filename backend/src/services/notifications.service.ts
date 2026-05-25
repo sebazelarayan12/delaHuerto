@@ -122,4 +122,26 @@ export class NotificationsService {
 
     console.log(`[NOTIF] Push enviado — ${pedidos.length} pedidos para manana`)
   }
+
+  static async forceSend() {
+    const suscripciones = await prisma.pushSubscription.findMany()
+    if (suscripciones.length === 0) return { sent: 0 }
+
+    const payload = JSON.stringify({
+      title: 'Test de notificacion',
+      body: 'Si ves esto, las push notifications funcionan correctamente.',
+    })
+
+    await Promise.allSettled(
+      suscripciones.map((sub) =>
+        webpush.sendNotification(
+          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+          payload
+        )
+      )
+    )
+
+    console.log(`[NOTIF] Force-send — ${suscripciones.length} suscripciones`)
+    return { sent: suscripciones.length }
+  }
 }
