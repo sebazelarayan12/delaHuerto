@@ -134,3 +134,21 @@ model AjusteStock {
 
   @@map("ajustes_stock")
 }
+
+model PushSubscription {
+  id       Int    @id @default(autoincrement())
+  endpoint String @unique
+  p256dh   String
+  auth     String
+
+  @@map("push_subscriptions")
+}
+
+model NotificationConfig {
+  id               Int     @id @default(autoincrement())
+  enabled          Boolean @default(true)
+  notificationTime String  @default("21:00")
+  lastSentDate     String?
+
+  @@map("notification_config")
+}

@@ -10,6 +10,9 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string().min(1),
   PORT: z.coerce.number().default(3000),
   ALLOWED_ORIGIN: z.string().default('http://localhost:5173'),
+  VAPID_PUBLIC_KEY: z.string().min(1),
+  VAPID_PRIVATE_KEY: z.string().min(1),
+  VAPID_EMAIL: z.string().email(),
 })
 
 export const env = envSchema.parse(process.env)
