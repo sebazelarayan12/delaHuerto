@@ -128,6 +128,29 @@ export default function DashboardPage() {
             ))}
           </div>
 
+          <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden mb-6">
+            <div className="px-5 py-4 border-b border-sand font-bold text-[15px]">
+              Accesos rapidos
+            </div>
+            <div className="px-4 py-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {[
+                { label: 'Gestionar categorias', icon: 'category', path: '/admin/categorias' },
+                { label: 'Gestionar productos', icon: 'inventory_2', path: '/admin/productos' },
+                { label: 'Gestionar stock', icon: 'inventory', path: '/admin/stock' },
+              ].map((l) => (
+                <button
+                  key={l.path}
+                  onClick={() => navigate(l.path)}
+                  className="flex items-center gap-2.5 px-3.5 py-[11px] rounded-[10px] border-[1.5px] border-sand-deep bg-transparent cursor-pointer w-full font-sans text-sm font-semibold text-brown transition-colors duration-150 hover:bg-sand/30"
+                >
+                  <span className="icon text-terra">{l.icon}</span>
+                  {l.label}
+                  <span className="icon ml-auto text-base text-muted">arrow_forward</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           <DeliveryDays />
           <NotificacionesConfig />
 
@@ -135,29 +158,6 @@ export default function DashboardPage() {
             <TopProductos ventas={todas} />
 
             <div className="flex flex-col gap-4 lg:gap-5">
-              <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
-                <div className="px-5 py-4 border-b border-sand font-bold text-[15px]">
-                  Accesos rapidos
-                </div>
-                <div className="px-4 py-3 flex flex-col gap-2">
-                  {[
-                    { label: 'Gestionar categorias', icon: 'category', path: '/admin/categorias' },
-                    { label: 'Gestionar productos', icon: 'inventory_2', path: '/admin/productos' },
-                    { label: 'Gestionar stock', icon: 'inventory', path: '/admin/stock' },
-                  ].map((l) => (
-                    <button
-                      key={l.path}
-                      onClick={() => navigate(l.path)}
-                      className="flex items-center gap-2.5 px-3.5 py-[11px] rounded-[10px] border-[1.5px] border-sand-deep bg-transparent cursor-pointer w-full font-sans text-sm font-semibold text-brown transition-colors duration-150 hover:bg-sand/30"
-                    >
-                      <span className="icon text-terra">{l.icon}</span>
-                      {l.label}
-                      <span className="icon ml-auto text-base text-muted">arrow_forward</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
                 <div className="px-5 py-4 border-b border-sand flex items-center gap-2">
                   <span className="font-bold text-[15px]">Productos no disponibles</span>
