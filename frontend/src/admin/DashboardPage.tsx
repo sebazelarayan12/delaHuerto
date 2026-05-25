@@ -11,6 +11,8 @@ import VentaForm from './ventas/VentaForm'
 import { getDailyRevenue } from './shared/revenueHelpers'
 import { Sparkline } from '../shared/components/Sparkline'
 import { TopProductos } from './dashboard/TopProductos'
+import DeliveryDays from './dashboard/DeliveryDays'
+import NotificacionesConfig from './dashboard/NotificacionesConfig'
 
 interface AdminProducto {
   id: number
@@ -82,7 +84,7 @@ export default function DashboardPage() {
       <div>
         <div className="px-4 lg:px-8 pt-6 lg:pt-8 flex justify-between items-start border-b border-sand-deep pb-5">
           <div>
-            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 34, fontWeight: 800, color: '#2C1208', lineHeight: 1.2, margin: 0 }}>
+            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 34, fontWeight: 600, color: '#2C1208', lineHeight: 1.2, margin: 0 }}>
               {greeting}
             </h1>
             <p className="text-sm text-muted mt-1">
@@ -126,32 +128,36 @@ export default function DashboardPage() {
             ))}
           </div>
 
+          <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden mb-6">
+            <div className="px-5 py-4 border-b border-sand font-bold text-[15px]">
+              Accesos rapidos
+            </div>
+            <div className="px-4 py-3 grid grid-cols-1 sm:grid-cols-3 gap-2">
+              {[
+                { label: 'Gestionar categorias', icon: 'category', path: '/admin/categorias' },
+                { label: 'Gestionar productos', icon: 'inventory_2', path: '/admin/productos' },
+                { label: 'Gestionar stock', icon: 'inventory', path: '/admin/stock' },
+              ].map((l) => (
+                <button
+                  key={l.path}
+                  onClick={() => navigate(l.path)}
+                  className="flex items-center gap-2.5 px-3.5 py-[11px] rounded-[10px] border-[1.5px] border-sand-deep bg-transparent cursor-pointer w-full font-sans text-sm font-semibold text-brown transition-colors duration-150 hover:bg-sand/30"
+                >
+                  <span className="icon text-terra">{l.icon}</span>
+                  {l.label}
+                  <span className="icon ml-auto text-base text-muted">arrow_forward</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <DeliveryDays />
+          <NotificacionesConfig />
+
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 lg:gap-5">
             <TopProductos ventas={todas} />
 
             <div className="flex flex-col gap-4 lg:gap-5">
-              <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
-                <div className="px-5 py-4 border-b border-sand font-bold text-[15px]">
-                  Accesos rapidos
-                </div>
-                <div className="px-4 py-3 flex flex-col gap-2">
-                  {[
-                    { label: 'Gestionar categorias', icon: 'category', path: '/admin/categorias' },
-                    { label: 'Gestionar productos', icon: 'inventory_2', path: '/admin/productos' },
-                  ].map((l) => (
-                    <button
-                      key={l.path}
-                      onClick={() => navigate(l.path)}
-                      className="flex items-center gap-2.5 px-3.5 py-[11px] rounded-[10px] border-[1.5px] border-sand-deep bg-transparent cursor-pointer w-full font-sans text-sm font-semibold text-brown transition-colors duration-150 hover:bg-sand/30"
-                    >
-                      <span className="icon text-terra">{l.icon}</span>
-                      {l.label}
-                      <span className="icon ml-auto text-base text-muted">arrow_forward</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               <div className="bg-white rounded-xl shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
                 <div className="px-5 py-4 border-b border-sand flex items-center gap-2">
                   <span className="font-bold text-[15px]">Productos no disponibles</span>
@@ -167,7 +173,7 @@ export default function DashboardPage() {
                 ) : (
                   unavailableProds.slice(0, 5).map((p) => (
                     <div key={p.id} className="flex items-center gap-2.5 px-4 py-2.5 border-t border-sand">
-                      <div className="w-9 h-9 rounded-lg bg-sand flex items-center justify-center text-lg shrink-0">
+                      <div className="size-9 rounded-lg bg-sand flex items-center justify-center text-lg shrink-0">
                         {p.fotoUrl ? (
                           <img src={p.fotoUrl} alt={p.nombre} className="w-full h-full object-cover rounded-lg" />
                         ) : <span className="icon text-[20px] text-muted">lunch_dining</span>}

@@ -5,6 +5,7 @@
   --font-display: 'Playfair Display', serif;
   --font-artisan: 'Fraunces', serif;
 
+  /* Primitives */
   --color-cream: #FDF6EC;
   --color-sand: #F3E8D8;
   --color-sand-deep: #E2CFB5;
@@ -18,11 +19,21 @@
   --color-muted: #9A7A66;
   --color-ivory: #FFFDF9;
   --color-gold-muted: #C49060;
+
+  /* Named values that were previously hardcoded */
+  --color-header-end: #5A2010;
+  --color-whatsapp: #25D366;
 }
 
 @keyframes waPulse {
   0%   { transform: scale(0.85); opacity: 0.6; }
   100% { transform: scale(1.4);  opacity: 0; }
+}
+
+@keyframes badgeBounce {
+  0%, 100% { transform: scale(1); }
+  40%       { transform: scale(1.45); }
+  70%       { transform: scale(0.88); }
 }
 
 * {
@@ -37,7 +48,7 @@ html {
 body {
   margin: 0;
   padding: 0;
-  background-color: #2C1208;
+  background-color: var(--color-espresso);
   -webkit-font-smoothing: antialiased;
   line-height: 1.5;
   font-size: 16px;
@@ -65,7 +76,7 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #E2CFB5;
+  background: var(--color-sand-deep);
   border-radius: 99px;
 }
 
@@ -74,4 +85,18 @@ body {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
   }
+}
+
+.grain-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  pointer-events: none;
+  user-select: none;
+}
+
+.diamond-pattern {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 20 20'%3E%3Cpath d='M10 1L19 10L10 19L1 10Z' fill='none' stroke='%23D4920A' stroke-width='0.5'/%3E%3C/svg%3E");
+  background-size: 20px 20px;
+  pointer-events: none;
+  user-select: none;
 }

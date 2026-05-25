@@ -3,9 +3,11 @@ import type { ReactNode } from 'react'
 import { useNavigate, useLocation } from 'react-router'
 
 import LogoMark from '../shared/components/LogoMark'
+import ErrorBoundary from '../shared/components/ErrorBoundary'
 
 const NAV = [
   { path: '/admin', label: 'Inicio', icon: 'dashboard' },
+  { path: '/admin/pedidos', label: 'Pedidos', icon: 'receipt_long' },
   { path: '/admin/categorias', label: 'Categorias', icon: 'category' },
   { path: '/admin/productos', label: 'Productos', icon: 'inventory_2' },
   { path: '/admin/stock', label: 'Stock', icon: 'warehouse' },
@@ -57,7 +59,7 @@ export default function AdminLayout({ children }: Props) {
 
       <div className="p-2 border-t border-white/10 pb-[max(1rem,env(safe-area-inset-bottom))]">
         <div className="flex items-center gap-2 px-3 py-2 pb-3">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-terra to-gold flex items-center justify-center text-white text-sm font-extrabold shrink-0">
+          <div className="size-8 rounded-full bg-gradient-to-br from-terra to-gold flex items-center justify-center text-white text-sm font-extrabold shrink-0">
             C
           </div>
           <div className="overflow-hidden">
@@ -117,7 +119,9 @@ export default function AdminLayout({ children }: Props) {
           <span className="font-display text-[15px] font-extrabold text-espresso">Huerto Admin</span>
         </div>
 
-        {children}
+        <ErrorBoundary>
+          {children}
+        </ErrorBoundary>
       </main>
     </div>
   )

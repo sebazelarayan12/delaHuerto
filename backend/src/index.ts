@@ -1,4 +1,5 @@
 import { serve } from '@hono/node-server'
+
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { logger } from 'hono/logger'
@@ -11,6 +12,9 @@ import { bannerPublicRoutes, bannerAdminRoutes } from './routes/banner.routes.js
 import { stockAdminRoutes } from './routes/stock.routes.js'
 import { ventasAdminRoutes } from './routes/ventas.routes.js'
 import { dashboardAdminRoutes } from './routes/dashboard.routes.js'
+import { pedidosAdminRoutes } from './routes/pedidos.routes.js'
+import { notificationsAdminRoutes } from './routes/notifications.routes.js'
+import { startNotificationsCron } from './jobs/notifications.cron.js'
 import { HttpError } from './utils/errors.js'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -27,7 +31,7 @@ app.use(
   '*',
   cors({
     origin: allowedOrigins,
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowHeaders: ['Content-Type', 'Authorization'],
   })
 )
@@ -41,6 +45,8 @@ app.route('/api/admin/banner', bannerAdminRoutes)
 app.route('/api/admin/stock', stockAdminRoutes)
 app.route('/api/admin/ventas', ventasAdminRoutes)
 app.route('/api/admin/dashboard', dashboardAdminRoutes)
+app.route('/api/admin/pedidos', pedidosAdminRoutes)
+app.route('/api/admin/notifications', notificationsAdminRoutes)
 
 app.get('/health', async (c) => {
   try {
@@ -79,4 +85,5 @@ console.log('allowedOrigins:', allowedOrigins)
 
 serve({ fetch: app.fetch, port }, () => {
   console.log(`Server running on http://localhost:${port}`)
+  startNotificationsCron()
 })

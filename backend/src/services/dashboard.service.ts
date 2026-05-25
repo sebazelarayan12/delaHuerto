@@ -38,7 +38,7 @@ export class DashboardService {
       prisma.$queryRaw<ProductoStockAlerta[]>`
         SELECT id, nombre, stock, stock_minimo, foto_url
         FROM productos
-        WHERE stock_minimo > 0 AND stock <= stock_minimo
+        WHERE stock_minimo > 0 AND stock <= stock_minimo AND eliminado = false
         ORDER BY (stock_minimo - stock) DESC
       `,
     ])
