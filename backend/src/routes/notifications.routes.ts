@@ -44,4 +44,9 @@ admin.put('/config', zValidator('json', configSchema), async (c) => {
   return c.json(config)
 })
 
+admin.post('/test-send', async (c) => {
+  await NotificationsService.sendDailyReminderIfNeeded()
+  return c.json({ ok: true })
+})
+
 export { admin as notificationsAdminRoutes }

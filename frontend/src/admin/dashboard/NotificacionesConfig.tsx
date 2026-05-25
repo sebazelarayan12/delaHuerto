@@ -90,7 +90,7 @@ export default function NotificacionesConfig() {
               disabled={!config || updateConfig.isPending}
               className={`relative w-11 h-6 rounded-full transition-colors duration-200 shrink-0 disabled:opacity-40 cursor-pointer ${config?.enabled ? 'bg-terra' : 'bg-sand-deep'}`}
             >
-              <span className={`absolute top-1 size-4 rounded-full bg-white shadow transition-transform duration-200 ${config?.enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+              <span className={`absolute top-0.5 left-0.5 size-5 rounded-full bg-white shadow transition-transform duration-200 ${config?.enabled ? 'translate-x-5' : 'translate-x-0'}`} />
             </button>
           </div>
 
