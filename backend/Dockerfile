@@ -1,7 +1,5 @@
 FROM node:20-alpine
 
-ENV NODE_ENV=production
-
 WORKDIR /app
 
 COPY package*.json ./
@@ -15,6 +13,8 @@ RUN echo "Cache bust: $CACHEBUST"
 
 COPY . .
 RUN npm run build
+
+ENV NODE_ENV=production
 
 EXPOSE 3000
 
