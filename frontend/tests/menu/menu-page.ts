@@ -6,7 +6,7 @@ export class MenuPage extends BasePage {
 
   constructor(page: Page) {
     super(page)
-    this.cartFab = page.getByRole('button', { name: /ver pedido|carrito/i })
+    this.cartFab = page.getByRole('button', { name: 'Ver carrito' })
   }
 
   async goto(): Promise<void> {
@@ -23,6 +23,6 @@ export class MenuPage extends BasePage {
   }
 
   async openCarrito(): Promise<void> {
-    await this.page.getByRole('button', { name: /ver pedido/i }).click()
+    await this.page.getByRole('button', { name: 'Ver carrito' }).click()
   }
 }
