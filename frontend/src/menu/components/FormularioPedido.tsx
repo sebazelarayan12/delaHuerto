@@ -71,7 +71,8 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
       setErrorPago(null)
       setRedirigiendo(true)
       try {
-        const initPoint = await crearPreferenceMercadoPago(items, data)
+        const fechaEntregaISO = fechaSeleccionada ? fechaSeleccionada.toISOString() : data.fechaEntrega
+        const initPoint = await crearPreferenceMercadoPago(items, { ...data, fechaEntrega: fechaEntregaISO })
         window.location.href = initPoint
       } catch {
         setRedirigiendo(false)

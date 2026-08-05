@@ -37,7 +37,8 @@ export class PedidosService {
 
   static async createPedido(data: CreatePedidoInput) {
     const total = data.items.reduce((acc, i) => acc + i.precioUnitario * i.cantidad, 0)
-    const fechaEntrega = data.fechaEntrega ? new Date(data.fechaEntrega) : new Date()
+    const fechaEntregaParseada = data.fechaEntrega ? new Date(data.fechaEntrega) : null
+    const fechaEntrega = fechaEntregaParseada && !isNaN(fechaEntregaParseada.getTime()) ? fechaEntregaParseada : new Date()
 
     return prisma.pedido.create({
       data: {
