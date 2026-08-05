@@ -82,6 +82,17 @@ enum EstadoPedido {
   cancelado
 }
 
+enum MetodoPago {
+  efectivo
+  transferencia
+  mercadopago
+}
+
+enum EstadoPago {
+  pendiente
+  pagado
+}
+
 model Pedido {
   id            Int           @id @default(autoincrement())
   estado        EstadoPedido  @default(pendiente)
@@ -91,6 +102,9 @@ model Pedido {
   notas         String?
   fechaEntrega  DateTime      @map("fecha_entrega")
   total         Decimal       @db.Decimal(10, 2)
+  metodoPago    MetodoPago    @default(efectivo) @map("metodo_pago")
+  estadoPago    EstadoPago    @default(pendiente) @map("estado_pago")
+  mpPaymentId   String?       @unique @map("mp_payment_id")
   ventaId       Int?          @unique @map("venta_id")
   venta         Venta?        @relation(fields: [ventaId], references: [id])
   items         ItemPedido[]
