@@ -1,5 +1,6 @@
 import { mpPayment } from '../lib/mercadopago.js'
 import { PedidosService } from './pedidos.service.js'
+import { prisma } from '../db.js'
 
 interface MetadataCheckout {
   nombre: string
@@ -26,15 +27,19 @@ export class MercadoPagoWebhookService {
     }
 
     const metadata = payment.metadata as unknown as MetadataCheckout
-    const additionalInfo = payment.additional_info?.items ?? []
+
+    const productoIds = metadata.items.map((item) => item.productoId)
+    const productos = await prisma.producto.findMany({ where: { id: { in: productoIds } } })
 
     const items = metadata.items.map((item) => {
-      const infoItem = additionalInfo.find((i) => i.id === String(item.productoId))
-      const precioUnitario = infoItem?.unit_price ? Number(infoItem.unit_price) : 0
+      const producto = productos.find((p) => p.id === item.productoId)
+      if (!producto) {
+        throw new Error(`Producto ${item.productoId} no encontrado al procesar pago ${payment.id} - pedido no creado`)
+      }
       return {
         productoId: item.productoId,
         cantidad: item.cantidad,
-        precioUnitario,
+        precioUnitario: Number(producto.precio),
       }
     })
 
