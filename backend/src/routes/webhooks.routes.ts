@@ -22,6 +22,11 @@ function verificarFirmaMercadoPago(xSignature: string | undefined, xRequestId: s
   const manifest = `id:${dataId.toLowerCase()};request-id:${xRequestId};ts:${ts};`
   const esperado = createHmac('sha256', env.MP_WEBHOOK_SECRET).update(manifest).digest('hex')
 
+  console.log('[DEBUG firma] manifest:', manifest)
+  console.log('[DEBUG firma] esperado:', esperado)
+  console.log('[DEBUG firma] recibido:', v1)
+  console.log('[DEBUG firma] secretLen:', env.MP_WEBHOOK_SECRET.length)
+
   const esperadoBuf = Buffer.from(esperado, 'hex')
   const recibidoBuf = Buffer.from(v1, 'hex')
   if (esperadoBuf.length !== recibidoBuf.length) return false
