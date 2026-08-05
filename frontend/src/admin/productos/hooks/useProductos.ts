@@ -59,7 +59,7 @@ export function useProductos() {
     mutationFn: ({ id, disponible }: { id: number; disponible: boolean }) => {
       const fd = new FormData()
       fd.append('disponible', String(disponible))
-      return api.put(`/api/admin/productos/${id}`, fd, {
+      return api.put<ProductoAdmin>(`/api/admin/productos/${id}`, fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
     },
