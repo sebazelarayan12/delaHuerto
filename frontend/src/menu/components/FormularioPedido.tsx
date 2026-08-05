@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { ItemCarrito } from '../hooks/useCarrito'
 import { enviarPedidoWhatsApp } from '../helpers/whatsapp.helper'
+import { crearPreferenceMercadoPago } from '../helpers/checkout.helper'
 import { getFechasDisponibles, formatFechaLarga, formatFechaCorta } from '../helpers/fechaEntrega.helper'
 import SelectorFechaEntrega from './SelectorFechaEntrega'
 
@@ -13,7 +14,7 @@ const schema = z.object({
   nombre: z.string().min(2, 'El nombre es muy corto').max(50, 'El nombre es muy largo').regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras'),
   telefono: z.string().refine(val => val.replace(/\D/g, '').length >= 10, 'Debe tener al menos 10 números (ej: 11 1234 5678)'),
   direccion: z.string().min(6, 'Ingresá calle y altura (ej: San Martín 123)'),
-  metodoPago: z.enum(['efectivo', 'transferencia']),
+  metodoPago: z.enum(['efectivo', 'transferencia', 'mercadopago']),
   notas: z.string().optional(),
   fechaEntrega: z.string().min(1, 'Selecciona una fecha de entrega'),
 })
@@ -53,6 +54,8 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
   const [fechaSeleccionada, setFechaSeleccionada] = useState<Date | null>(null)
   const [calendarOpen, setCalendarOpen] = useState(false)
   const [step, setStep] = useState<1 | 2>(1)
+  const [redirigiendo, setRedirigiendo] = useState(false)
+  const [errorPago, setErrorPago] = useState<string | null>(null)
 
   const { register, handleSubmit, setValue, formState: { errors }, control } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -61,14 +64,29 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
 
   const metodoPago = useWatch({ control, name: 'metodoPago' })
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    const { metodoPago } = data
+
+    if (metodoPago === 'mercadopago') {
+      setErrorPago(null)
+      setRedirigiendo(true)
+      try {
+        const initPoint = await crearPreferenceMercadoPago(items, data)
+        window.location.href = initPoint
+      } catch {
+        setRedirigiendo(false)
+        setErrorPago('No se pudo iniciar el pago. Intenta de nuevo o elegi otro metodo.')
+      }
+      return
+    }
+
     const enviados = getPedidosEnviados()
     if (enviados.includes(data.telefono)) {
       setDupError(true)
       return
     }
     setDupError(false)
-    enviarPedidoWhatsApp(items, data)
+    enviarPedidoWhatsApp(items, { ...data, metodoPago })
     registrarPedido(data.telefono)
     setSent(true)
     onSuccess()
@@ -226,6 +244,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                 <div className="flex gap-2.5">
                   <RadioPill id="ef" value="efectivo" label="Efectivo" icon="payments" register={register} name="metodoPago" checked={metodoPago === 'efectivo'} />
                   <RadioPill id="tr" value="transferencia" label="Transferencia" icon="account_balance" register={register} name="metodoPago" checked={metodoPago === 'transferencia'} />
+                  <RadioPill id="mp" value="mercadopago" label="Mercado Pago" icon="credit_card" register={register} name="metodoPago" checked={metodoPago === 'mercadopago'} />
                 </div>
               </Field>
               <Field label="Notas (opcional)">
@@ -234,11 +253,21 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
 
               <button
                 type="submit"
-                className="w-full p-4 bg-whatsapp border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2.5 shadow-[0_4px_16px_rgba(37,211,102,0.4)] mb-2 transition-transform duration-200 hover:scale-[1.02]"
+                disabled={redirigiendo}
+                className={`w-full p-4 border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2.5 mb-2 transition-transform duration-200 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed ${metodoPago === 'mercadopago' ? 'bg-terra shadow-[0_4px_16px_rgba(196,82,42,0.4)]' : 'bg-whatsapp shadow-[0_4px_16px_rgba(37,211,102,0.4)]'}`}
               >
-                <WhatsAppIcon />
-                Enviar pedido por WhatsApp
+                {metodoPago === 'mercadopago' ? (
+                  redirigiendo ? 'Redirigiendo a Mercado Pago...' : 'Pagar con Mercado Pago'
+                ) : (
+                  <>
+                    <WhatsAppIcon />
+                    Enviar pedido por WhatsApp
+                  </>
+                )}
               </button>
+              {errorPago && (
+                <span className="text-xs text-red-600 mt-1 block text-center">{errorPago}</span>
+              )}
             </form>
           </>
         ) : (
