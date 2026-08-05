@@ -1,4 +1,10 @@
+import { config } from 'dotenv'
 import { z } from 'zod'
+
+const modo = process.env.NODE_ENV === 'production' ? 'production' : 'development'
+
+config({ path: `.env.${modo}` })
+config()
 
 const envSchema = z.object({
   DATABASE_URL: z.string().min(1),
