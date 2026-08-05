@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 import { z } from 'zod'
 
-const modo = process.env.NODE_ENV === 'production' ? 'production' : 'development'
+export const modo = process.env.NODE_ENV === 'production' ? 'production' : 'development'
 
 config({ path: `.env.${modo}` })
 config()

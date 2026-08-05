@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { MercadoPagoWebhookService } from '../services/mercadopago-webhook.service.js'
-import { env } from '../env.js'
+import { env, modo } from '../env.js'
 
 const publicRoutes = new Hono()
 
@@ -21,11 +21,6 @@ function verificarFirmaMercadoPago(xSignature: string | undefined, xRequestId: s
 
   const manifest = `id:${dataId.toLowerCase()};request-id:${xRequestId};ts:${ts};`
   const esperado = createHmac('sha256', env.MP_WEBHOOK_SECRET).update(manifest).digest('hex')
-
-  console.log('[DEBUG firma] manifest:', manifest)
-  console.log('[DEBUG firma] esperado:', esperado)
-  console.log('[DEBUG firma] recibido:', v1)
-  console.log('[DEBUG firma] secretLen:', env.MP_WEBHOOK_SECRET.length)
 
   const esperadoBuf = Buffer.from(esperado, 'hex')
   const recibidoBuf = Buffer.from(v1, 'hex')
@@ -58,8 +53,11 @@ publicRoutes.post('/mercadopago', async (c) => {
   const firmaValida = verificarFirmaMercadoPago(c.req.header('x-signature'), c.req.header('x-request-id'), dataIdParaFirma)
 
   if (!firmaValida) {
-    console.log('[POST] /api/webhooks/mercadopago - firma invalida, notificacion rechazada')
-    return c.json({ error: 'Firma invalida' }, 401)
+    if (modo === 'production') {
+      console.log('[POST] /api/webhooks/mercadopago - firma invalida, notificacion rechazada')
+      return c.json({ error: 'Firma invalida' }, 401)
+    }
+    console.log('[POST] /api/webhooks/mercadopago - firma invalida ignorada (modo development, MP a veces firma con secret distinto al del panel en sandbox); se revalida el pago contra la API de MP igual')
   }
 
   console.log('[POST] /api/webhooks/mercadopago - payment id:', paymentId)
