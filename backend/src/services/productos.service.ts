@@ -54,6 +54,7 @@ export class ProductosService {
     precioUnidad?: number
     disponible?: boolean
     orden?: number
+    stock?: number
   }, file: File | null) {
     if (data.orden !== undefined && data.categoriaId !== undefined) {
       const dup = await prisma.producto.findFirst({ where: { orden: data.orden, categoriaId: data.categoriaId, NOT: { id } } })
@@ -61,6 +62,11 @@ export class ProductosService {
     }
 
     const updateData: Record<string, unknown> = { ...data }
+
+    if (data.disponible === true) {
+      const stockActual = data.stock ?? (await prisma.producto.findUnique({ where: { id }, select: { stock: true } }))?.stock ?? 0
+      if (stockActual <= 0) updateData.disponible = false
+    }
 
     if (file && file.size > 0) {
       const existing = await prisma.producto.findUnique({ where: { id } })
