@@ -13,6 +13,10 @@ const envSchema = z.object({
   VAPID_PUBLIC_KEY: z.string().min(1),
   VAPID_PRIVATE_KEY: z.string().min(1),
   VAPID_EMAIL: z.string().email(),
+  MP_ACCESS_TOKEN: z.string().min(1),
+  MP_PUBLIC_KEY: z.string().min(1),
+  FRONTEND_URL: z.string().min(1),
+  BACKEND_URL: z.string().min(1),
 })
 
 export const env = envSchema.parse(process.env)
