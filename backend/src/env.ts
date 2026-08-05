@@ -21,7 +21,7 @@ const envSchema = z.object({
   VAPID_EMAIL: z.string().email(),
   MP_ACCESS_TOKEN: z.string().min(1),
   MP_PUBLIC_KEY: z.string().min(1),
-  MP_WEBHOOK_SECRET: z.string().min(1).optional(),
+  MP_WEBHOOK_SECRET: z.preprocess((v) => (v === '' ? undefined : v), z.string().min(1).optional()),
   FRONTEND_URL: z.string().min(1),
   BACKEND_URL: z.string().min(1),
 })
