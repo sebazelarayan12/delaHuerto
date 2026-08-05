@@ -50,6 +50,7 @@ export class PedidosService {
         total,
         metodoPago: data.metodoPago ?? 'efectivo',
         estadoPago: data.estadoPago ?? 'pendiente',
+        estado: data.estadoPago === 'pagado' ? 'por_entregar' : 'pendiente',
         mpPaymentId: data.mpPaymentId ?? null,
         items: {
           create: data.items.map((i) => ({
