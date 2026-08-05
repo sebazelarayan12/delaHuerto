@@ -14,6 +14,9 @@ interface CreatePedidoInput {
   notas?: string
   fechaEntrega?: string
   items: ItemInput[]
+  metodoPago?: 'efectivo' | 'transferencia' | 'mercadopago'
+  estadoPago?: 'pendiente' | 'pagado'
+  mpPaymentId?: string
 }
 
 const PEDIDO_INCLUDE = {
@@ -44,6 +47,9 @@ export class PedidosService {
         notas: data.notas ?? null,
         fechaEntrega,
         total,
+        metodoPago: data.metodoPago ?? 'efectivo',
+        estadoPago: data.estadoPago ?? 'pendiente',
+        mpPaymentId: data.mpPaymentId ?? null,
         items: {
           create: data.items.map((i) => ({
             productoId: i.productoId,
@@ -145,5 +151,9 @@ export class PedidosService {
     }
 
     await prisma.pedido.delete({ where: { id } })
+  }
+
+  static async findByMpPaymentId(mpPaymentId: string) {
+    return prisma.pedido.findUnique({ where: { mpPaymentId } })
   }
 }
