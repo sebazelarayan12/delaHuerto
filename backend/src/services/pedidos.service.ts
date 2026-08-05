@@ -40,7 +40,7 @@ export class PedidosService {
     const fechaEntregaParseada = data.fechaEntrega ? new Date(data.fechaEntrega) : null
     const fechaEntrega = fechaEntregaParseada && !isNaN(fechaEntregaParseada.getTime()) ? fechaEntregaParseada : new Date()
 
-    return prisma.pedido.create({
+    const pedido = await prisma.pedido.create({
       data: {
         nombre: data.nombre,
         telefono: data.telefono ?? null,
@@ -50,7 +50,6 @@ export class PedidosService {
         total,
         metodoPago: data.metodoPago ?? 'efectivo',
         estadoPago: data.estadoPago ?? 'pendiente',
-        estado: data.estadoPago === 'pagado' ? 'por_entregar' : 'pendiente',
         mpPaymentId: data.mpPaymentId ?? null,
         items: {
           create: data.items.map((i) => ({
@@ -62,6 +61,12 @@ export class PedidosService {
       },
       include: PEDIDO_INCLUDE,
     })
+
+    if (data.estadoPago === 'pagado') {
+      return this.cambiarEstado(pedido.id, 'por_entregar')
+    }
+
+    return pedido
   }
 
   static async cambiarEstado(id: number, nuevoEstado: 'por_entregar' | 'entregado' | 'cancelado') {
