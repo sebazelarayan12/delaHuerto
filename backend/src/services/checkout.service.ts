@@ -1,5 +1,5 @@
 import { prisma } from '../db.js'
-import { mpPreference } from '../lib/mercadopago.js'
+import { getMpPreferenceClient } from '../lib/mercadopago.js'
 import { env } from '../env.js'
 import { HttpError, NotFoundError } from '../utils/errors.js'
 
@@ -57,6 +57,11 @@ export class CheckoutService {
         cantidad: item.cantidad,
         precio_unitario: mpItems.find((mi) => mi.id === String(item.productoId))!.unit_price,
       })),
+    }
+
+    const mpPreference = await getMpPreferenceClient()
+    if (!mpPreference) {
+      throw new HttpError(503, 'Pago no disponible, contactar al administrador')
     }
 
     const result = await mpPreference.create({

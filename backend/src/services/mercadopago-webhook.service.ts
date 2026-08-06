@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { mpPayment } from '../lib/mercadopago.js'
+import { getMpPaymentClient } from '../lib/mercadopago.js'
 import { PedidosService } from './pedidos.service.js'
 import { prisma } from '../db.js'
 
@@ -23,6 +23,12 @@ const metadataCheckoutSchema = z.object({
 
 export class MercadoPagoWebhookService {
   static async procesarNotificacion(paymentId: string): Promise<{ procesado: boolean }> {
+    const mpPayment = await getMpPaymentClient()
+    if (!mpPayment) {
+      console.error(`[webhook mercadopago] no hay token de MP disponible (produccion sin cuenta conectada) - no se puede procesar pago ${paymentId}`)
+      return { procesado: false }
+    }
+
     const payment = await mpPayment.get({ id: paymentId })
 
     if (payment.status !== 'approved') {
