@@ -30,6 +30,9 @@ export class CheckoutService {
       const producto = productos.find((p) => p.id === item.productoId)
       if (!producto) throw new NotFoundError(`Producto ${item.productoId} no encontrado`)
       if (!producto.disponible) throw new HttpError(409, `"${producto.nombre}" ya no esta disponible`)
+      if (producto.stock < item.cantidad) {
+        throw new HttpError(409, `Stock insuficiente para "${producto.nombre}": disponible ${producto.stock}, requerido ${item.cantidad}`)
+      }
 
       return {
         id: String(producto.id),
@@ -40,13 +43,20 @@ export class CheckoutService {
       }
     })
 
+    // El precio se congela en la metadata al momento del checkout. El webhook usa este
+    // precio (no el precio actual del producto) para que un cambio de precio entre el
+    // pago y la llegada del webhook no desalinee lo cobrado por MP con lo registrado.
     const metadata = {
       nombre: input.nombre,
       telefono: input.telefono ?? null,
       direccion: input.direccion ?? null,
       notas: input.notas ?? null,
       fechaEntrega: input.fechaEntrega ?? null,
-      items: input.items,
+      items: input.items.map((item) => ({
+        producto_id: item.productoId,
+        cantidad: item.cantidad,
+        precio_unitario: mpItems.find((mi) => mi.id === String(item.productoId))!.unit_price,
+      })),
     }
 
     const result = await mpPreference.create({

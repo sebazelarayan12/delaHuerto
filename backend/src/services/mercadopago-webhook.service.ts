@@ -1,15 +1,25 @@
+import { z } from 'zod'
 import { mpPayment } from '../lib/mercadopago.js'
 import { PedidosService } from './pedidos.service.js'
 import { prisma } from '../db.js'
 
-interface MetadataCheckout {
-  nombre: string
-  telefono: string | null
-  direccion: string | null
-  notas: string | null
-  fecha_entrega: string | null
-  items: Array<{ producto_id: number; cantidad: number }>
-}
+// MP normaliza la metadata a snake_case y a veces la stringifica -> coerce defensivo.
+const metadataCheckoutSchema = z.object({
+  nombre: z.string().min(1),
+  telefono: z.string().nullable().optional(),
+  direccion: z.string().nullable().optional(),
+  notas: z.string().nullable().optional(),
+  fecha_entrega: z.string().nullable().optional(),
+  items: z
+    .array(
+      z.object({
+        producto_id: z.coerce.number().int().positive(),
+        cantidad: z.coerce.number().int().positive(),
+        precio_unitario: z.coerce.number().nonnegative(),
+      })
+    )
+    .min(1),
+})
 
 export class MercadoPagoWebhookService {
   static async procesarNotificacion(paymentId: string): Promise<{ procesado: boolean }> {
@@ -26,7 +36,14 @@ export class MercadoPagoWebhookService {
       return { procesado: true }
     }
 
-    const metadata = payment.metadata as unknown as MetadataCheckout
+    const metadataParseada = metadataCheckoutSchema.safeParse(payment.metadata)
+    if (!metadataParseada.success) {
+      // Metadata invalida (ej. pago que no vino del checkout propio, link manual) - no hay
+      // nada que reintentar, se marca como procesado para que MP no reintente para siempre.
+      console.error(`[webhook mercadopago] pago ${paymentId} con metadata invalida, pedido no creado:`, metadataParseada.error.flatten())
+      return { procesado: false }
+    }
+    const metadata = metadataParseada.data
 
     const productoIds = metadata.items.map((item) => item.producto_id)
     const productos = await prisma.producto.findMany({ where: { id: { in: productoIds } } })
@@ -36,12 +53,23 @@ export class MercadoPagoWebhookService {
       if (!producto) {
         throw new Error(`Producto ${item.producto_id} no encontrado al procesar pago ${payment.id} - pedido no creado`)
       }
+      // Precio congelado en la metadata al momento del checkout, no el precio actual del
+      // producto - evita que un cambio de precio entre el pago y el webhook desalinee lo
+      // cobrado por MP con lo registrado.
       return {
         productoId: item.producto_id,
         cantidad: item.cantidad,
-        precioUnitario: Number(producto.precio),
+        precioUnitario: item.precio_unitario,
       }
     })
+
+    const totalCalculado = items.reduce((acc, i) => acc + i.precioUnitario * i.cantidad, 0)
+    const montoPagado = Number(payment.transaction_amount ?? 0)
+    if (Math.abs(totalCalculado - montoPagado) > 0.01) {
+      console.error(
+        `[webhook mercadopago] pago ${paymentId}: total calculado (${totalCalculado}) no coincide con transaction_amount de MP (${montoPagado}) - se registra igual, revisar manualmente`
+      )
+    }
 
     await PedidosService.createPedido({
       nombre: metadata.nombre,
