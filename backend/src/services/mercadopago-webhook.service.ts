@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { getMpPaymentClient } from '../lib/mercadopago.js'
 import { PedidosService } from './pedidos.service.js'
 import { prisma } from '../db.js'
+import { HttpError } from '../utils/errors.js'
 
 // MP normaliza la metadata a snake_case y a veces la stringifica -> coerce defensivo.
 const metadataCheckoutSchema = z.object({
@@ -26,7 +27,7 @@ export class MercadoPagoWebhookService {
     const mpPayment = await getMpPaymentClient()
     if (!mpPayment) {
       console.error(`[webhook mercadopago] no hay token de MP disponible (produccion sin cuenta conectada) - no se puede procesar pago ${paymentId}`)
-      return { procesado: false }
+      throw new HttpError(503, 'Mercado Pago no esta conectado, no se puede procesar el pago')
     }
 
     const payment = await mpPayment.get({ id: paymentId })

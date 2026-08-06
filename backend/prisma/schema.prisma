@@ -173,8 +173,9 @@ model MercadoPagoConnection {
   refreshToken  String   @map("refresh_token")
   publicKey     String   @map("public_key")
   mpUserId      String   @map("mp_user_id")
-  expiresAt     DateTime @map("expires_at")
-  conectadoEn   DateTime @default(now()) @map("conectado_en")
+  expiresAt        DateTime @map("expires_at")
+  intentosFallidos Int      @default(0) @map("intentos_fallidos")
+  conectadoEn      DateTime @default(now()) @map("conectado_en")
   actualizadoEn DateTime @updatedAt @map("actualizado_en")
 
   @@map("mercado_pago_connections")

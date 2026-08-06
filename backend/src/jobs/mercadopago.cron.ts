@@ -18,10 +18,16 @@ export function startMercadoPagoCron() {
       console.log('[CRON] Token de Mercado Pago renovado')
     } catch (err) {
       console.error('[CRON] Error renovando token de Mercado Pago:', err)
-      await NotificationsService.notifyAdmins(
-        'Mercado Pago desconectado',
-        'No se pudo renovar la conexion. Los pagos online estan deshabilitados hasta reconectar desde el panel.'
-      )
+      const connection = await MercadoPagoOAuthService.getConnection()
+      if (connection) {
+        const intentos = await MercadoPagoOAuthService.registrarFalloRefresh(connection.id)
+        if (intentos <= 3) {
+          await NotificationsService.notifyAdmins(
+            'Mercado Pago desconectado',
+            'No se pudo renovar la conexion. Los pagos online estan deshabilitados hasta reconectar desde el panel.'
+          )
+        }
+      }
     }
   })
 

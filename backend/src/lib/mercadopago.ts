@@ -8,7 +8,7 @@ import { env, modo } from '../env.js'
 // cortar el flujo (503 en checkout, log + procesado:false en el webhook).
 export async function getMpAccessToken(): Promise<string | null> {
   const connection = await prisma.mercadoPagoConnection.findFirst()
-  if (connection) return connection.accessToken
+  if (connection && connection.expiresAt > new Date() && connection.intentosFallidos < 3) return connection.accessToken
   if (modo === 'production') return null
   return env.MP_ACCESS_TOKEN
 }
