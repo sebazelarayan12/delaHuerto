@@ -59,11 +59,22 @@ export function useProductos() {
     mutationFn: ({ id, disponible }: { id: number; disponible: boolean }) => {
       const fd = new FormData()
       fd.append('disponible', String(disponible))
-      return api.put(`/api/admin/productos/${id}`, fd, {
+      return api.put<ProductoAdmin>(`/api/admin/productos/${id}`, fd, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
     },
-    onSuccess: () => {
+    onMutate: async ({ id, disponible }) => {
+      await qc.cancelQueries({ queryKey: ['productos', 'admin'] })
+      const previous = qc.getQueryData<ProductoAdmin[]>(['productos', 'admin'])
+      qc.setQueryData<ProductoAdmin[]>(['productos', 'admin'], (old) =>
+        old?.map((p) => (p.id === id ? { ...p, disponible } : p))
+      )
+      return { previous }
+    },
+    onError: (_err, _vars, context) => {
+      if (context?.previous) qc.setQueryData(['productos', 'admin'], context.previous)
+    },
+    onSettled: () => {
       qc.invalidateQueries({ queryKey: ['productos'] })
       qc.invalidateQueries({ queryKey: ['categorias'] })
     },

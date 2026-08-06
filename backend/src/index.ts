@@ -14,6 +14,8 @@ import { ventasAdminRoutes } from './routes/ventas.routes.js'
 import { dashboardAdminRoutes } from './routes/dashboard.routes.js'
 import { pedidosAdminRoutes } from './routes/pedidos.routes.js'
 import { notificationsAdminRoutes } from './routes/notifications.routes.js'
+import { checkoutPublicRoutes } from './routes/checkout.routes.js'
+import { webhooksPublicRoutes } from './routes/webhooks.routes.js'
 import { startNotificationsCron } from './jobs/notifications.cron.js'
 import { HttpError } from './utils/errors.js'
 
@@ -47,6 +49,8 @@ app.route('/api/admin/ventas', ventasAdminRoutes)
 app.route('/api/admin/dashboard', dashboardAdminRoutes)
 app.route('/api/admin/pedidos', pedidosAdminRoutes)
 app.route('/api/admin/notifications', notificationsAdminRoutes)
+app.route('/api/checkout', checkoutPublicRoutes)
+app.route('/api/webhooks', webhooksPublicRoutes)
 
 app.get('/health', async (c) => {
   try {

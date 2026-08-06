@@ -4,8 +4,14 @@
 .env
 .env.local
 .env.*.local
+.env.development
+.env.production
 backend/.env
 frontend/.env
+backend/.env.development
+backend/.env.production
+frontend/.env.development
+frontend/.env.production
 
 # ──────────────────────────────────────────────
 # Dependencias
@@ -62,6 +68,13 @@ desktop.ini
 # Brainstorming / design sessions (temporales)
 # ──────────────────────────────────────────────
 .superpowers/
+.docs/
+docs/
+
+# ──────────────────────────────────────────────
+# Engram (memoria persistente local)
+# ──────────────────────────────────────────────
+.engram/
 
 # ──────────────────────────────────────────────
 # Playwright

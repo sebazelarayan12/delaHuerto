@@ -166,6 +166,12 @@ Esto le dice a Prisma "esta migracion ya esta aplicada, no la corras de nuevo".
 - `Producto`: desactivar con `disponible: false`
 - `prisma.categoria.delete()` y `prisma.producto.delete()` estan prohibidos desde la API
 
+## Infraestructura y deploy
+
+Hoy: frontend en Cloudflare Pages, backend en Railway (dos ambientes: `main` produccion, `development` testing).
+
+**MIGRACION PLANEADA (aviso 2026-08-05, aun no ejecutada):** backend y base de datos se van a migrar al VPS propio via Dokploy (Railway deja de usarse para eso). El frontend SIGUE en Cloudflare Pages — no migra. La DB de desarrollo ya vive en Dokploy. No asumir Railway como destino final de cambios de infra del backend sin confirmar primero si la migracion ya se hizo. No tomar acciones de migracion sin instruccion explicita.
+
 ## Seguridad y buenas prácticas
 
 - Mantener credenciales y datos sensibles fuera del repositorio — respetar `.gitignore` (`.env*`)

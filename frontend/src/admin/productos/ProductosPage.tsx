@@ -116,7 +116,11 @@ export default function ProductosPage() {
   }
 
   const handleToggle = async (prod: ProductoAdmin) => {
-    await toggleDisponible.mutateAsync({ id: prod.id, disponible: !prod.disponible })
+    const nuevoValor = !prod.disponible
+    const res = await toggleDisponible.mutateAsync({ id: prod.id, disponible: nuevoValor })
+    if (nuevoValor && !res.data.disponible) {
+      toast.error(`"${prod.nombre}" no tiene stock: agregá stock antes de marcarlo disponible`)
+    }
   }
 
   const openEdit = (prod: ProductoAdmin) => dispatch({ type: 'OPEN_EDIT', payload: prod })
