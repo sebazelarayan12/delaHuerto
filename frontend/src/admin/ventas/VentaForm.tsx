@@ -15,6 +15,7 @@ const itemSchema = z.object({
 const ventaSchema = z.object({
   items: z.array(itemSchema).min(1, { message: 'Agregar al menos un producto' }),
   notas: z.string().optional(),
+  fecha: z.string().min(1, { message: 'Fecha requerida' }),
 })
 
 type VentaFormData = z.infer<typeof ventaSchema>
@@ -31,9 +32,11 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
     queryFn: async () => (await api.get<ProductoAdmin[]>('/api/admin/productos')).data,
   })
 
+  const hoy = new Date().toISOString().split('T')[0]
+
   const form = useForm<VentaFormData>({
     resolver: zodResolver(ventaSchema),
-    defaultValues: { items: [{ productoId: 0, cantidad: 1, precioUnitario: 0 }], notas: '' },
+    defaultValues: { items: [{ productoId: 0, cantidad: 1, precioUnitario: 0 }], notas: '', fecha: hoy },
   })
 
   const { fields, append, remove } = useFieldArray({
@@ -59,7 +62,8 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
         cantidad: Number(i.cantidad),
         precioUnitario: Number(i.precioUnitario),
       })),
-      data.notas || undefined
+      data.notas || undefined,
+      data.fecha
     )
   }
 
@@ -172,17 +176,34 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
             <span className="font-display text-[22px] font-extrabold text-terra">{fmt(total)}</span>
           </div>
 
-          <div>
-            <label htmlFor="venta-notas" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">
-              Notas (opcional)
-            </label>
-            <input
-              id="venta-notas"
-              type="text"
-              placeholder="Ej: Cliente Juan, pago en efectivo"
-              {...form.register('notas')}
-              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
-            />
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <label htmlFor="venta-fecha" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">
+                Fecha
+              </label>
+              <input
+                id="venta-fecha"
+                type="date"
+                {...form.register('fecha')}
+                className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+              />
+              {form.formState.errors.fecha && (
+                <p className="text-xs text-red-600 mt-1">{form.formState.errors.fecha.message}</p>
+              )}
+            </div>
+
+            <div className="flex-[2]">
+              <label htmlFor="venta-notas" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">
+                Notas (opcional)
+              </label>
+              <input
+                id="venta-notas"
+                type="text"
+                placeholder="Ej: Cliente Juan, pago en efectivo"
+                {...form.register('notas')}
+                className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+              />
+            </div>
           </div>
         </form>
 
