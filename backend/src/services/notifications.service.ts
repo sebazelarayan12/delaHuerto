@@ -140,6 +140,7 @@ export class NotificationsService {
       title: 'Test de notificacion',
       body: 'Si ves esto, las push notifications funcionan correctamente.',
     })
+    if (result.sent === 0) return result
     console.log(`[NOTIF] Force-send - ${result.sent} suscripciones`)
     return result
   }
