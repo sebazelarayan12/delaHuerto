@@ -18,6 +18,7 @@ import { mercadopagoAdminRoutes } from './routes/mercadopago.routes.js'
 import { checkoutPublicRoutes } from './routes/checkout.routes.js'
 import { webhooksPublicRoutes } from './routes/webhooks.routes.js'
 import { startNotificationsCron } from './jobs/notifications.cron.js'
+import { startMercadoPagoCron } from './jobs/mercadopago.cron.js'
 import { HttpError } from './utils/errors.js'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -92,4 +93,5 @@ console.log('allowedOrigins:', allowedOrigins)
 serve({ fetch: app.fetch, port }, () => {
   console.log(`Server running on http://localhost:${port}`)
   startNotificationsCron()
+  startMercadoPagoCron()
 })
