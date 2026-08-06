@@ -40,33 +40,78 @@ export class PedidosService {
     const fechaEntregaParseada = data.fechaEntrega ? new Date(data.fechaEntrega) : null
     const fechaEntrega = fechaEntregaParseada && !isNaN(fechaEntregaParseada.getTime()) ? fechaEntregaParseada : new Date()
 
-    const pedido = await prisma.pedido.create({
-      data: {
-        nombre: data.nombre,
-        telefono: data.telefono ?? null,
-        direccion: data.direccion ?? null,
-        notas: data.notas ?? null,
-        fechaEntrega,
-        total,
-        metodoPago: data.metodoPago ?? 'efectivo',
-        estadoPago: data.estadoPago ?? 'pendiente',
-        mpPaymentId: data.mpPaymentId ?? null,
-        items: {
-          create: data.items.map((i) => ({
-            productoId: i.productoId,
-            cantidad: i.cantidad,
-            precioUnitario: i.precioUnitario,
-          })),
-        },
-      },
-      include: PEDIDO_INCLUDE,
-    })
-
-    if (data.estadoPago === 'pagado') {
-      return this.cambiarEstado(pedido.id, 'por_entregar')
+    const datosBase = {
+      nombre: data.nombre,
+      telefono: data.telefono ?? null,
+      direccion: data.direccion ?? null,
+      notas: data.notas ?? null,
+      fechaEntrega,
+      total,
+      metodoPago: data.metodoPago ?? 'efectivo',
+      estadoPago: data.estadoPago ?? 'pendiente',
+      mpPaymentId: data.mpPaymentId ?? null,
     }
 
-    return pedido
+    if (data.estadoPago !== 'pagado') {
+      return prisma.pedido.create({
+        data: {
+          ...datosBase,
+          items: { create: data.items.map((i) => ({ productoId: i.productoId, cantidad: i.cantidad, precioUnitario: i.precioUnitario })) },
+        },
+        include: PEDIDO_INCLUDE,
+      })
+    }
+
+    // Pedido ya pagado (ej. confirmado por webhook de MP): crear pedido, generar venta y
+    // descontar stock en una unica transaccion. Si el stock falla, el pedido NUNCA se
+    // commitea, evitando que quede un pedido pagado huerfano sin venta asociada.
+    return prisma.$transaction(async (tx) => {
+      const productoIds = data.items.map((i) => i.productoId)
+      const productos = await tx.producto.findMany({ where: { id: { in: productoIds } } })
+
+      for (const item of data.items) {
+        const prod = productos.find((p) => p.id === item.productoId)
+        if (!prod) throw new NotFoundError(`Producto ${item.productoId} no encontrado`)
+        if (prod.stock < item.cantidad) {
+          throw new HttpError(409, `Stock insuficiente para "${prod.nombre}": disponible ${prod.stock}, requerido ${item.cantidad}`)
+        }
+      }
+
+      const venta = await tx.venta.create({ data: { total, notas: data.nombre } })
+
+      await tx.itemVenta.createMany({
+        data: data.items.map((i) => ({
+          ventaId: venta.id,
+          productoId: i.productoId,
+          cantidad: i.cantidad,
+          precioUnitario: i.precioUnitario,
+        })),
+      })
+
+      await Promise.all(
+        data.items.map((item) => {
+          const prod = productos.find((p) => p.id === item.productoId)!
+          const nuevoStock = prod.stock - item.cantidad
+          return tx.producto.update({
+            where: { id: item.productoId },
+            data: {
+              stock: { decrement: item.cantidad },
+              ...(nuevoStock <= 0 ? { disponible: false } : {}),
+            },
+          })
+        })
+      )
+
+      return tx.pedido.create({
+        data: {
+          ...datosBase,
+          estado: 'por_entregar',
+          ventaId: venta.id,
+          items: { create: data.items.map((i) => ({ productoId: i.productoId, cantidad: i.cantidad, precioUnitario: i.precioUnitario })) },
+        },
+        include: PEDIDO_INCLUDE,
+      })
+    })
   }
 
   static async cambiarEstado(id: number, nuevoEstado: 'por_entregar' | 'entregado' | 'cancelado') {
