@@ -23,8 +23,9 @@ export class PedidosPage extends BasePage {
     await this.page.getByRole('button', { name: /historial/i }).click()
   }
 
-  async clickFiltro(label: 'Todos' | 'Por pagar' | 'Por entregar'): Promise<void> {
-    await this.page.getByRole('button', { name: label, exact: true }).click()
+  async clickFiltro(label: 'Por pagar' | 'Por entregar'): Promise<void> {
+    const nombreAccesible = label === 'Por pagar' ? /pendientes por pagar/i : /pendientes por entregar/i
+    await this.page.getByRole('button', { name: nombreAccesible }).click()
   }
 
   async buscarEnHistorial(texto: string): Promise<void> {
