@@ -1,12 +1,6 @@
--- CreateTable
-CREATE TABLE "descuentos_categoria" (
-    "id" SERIAL NOT NULL,
-    "categoria_id" INTEGER NOT NULL,
-    "cantidad_minima" INTEGER NOT NULL,
-    "porcentaje" DOUBLE PRECISION NOT NULL,
-
-    CONSTRAINT "descuentos_categoria_pkey" PRIMARY KEY ("id")
-);
-
--- AddForeignKey
-ALTER TABLE "descuentos_categoria" ADD CONSTRAINT "descuentos_categoria_categoria_id_fkey" FOREIGN KEY ("categoria_id") REFERENCES "categorias"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- Esta migracion quedo vacia a proposito: la tabla "descuentos_categoria" ya fue
+-- creada por la migracion 0_init (duplicado por error historico). El contenido
+-- original volvia a crear la misma tabla, lo que rompia "prisma migrate dev" en
+-- cualquier base de datos 100% fresca (shadow DB incluida) con el error P3006
+-- "relation already exists". No se elimina el archivo para no invalidar el
+-- checksum de esta migracion ya aplicada en las bases de datos reales.
