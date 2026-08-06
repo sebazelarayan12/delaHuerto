@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { createHmac, timingSafeEqual } from 'node:crypto'
 import { MercadoPagoWebhookService } from '../services/mercadopago-webhook.service.js'
+import { MercadoPagoOAuthService } from '../services/mercadopago-oauth.service.js'
 import { env, modo } from '../env.js'
 
 const publicRoutes = new Hono()
@@ -63,6 +64,26 @@ publicRoutes.post('/mercadopago', async (c) => {
   console.log('[POST] /api/webhooks/mercadopago - payment id:', paymentId)
   await MercadoPagoWebhookService.procesarNotificacion(paymentId)
   return c.json({ ok: true })
+})
+
+publicRoutes.get('/mercadopago/oauth/callback', async (c) => {
+  const code = c.req.query('code')
+  const state = c.req.query('state')
+
+  if (!code || !state || !MercadoPagoOAuthService.verifyState(state)) {
+    console.error('[GET] /api/webhooks/mercadopago/oauth/callback - state invalido o code faltante')
+    return c.redirect(`${env.FRONTEND_URL}/admin?mp=error`)
+  }
+
+  try {
+    const token = await MercadoPagoOAuthService.exchangeCodeForToken(code)
+    await MercadoPagoOAuthService.saveConnection(token)
+    console.log(`[GET] /api/webhooks/mercadopago/oauth/callback - conectado mpUserId ${token.user_id}`)
+    return c.redirect(`${env.FRONTEND_URL}/admin?mp=conectado`)
+  } catch (err) {
+    console.error('[GET] /api/webhooks/mercadopago/oauth/callback - error intercambiando code:', err)
+    return c.redirect(`${env.FRONTEND_URL}/admin?mp=error`)
+  }
 })
 
 export { publicRoutes as webhooksPublicRoutes }
