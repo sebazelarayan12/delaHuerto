@@ -1,5 +1,6 @@
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import type { AxiosError } from 'axios'
 import { mercadopagoApi } from '../../api/mercadopago'
 
 export default function MercadoPagoConexion() {
@@ -13,7 +14,10 @@ export default function MercadoPagoConexion() {
     onSuccess: (data) => {
       window.location.href = data.url
     },
-    onError: () => toast.error('No se pudo iniciar la conexion con Mercado Pago'),
+    onError: (error) => {
+      const msg = (error as AxiosError<{ error: string }>).response?.data?.error ?? 'No se pudo iniciar la conexion con Mercado Pago'
+      toast.error(msg)
+    },
   })
 
   return (

@@ -67,6 +67,13 @@ publicRoutes.post('/mercadopago', async (c) => {
 })
 
 publicRoutes.get('/mercadopago/oauth/callback', async (c) => {
+  // Defensa en profundidad: /authorize ya bloquea esto fuera de produccion, pero si
+  // llegara un state valido igual (ej. copiado a mano) no se guarda la conexion.
+  if (modo !== 'production') {
+    console.error('[GET] /api/webhooks/mercadopago/oauth/callback - callback recibido fuera de produccion, ignorado')
+    return c.redirect(`${env.FRONTEND_URL}/admin?mp=error`)
+  }
+
   const code = c.req.query('code')
   const state = c.req.query('state')
 
