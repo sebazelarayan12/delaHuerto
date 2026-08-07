@@ -14,9 +14,11 @@ import { ventasAdminRoutes } from './routes/ventas.routes.js'
 import { dashboardAdminRoutes } from './routes/dashboard.routes.js'
 import { pedidosAdminRoutes } from './routes/pedidos.routes.js'
 import { notificationsAdminRoutes } from './routes/notifications.routes.js'
+import { mercadopagoAdminRoutes } from './routes/mercadopago.routes.js'
 import { checkoutPublicRoutes } from './routes/checkout.routes.js'
 import { webhooksPublicRoutes } from './routes/webhooks.routes.js'
 import { startNotificationsCron } from './jobs/notifications.cron.js'
+import { startMercadoPagoCron } from './jobs/mercadopago.cron.js'
 import { HttpError } from './utils/errors.js'
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -49,6 +51,7 @@ app.route('/api/admin/ventas', ventasAdminRoutes)
 app.route('/api/admin/dashboard', dashboardAdminRoutes)
 app.route('/api/admin/pedidos', pedidosAdminRoutes)
 app.route('/api/admin/notifications', notificationsAdminRoutes)
+app.route('/api/admin/mercadopago', mercadopagoAdminRoutes)
 app.route('/api/checkout', checkoutPublicRoutes)
 app.route('/api/webhooks', webhooksPublicRoutes)
 
@@ -90,4 +93,5 @@ console.log('allowedOrigins:', allowedOrigins)
 serve({ fetch: app.fetch, port }, () => {
   console.log(`Server running on http://localhost:${port}`)
   startNotificationsCron()
+  startMercadoPagoCron()
 })

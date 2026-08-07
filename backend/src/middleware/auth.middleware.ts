@@ -10,6 +10,9 @@ export const authMiddleware = createMiddleware(async (c, next) => {
   const token = authHeader.slice(7)
   try {
     const decoded = jwt.verify(token, env.JWT_SECRET, { algorithms: ['HS256'] }) as jwt.JwtPayload
+    if (decoded.role !== 'admin') {
+      return c.json({ error: 'Token invalido o expirado' }, 401)
+    }
     c.set('jwtPayload', decoded)
     await next()
   } catch (err) {

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router'
+import { useMemo, useState, useEffect } from 'react'
+import { useNavigate, useSearchParams } from 'react-router'
 import { useQuery } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { api } from '../api/axios'
@@ -13,6 +13,7 @@ import { Sparkline } from '../shared/components/Sparkline'
 import { TopProductos } from './dashboard/TopProductos'
 import DeliveryDays from './dashboard/DeliveryDays'
 import NotificacionesConfig from './dashboard/NotificacionesConfig'
+import MercadoPagoConexion from './dashboard/MercadoPagoConexion'
 
 interface AdminProducto {
   id: number
@@ -27,6 +28,17 @@ const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
 export default function DashboardPage() {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  useEffect(() => {
+    const mp = searchParams.get('mp')
+    if (mp === 'conectado') {
+      toast.success('Mercado Pago conectado correctamente')
+      setSearchParams({}, { replace: true })
+    } else if (mp === 'error') {
+      toast.error('No se pudo conectar Mercado Pago, intenta de nuevo')
+      setSearchParams({}, { replace: true })
+    }
+  }, [searchParams])
 
   const { data: categorias } = useQuery({
     queryKey: ['categorias', 'admin'],
@@ -153,6 +165,7 @@ export default function DashboardPage() {
 
           <DeliveryDays />
           <NotificacionesConfig />
+          <MercadoPagoConexion />
 
           <div className="grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] gap-4 lg:gap-5">
             <TopProductos ventas={todas} />

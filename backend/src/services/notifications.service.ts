@@ -71,6 +71,28 @@ export class NotificationsService {
     })
   }
 
+  private static async sendPushToAll(payload: { title: string; body: string }): Promise<{ sent: number }> {
+    const suscripciones = await prisma.pushSubscription.findMany()
+    if (suscripciones.length === 0) return { sent: 0 }
+
+    const json = JSON.stringify(payload)
+    await Promise.allSettled(
+      suscripciones.map((sub) =>
+        webpush.sendNotification(
+          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
+          json
+        )
+      )
+    )
+    return { sent: suscripciones.length }
+  }
+
+  static async notifyAdmins(title: string, body: string): Promise<{ sent: number }> {
+    const result = await NotificationsService.sendPushToAll({ title, body })
+    console.log(`[NOTIF] Alerta enviada: "${title}" - ${result.sent} suscripciones`)
+    return result
+  }
+
   static async sendDailyReminderIfNeeded() {
     const config = await prisma.notificationConfig.findFirst()
     if (!config || !config.enabled) return
@@ -92,28 +114,18 @@ export class NotificationsService {
 
     if (pedidos.length === 0) return
 
-    const suscripciones = await prisma.pushSubscription.findMany()
-    if (suscripciones.length === 0) return
-
     const names = pedidos
       .slice(0, 3)
       .map((p) => p.nombre)
       .join(', ')
     const extra = pedidos.length > 3 ? ` y ${pedidos.length - 3} mas` : ''
 
-    const payload = JSON.stringify({
+    const payload = {
       title: `Pedidos para manana (${pedidos.length})`,
       body: `${names}${extra}`,
-    })
-
-    await Promise.allSettled(
-      suscripciones.map((sub) =>
-        webpush.sendNotification(
-          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-          payload
-        )
-      )
-    )
+    }
+    const result = await NotificationsService.sendPushToAll(payload)
+    if (result.sent === 0) return
 
     await prisma.notificationConfig.update({
       where: { id: config.id },
@@ -124,24 +136,12 @@ export class NotificationsService {
   }
 
   static async forceSend() {
-    const suscripciones = await prisma.pushSubscription.findMany()
-    if (suscripciones.length === 0) return { sent: 0 }
-
-    const payload = JSON.stringify({
+    const result = await NotificationsService.sendPushToAll({
       title: 'Test de notificacion',
       body: 'Si ves esto, las push notifications funcionan correctamente.',
     })
-
-    await Promise.allSettled(
-      suscripciones.map((sub) =>
-        webpush.sendNotification(
-          { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-          payload
-        )
-      )
-    )
-
-    console.log(`[NOTIF] Force-send — ${suscripciones.length} suscripciones`)
-    return { sent: suscripciones.length }
+    if (result.sent === 0) return result
+    console.log(`[NOTIF] Force-send - ${result.sent} suscripciones`)
+    return result
   }
 }
