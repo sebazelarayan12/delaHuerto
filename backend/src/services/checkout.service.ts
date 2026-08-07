@@ -37,6 +37,9 @@ export class CheckoutService {
       return {
         id: String(producto.id),
         title: producto.nombre,
+        description: producto.descripcion ?? undefined,
+        picture_url: producto.fotoUrl ?? undefined,
+        category_id: 'food',
         quantity: item.cantidad,
         unit_price: Number(producto.precio),
         currency_id: 'ARS',
@@ -64,10 +67,20 @@ export class CheckoutService {
       throw new HttpError(503, 'Pago no disponible, contactar al administrador')
     }
 
+    // Solo se permite pagar con dinero en cuenta de MP o tarjeta de debito -- se excluye
+    // tarjeta de credito, efectivo en puntos de pago (ticket) y la linea de credito propia
+    // de MP (mercado_credito).
     const result = await mpPreference.create({
       body: {
         items: mpItems,
         metadata,
+        payment_methods: {
+          excluded_payment_types: [
+            { id: 'credit_card' },
+            { id: 'ticket' },
+            { id: 'mercado_credito' },
+          ],
+        },
         back_urls: {
           success: `${env.FRONTEND_URL}/pedido/exito`,
           failure: `${env.FRONTEND_URL}/pedido/error`,
