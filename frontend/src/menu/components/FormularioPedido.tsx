@@ -6,9 +6,8 @@ import type { ItemCarrito } from '../hooks/useCarrito'
 import { enviarPedidoWhatsApp } from '../helpers/whatsapp.helper'
 import { crearPreferenceMercadoPago } from '../helpers/checkout.helper'
 import { getFechasDisponibles, formatFechaLarga, formatFechaCorta } from '../helpers/fechaEntrega.helper'
+import { useDeliveryDias } from '../../shared/hooks/useDeliveryDias'
 import SelectorFechaEntrega from './SelectorFechaEntrega'
-
-const FECHAS_DISPONIBLES = getFechasDisponibles()
 
 const schema = z.object({
   nombre: z.string().min(2, 'El nombre es muy corto').max(50, 'El nombre es muy largo').regex(/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/, 'Solo se permiten letras'),
@@ -63,6 +62,8 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
   })
 
   const metodoPago = useWatch({ control, name: 'metodoPago' })
+  const { dias } = useDeliveryDias()
+  const fechasDisponibles = getFechasDisponibles(dias)
 
   const onSubmit = async (data: FormData) => {
     const { metodoPago } = data
@@ -214,7 +215,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
               </Field>
               <Field label="Fecha de entrega" error={errors.fechaEntrega?.message}>
                 <div className="relative">
-                  {FECHAS_DISPONIBLES.length === 0 ? (
+                  {fechasDisponibles.length === 0 ? (
                     <p className="text-[13px] px-1 text-terra">
                       No hay fechas de entrega disponibles por el momento.
                     </p>
@@ -230,7 +231,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                       </button>
                       {calendarOpen && (
                         <SelectorFechaEntrega
-                          fechasDisponibles={FECHAS_DISPONIBLES}
+                          fechasDisponibles={fechasDisponibles}
                           selected={fechaSeleccionada}
                           onSelect={handleSelectFecha}
                           onClose={() => setCalendarOpen(false)}

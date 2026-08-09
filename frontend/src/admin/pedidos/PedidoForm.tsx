@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api/axios'
+import { useDeliveryDias } from '../../shared/hooks/useDeliveryDias'
 import type { ProductoAdmin } from '../productos/hooks/useProductos'
 import type { CreatePedidoInput } from './hooks/usePedidos'
 import {
@@ -10,18 +11,6 @@ import {
   getDeliveryDayWarning,
   getEnabledDaysHint,
 } from './helpers/pedido.helpers'
-
-const STORAGE_KEY = 'huerto_delivery_days'
-const DEFAULT_DAYS: boolean[] = [true, true, true, true, true, true, false]
-
-function loadDeliveryDays(): boolean[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    const parsed = raw ? JSON.parse(raw) : null
-    if (Array.isArray(parsed) && parsed.length === 7) return parsed
-  } catch {}
-  return [...DEFAULT_DAYS]
-}
 
 const itemSchema = z.object({
   productoId: z.coerce.number().int().positive({ message: 'Seleccionar producto' }),
@@ -47,7 +36,7 @@ interface Props {
 }
 
 export default function PedidoForm({ onClose, onSave, loading }: Props) {
-  const deliveryDays = loadDeliveryDays()
+  const { dias: deliveryDays } = useDeliveryDias()
   const todayStr = toYMD(new Date())
 
   const { data: productos = [] } = useQuery<ProductoAdmin[]>({

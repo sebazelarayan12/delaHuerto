@@ -1,24 +1,32 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
+import { useQueryClient, useMutation } from '@tanstack/react-query'
+import { deliveryDiasApi } from '../../api/deliveryDias'
+import { useDeliveryDias } from '../../shared/hooks/useDeliveryDias'
 
-const STORAGE_KEY = 'huerto_delivery_days'
-const DEFAULT_DAYS: boolean[] = [true, true, true, true, true, true, false]
 const LABELS = ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'] as const
 
-function loadDays(): boolean[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    const parsed = raw ? JSON.parse(raw) : null
-    if (Array.isArray(parsed) && parsed.length === 7) return parsed
-  } catch {}
-  return [...DEFAULT_DAYS]
-}
-
 export default function DeliveryDays() {
-  const [draft, setDraft] = useState<boolean[]>(loadDays)
+  const queryClient = useQueryClient()
+  const { dias, isLoading } = useDeliveryDias()
+  const [draft, setDraft] = useState<boolean[]>(dias)
   const [saved, setSaved] = useState(true)
 
+  useEffect(() => {
+    if (!isLoading) setDraft(dias)
+  }, [isLoading, dias])
+
   const activeCount = draft.filter(Boolean).length
+
+  const updateDias = useMutation({
+    mutationFn: deliveryDiasApi.update,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['delivery-dias'] })
+      setSaved(true)
+      toast.success('Dias de entrega guardados')
+    },
+    onError: () => toast.error('No se pudo guardar'),
+  })
 
   function handleToggle(i: number) {
     setDraft(prev => {
@@ -30,9 +38,7 @@ export default function DeliveryDays() {
   }
 
   function handleSave() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(draft))
-    setSaved(true)
-    toast.success('Dias de entrega guardados')
+    updateDias.mutate(draft)
   }
 
   return (
@@ -68,7 +74,7 @@ export default function DeliveryDays() {
           <button
             type="button"
             onClick={handleSave}
-            disabled={saved}
+            disabled={saved || updateDias.isPending}
             className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition-colors duration-150 bg-terra text-white disabled:opacity-40 disabled:cursor-not-allowed hover:bg-terra-dark"
           >
             <span className="icon text-[16px]">save</span>

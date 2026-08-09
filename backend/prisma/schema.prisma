@@ -167,6 +167,13 @@ model NotificationConfig {
   @@map("notification_config")
 }
 
+model DeliveryConfig {
+  id   Int       @id @default(autoincrement())
+  dias Boolean[] @default([true, true, true, true, true, true, false])
+
+  @@map("delivery_config")
+}
+
 model MercadoPagoConnection {
   id            Int      @id @default(autoincrement())
   accessToken   String   @map("access_token")
