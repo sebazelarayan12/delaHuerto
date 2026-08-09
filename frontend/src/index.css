@@ -23,6 +23,9 @@
   /* Named values that were previously hardcoded */
   --color-header-end: #5A2010;
   --color-whatsapp: #25D366;
+  --color-mercadopago: #009EE3;
+  --color-mercadopago-dark: #0089C7;
+  --color-mercadopago-light: #E5F6FD;
 }
 
 @keyframes waPulse {

@@ -242,10 +242,12 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                 </div>
               </Field>
               <Field label="Método de pago" error={errors.metodoPago?.message}>
-                <div className="flex gap-2.5">
-                  <RadioPill id="ef" value="efectivo" label="Efectivo" icon="payments" register={register} name="metodoPago" checked={metodoPago === 'efectivo'} />
-                  <RadioPill id="tr" value="transferencia" label="Transferencia" icon="account_balance" register={register} name="metodoPago" checked={metodoPago === 'transferencia'} />
-                  <RadioPill id="mp" value="mercadopago" label="Mercado Pago" icon="credit_card" register={register} name="metodoPago" checked={metodoPago === 'mercadopago'} />
+                <div className="flex flex-col gap-2.5">
+                  <RadioPill id="mp" value="mercadopago" label="Mercado Pago" icon="account_balance_wallet" register={register} name="metodoPago" checked={metodoPago === 'mercadopago'} variant="mercadopago" />
+                  <div className="flex gap-2.5">
+                    <RadioPill id="ef" value="efectivo" label="Efectivo" icon="payments" register={register} name="metodoPago" checked={metodoPago === 'efectivo'} />
+                    <RadioPill id="tr" value="transferencia" label="Transferencia" icon="account_balance" register={register} name="metodoPago" checked={metodoPago === 'transferencia'} />
+                  </div>
                 </div>
               </Field>
               <Field label="Notas (opcional)">
@@ -255,7 +257,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
               <button
                 type="submit"
                 disabled={redirigiendo}
-                className={`w-full p-4 border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2.5 mb-2 transition-transform duration-200 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed ${metodoPago === 'mercadopago' ? 'bg-terra shadow-[0_4px_16px_rgba(196,82,42,0.4)]' : 'bg-whatsapp shadow-[0_4px_16px_rgba(37,211,102,0.4)]'}`}
+                className={`w-full p-4 border-none rounded-[14px] text-white font-sans text-base font-bold cursor-pointer flex items-center justify-center gap-2.5 mb-2 transition-transform duration-200 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed ${metodoPago === 'mercadopago' ? 'bg-mercadopago shadow-[0_4px_16px_rgba(0,158,227,0.4)]' : 'bg-whatsapp shadow-[0_4px_16px_rgba(37,211,102,0.4)]'}`}
               >
                 {metodoPago === 'mercadopago' ? (
                   redirigiendo ? 'Redirigiendo a Mercado Pago...' : 'Pagar con Mercado Pago'
@@ -305,7 +307,7 @@ function Field({ label, error, children }: { label: string; error?: string; chil
   )
 }
 
-function RadioPill({ id, value, label, icon, register, name, checked }: {
+function RadioPill({ id, value, label, icon, register, name, checked, variant = 'default' }: {
   id: string
   value: string
   label: string
@@ -313,9 +315,11 @@ function RadioPill({ id, value, label, icon, register, name, checked }: {
   register: ReturnType<typeof useForm<FormData>>['register']
   name: keyof FormData
   checked: boolean
+  variant?: 'default' | 'mercadopago'
 }) {
+  const isMp = variant === 'mercadopago'
   return (
-    <div className="flex-1 relative">
+    <div className={isMp ? 'relative w-full' : 'flex-1 relative'}>
       <input
         type="radio"
         id={`p-${id}`}
@@ -325,9 +329,13 @@ function RadioPill({ id, value, label, icon, register, name, checked }: {
       />
       <label
         htmlFor={`p-${id}`}
-        className={`w-full flex items-center justify-center gap-1.5 py-2.5 px-2 border-[1.5px] rounded-xl cursor-pointer text-sm font-semibold transition-all duration-150 ${checked ? 'border-terra text-terra bg-terra-light ring-1 ring-terra' : 'border-sand-deep text-muted bg-cream hover:bg-sand'}`}
+        className={
+          isMp
+            ? `w-full flex items-center justify-center gap-2 py-3.5 px-3 border-2 rounded-xl cursor-pointer text-[15px] font-bold transition-all duration-150 ${checked ? 'border-mercadopago-dark text-white bg-mercadopago-dark shadow-[0_4px_14px_rgba(0,137,199,0.4)]' : 'border-mercadopago-dark text-mercadopago-dark bg-mercadopago-light hover:bg-mercadopago-dark hover:text-white'}`
+            : `w-full flex items-center justify-center gap-1.5 py-2.5 px-2 border-[1.5px] rounded-xl cursor-pointer text-sm font-semibold transition-all duration-150 ${checked ? 'border-terra text-terra bg-terra-light ring-1 ring-terra' : 'border-sand-deep text-muted bg-cream hover:bg-sand'}`
+        }
       >
-        <span className="icon text-[18px]">{icon}</span>
+        <span className={`icon ${isMp ? 'text-[20px]' : 'text-[18px]'}`}>{icon}</span>
         {label}
       </label>
     </div>
