@@ -65,17 +65,28 @@ export class PedidosService {
     // Pedido ya pagado (ej. confirmado por webhook de MP): crear pedido, generar venta y
     // descontar stock en una unica transaccion. Si el stock falla, el pedido NUNCA se
     // commitea, evitando que quede un pedido pagado huerfano sin venta asociada.
-    return prisma.$transaction(async (tx) => {
-      const productoIds = data.items.map((i) => i.productoId)
-      const productos = await tx.producto.findMany({ where: { id: { in: productoIds } } })
+    const productoIds = data.items.map((i) => i.productoId)
 
+    return prisma.$transaction(async (tx) => {
+      // updateMany con WHERE stock >= cantidad: el chequeo y el decrement son una unica
+      // sentencia SQL atomica. Evita que dos pagos concurrentes por el mismo producto lean
+      // el mismo stock antes de que ninguno commitee y ambos pasen la validacion (oversell).
       for (const item of data.items) {
-        const prod = productos.find((p) => p.id === item.productoId)
-        if (!prod) throw new NotFoundError(`Producto ${item.productoId} no encontrado`)
-        if (prod.stock < item.cantidad) {
+        const { count } = await tx.producto.updateMany({
+          where: { id: item.productoId, stock: { gte: item.cantidad } },
+          data: { stock: { decrement: item.cantidad } },
+        })
+        if (count === 0) {
+          const prod = await tx.producto.findUnique({ where: { id: item.productoId } })
+          if (!prod) throw new NotFoundError(`Producto ${item.productoId} no encontrado`)
           throw new HttpError(409, `Stock insuficiente para "${prod.nombre}": disponible ${prod.stock}, requerido ${item.cantidad}`)
         }
       }
+
+      await tx.producto.updateMany({
+        where: { id: { in: productoIds }, stock: { lte: 0 } },
+        data: { disponible: false },
+      })
 
       const venta = await tx.venta.create({ data: { total, notas: data.nombre } })
 
@@ -87,20 +98,6 @@ export class PedidosService {
           precioUnitario: i.precioUnitario,
         })),
       })
-
-      await Promise.all(
-        data.items.map((item) => {
-          const prod = productos.find((p) => p.id === item.productoId)!
-          const nuevoStock = prod.stock - item.cantidad
-          return tx.producto.update({
-            where: { id: item.productoId },
-            data: {
-              stock: { decrement: item.cantidad },
-              ...(nuevoStock <= 0 ? { disponible: false } : {}),
-            },
-          })
-        })
-      )
 
       return tx.pedido.create({
         data: {
@@ -132,20 +129,30 @@ export class PedidosService {
     }
 
     if (nuevoEstado === 'por_entregar') {
-      return prisma.$transaction(async (tx) => {
-        const productoIds = pedido.items.map((i) => i.productoId)
-        const productos = await tx.producto.findMany({ where: { id: { in: productoIds } } })
+      const productoIds = pedido.items.map((i) => i.productoId)
 
+      return prisma.$transaction(async (tx) => {
+        // Ver comentario en createPedido: updateMany con WHERE stock >= cantidad hace que
+        // chequeo y decrement sean atomicos, sin ventana de carrera entre lectura y escritura.
         for (const item of pedido.items) {
-          const prod = productos.find((p) => p.id === item.productoId)
-          if (!prod) throw new NotFoundError(`Producto ${item.productoId} no encontrado`)
-          if (prod.stock < item.cantidad) {
+          const { count } = await tx.producto.updateMany({
+            where: { id: item.productoId, stock: { gte: item.cantidad } },
+            data: { stock: { decrement: item.cantidad } },
+          })
+          if (count === 0) {
+            const prod = await tx.producto.findUnique({ where: { id: item.productoId } })
+            if (!prod) throw new NotFoundError(`Producto ${item.productoId} no encontrado`)
             throw new HttpError(
               409,
               `Stock insuficiente para "${prod.nombre}": disponible ${prod.stock}, requerido ${item.cantidad}`
             )
           }
         }
+
+        await tx.producto.updateMany({
+          where: { id: { in: productoIds }, stock: { lte: 0 } },
+          data: { disponible: false },
+        })
 
         const ventaTotal = pedido.items.reduce(
           (acc, i) => acc + Number(i.precioUnitario) * i.cantidad,
@@ -164,20 +171,6 @@ export class PedidosService {
             precioUnitario: i.precioUnitario,
           })),
         })
-
-        await Promise.all(
-          pedido.items.map((item) => {
-            const prod = productos.find((p) => p.id === item.productoId)!
-            const nuevoStock = prod.stock - item.cantidad
-            return tx.producto.update({
-              where: { id: item.productoId },
-              data: {
-                stock: { decrement: item.cantidad },
-                ...(nuevoStock <= 0 ? { disponible: false } : {}),
-              },
-            })
-          })
-        )
 
         return tx.pedido.update({
           where: { id },
