@@ -14,6 +14,7 @@ export default function NotificacionesConfig() {
   })
 
   const [timeInput, setTimeInput] = useState('')
+  const [showIosHelp, setShowIosHelp] = useState(false)
 
   useEffect(() => {
     if (config && !timeInput) setTimeInput(config.notificationTime)
@@ -116,7 +117,16 @@ export default function NotificacionesConfig() {
           </div>
 
           <div className="border-t border-sand pt-4">
-            <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-2">Este dispositivo</p>
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs font-semibold text-muted uppercase tracking-wide">Este dispositivo</p>
+              <button
+                type="button"
+                onClick={() => setShowIosHelp(true)}
+                className="text-xs font-semibold text-terra hover:text-terra-dark underline underline-offset-2 cursor-pointer"
+              >
+                Como activar en iPhone
+              </button>
+            </div>
             {!isSupported ? (
               <p className="text-sm text-muted">Tu navegador no soporta notificaciones push.</p>
             ) : permission === 'denied' ? (
@@ -145,6 +155,43 @@ export default function NotificacionesConfig() {
                 {pushLoading ? 'Activando...' : 'Activar en este dispositivo'}
               </button>
             )}
+          </div>
+        </div>
+      )}
+
+      {showIosHelp && (
+        <div
+          className="fixed inset-0 bg-espresso/50 z-50 flex items-center justify-center p-5 font-sans"
+          role="presentation"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowIosHelp(false) }}
+          onKeyDown={(e) => { if (e.key === 'Escape') setShowIosHelp(false) }}
+        >
+          <div className="bg-white rounded-[18px] w-full max-w-[380px] shadow-[0_20px_60px_rgba(44,18,8,0.2)] p-6 flex flex-col gap-4">
+            <div className="flex items-start gap-3">
+              <span className="icon icon-fill text-[28px] text-terra shrink-0">phone_iphone</span>
+              <div>
+                <h3 className="text-base font-extrabold text-espresso">Activar en iPhone</h3>
+                <p className="text-sm text-muted mt-1">
+                  iOS solo permite notificaciones si el sitio esta agregado a la pantalla de inicio (requiere iOS 16.4 o superior).
+                </p>
+              </div>
+            </div>
+            <ol className="text-sm text-espresso flex flex-col gap-2 list-decimal pl-4">
+              <li>Abrir este panel con <strong>Safari</strong> (no funciona desde Chrome en iPhone)</li>
+              <li>Tocar el boton <strong>Compartir</strong> (el cuadrado con la flecha hacia arriba)</li>
+              <li>Elegir <strong>"Agregar a inicio"</strong></li>
+              <li>Abrir la app desde el icono nuevo en la pantalla de inicio (no desde Safari)</li>
+              <li>Ahi, tocar <strong>"Activar en este dispositivo"</strong> y aceptar el permiso</li>
+            </ol>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowIosHelp(false)}
+                className="px-4 py-2 rounded-lg text-sm font-semibold bg-terra text-white hover:bg-terra-dark transition-colors cursor-pointer"
+              >
+                Entendido
+              </button>
+            </div>
           </div>
         </div>
       )}

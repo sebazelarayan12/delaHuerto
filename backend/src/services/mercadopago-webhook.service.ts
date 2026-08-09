@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { getMpPaymentClient } from '../lib/mercadopago.js'
 import { PedidosService } from './pedidos.service.js'
+import { NotificationsService } from './notifications.service.js'
 import { prisma } from '../db.js'
 import { HttpError } from '../utils/errors.js'
 
@@ -91,6 +92,13 @@ export class MercadoPagoWebhookService {
     })
 
     console.log(`[webhook mercadopago] pedido creado para pago ${paymentId}`)
+
+    // Fire-and-forget: si falla el push no debe tumbar la confirmacion del pedido ante MP.
+    NotificationsService.notifyAdmins(
+      `Nuevo pedido pagado - ${metadata.nombre}`,
+      `$${montoPagado.toFixed(2)} - ${items.length} producto${items.length > 1 ? 's' : ''}`
+    ).catch((err) => console.error(`[webhook mercadopago] error enviando notificacion push para pago ${paymentId}:`, err))
+
     return { procesado: true }
   }
 }
