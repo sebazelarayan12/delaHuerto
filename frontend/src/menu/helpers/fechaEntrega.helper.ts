@@ -1,15 +1,3 @@
-const DELIVERY_DAYS_KEY = 'huerto_delivery_days'
-const DEFAULT_DELIVERY_DAYS: boolean[] = [true, true, true, true, true, true, false]
-
-function getDeliveryDays(): boolean[] {
-  try {
-    const raw = localStorage.getItem(DELIVERY_DAYS_KEY)
-    const parsed = raw ? JSON.parse(raw) : null
-    if (Array.isArray(parsed) && parsed.length === 7) return parsed
-  } catch {}
-  return DEFAULT_DELIVERY_DAYS
-}
-
 function getNowAR(): Date {
   const formatter = new Intl.DateTimeFormat('en-CA', {
     timeZone: 'America/Argentina/Buenos_Aires',
@@ -26,9 +14,8 @@ function getNowAR(): Date {
   )
 }
 
-export function getFechasDisponibles(): readonly Date[] {
+export function getFechasDisponibles(deliveryDays: boolean[]): readonly Date[] {
   const now = getNowAR()
-  const deliveryDays = getDeliveryDays()
   const available: Date[] = []
 
   for (let i = 0; i <= 60; i++) {
