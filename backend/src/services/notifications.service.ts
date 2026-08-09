@@ -76,7 +76,7 @@ export class NotificationsService {
     if (suscripciones.length === 0) return { sent: 0 }
 
     const json = JSON.stringify(payload)
-    await Promise.allSettled(
+    const resultados = await Promise.allSettled(
       suscripciones.map((sub) =>
         webpush.sendNotification(
           { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
@@ -84,7 +84,21 @@ export class NotificationsService {
         )
       )
     )
-    return { sent: suscripciones.length }
+
+    // Suscripcion invalida (navegador desinstalado, permiso revocado, etc.) - MP/el navegador
+    // nunca la va a aceptar de nuevo, se borra para que no falle en silencio para siempre.
+    const endpointsMuertos: string[] = []
+    resultados.forEach((r, i) => {
+      if (r.status === 'rejected' && (r.reason?.statusCode === 404 || r.reason?.statusCode === 410)) {
+        endpointsMuertos.push(suscripciones[i].endpoint)
+      }
+    })
+    if (endpointsMuertos.length > 0) {
+      await prisma.pushSubscription.deleteMany({ where: { endpoint: { in: endpointsMuertos } } })
+      console.log(`[NOTIF] ${endpointsMuertos.length} suscripcion(es) invalida(s) eliminada(s)`)
+    }
+
+    return { sent: suscripciones.length - endpointsMuertos.length }
   }
 
   static async notifyAdmins(title: string, body: string): Promise<{ sent: number }> {
