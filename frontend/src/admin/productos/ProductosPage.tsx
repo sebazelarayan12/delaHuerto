@@ -192,7 +192,7 @@ export default function ProductosPage() {
               <table className="w-full border-collapse font-sans min-w-[640px]">
                 <thead>
                   <tr className="bg-gold-light">
-                    {[!hasFilters ? '' : null, 'Foto', 'Nombre', 'Categoria', 'Precio', 'Estado', 'Disponible', 'Acciones'].filter(Boolean).map((h, i) => (
+                    {[!hasFilters ? '' : null, 'Foto', 'Nombre', 'Categoria', 'Precio', 'Estado', 'Disponible', 'Acciones'].filter((h) => h !== null).map((h, i) => (
                       <th key={h || `empty-${i}`} className={`px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.08em] text-muted border-b border-sand-deep whitespace-nowrap ${h === '' ? 'w-10' : 'w-auto'}`}>
                         {h}
                       </th>
