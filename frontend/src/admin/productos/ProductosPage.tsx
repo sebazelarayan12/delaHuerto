@@ -6,6 +6,7 @@ import type { ProductoAdmin } from './hooks/useProductos'
 import ProductoForm from './ProductoForm'
 import { useCategorias } from '../categorias/hooks/useCategorias'
 import Toggle from '../../shared/components/Toggle'
+import TableSkeleton from '../../shared/components/TableSkeleton'
 
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
@@ -177,17 +178,19 @@ export default function ProductosPage() {
         </select>
       </div>
 
-      {!hasFilters && (
+      {query.isLoading ? (
+        <p className="px-4 lg:px-8 pb-1 text-xs text-muted flex items-center gap-1.5">
+          <span className="icon text-[14px] animate-spin motion-reduce:animate-none">progress_activity</span>
+          Cargando tus productos guardados…
+        </p>
+      ) : !hasFilters && (
         <p className="px-4 lg:px-8 pb-1 text-xs text-muted">
           Arrasta las filas para cambiar el orden
         </p>
       )}
 
       <div className="px-4 lg:px-8 pb-8 pt-2">
-        {query.isLoading ? (
-          <div className="text-center p-10 text-muted">Cargando…</div>
-        ) : (
-          <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
+        <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse font-sans min-w-[640px]">
                 <thead>
@@ -200,7 +203,9 @@ export default function ProductosPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {productos.map((prod, i) => (
+                  {query.isLoading ? (
+                    <TableSkeleton columns={!hasFilters ? 8 : 7} />
+                  ) : productos.map((prod, i) => (
                     <tr
                       key={prod.id}
                       draggable={!hasFilters}
@@ -256,13 +261,12 @@ export default function ProductosPage() {
                 </tbody>
               </table>
             </div>
-            {productos.length === 0 && (
+            {!query.isLoading && productos.length === 0 && (
               <div className="p-10 text-center text-muted text-sm">
                 No se encontraron productos
               </div>
             )}
-          </div>
-        )}
+        </div>
       </div>
 
       <ProductoForm

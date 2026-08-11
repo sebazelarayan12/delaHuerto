@@ -5,6 +5,7 @@ import { useCategorias } from './hooks/useCategorias'
 import type { CategoriaAdmin } from './hooks/useCategorias'
 import CategoriaForm from './CategoriaForm'
 import Toggle from '../../shared/components/Toggle'
+import TableSkeleton from '../../shared/components/TableSkeleton'
 
 export default function CategoriasPage() {
   const { query, crear, editar, toggleActiva, eliminar, reordenar, syncDescuentos } = useCategorias()
@@ -108,11 +109,15 @@ export default function CategoriasPage() {
         </button>
       </div>
 
+      {query.isLoading && (
+        <p className="px-4 lg:px-8 pt-6 pb-1 text-xs text-muted flex items-center gap-1.5">
+          <span className="icon text-[14px] animate-spin motion-reduce:animate-none">progress_activity</span>
+          Cargando tus categorias guardadas…
+        </p>
+      )}
+
       <div className="px-4 lg:px-8 py-6">
-        {query.isLoading ? (
-          <div className="text-center p-10 text-muted">Cargando…</div>
-        ) : (
-          <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
+        <div className="bg-white rounded-[14px] shadow-[0_2px_8px_rgba(44,18,8,0.06)] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse font-sans min-w-[520px]">
                 <thead>
@@ -125,7 +130,9 @@ export default function CategoriasPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {localCats.map((cat, i) => (
+                  {query.isLoading ? (
+                    <TableSkeleton columns={7} />
+                  ) : localCats.map((cat, i) => (
                     <tr
                       key={cat.id}
                       draggable
@@ -190,8 +197,7 @@ export default function CategoriasPage() {
                 </tbody>
               </table>
             </div>
-          </div>
-        )}
+        </div>
       </div>
 
       <CategoriaForm

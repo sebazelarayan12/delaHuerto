@@ -7,7 +7,7 @@ export function useAuth() {
   const [token, setToken] = useState<string | null>(() => localStorage.getItem(TOKEN_KEY))
 
   const login = async (username: string, password: string) => {
-    const res = await api.post<{ token: string }>('/api/auth/login', { username, password })
+    const res = await api.post<{ token: string }>('/api/auth/login', { username, password }, { timeout: 15000 })
     const t = res.data.token
     localStorage.setItem(TOKEN_KEY, t)
     setToken(t)
