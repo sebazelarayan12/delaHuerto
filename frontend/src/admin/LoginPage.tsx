@@ -1,7 +1,23 @@
 import { useState, useReducer } from 'react'
 import { useNavigate } from 'react-router'
+import { isAxiosError } from 'axios'
 import LogoMark from '../shared/components/LogoMark'
 import { useAuth } from '../shared/hooks/useAuth'
+
+function getLoginErrorMessage(err: unknown): string {
+  if (!isAxiosError(err)) return 'No se pudo iniciar sesion. Intenta de nuevo.'
+
+  if (!err.response) {
+    if (err.code === 'ECONNABORTED') {
+      return 'La conexion tardo demasiado. Revisa tu internet e intenta de nuevo.'
+    }
+    return 'No se pudo conectar con el servidor. Revisa tu conexion a internet.'
+  }
+
+  if (err.response.status === 401) return 'Usuario o contrasena incorrectos'
+  if (err.response.status >= 500) return 'Error del servidor. Intenta de nuevo en unos minutos.'
+  return 'No se pudo iniciar sesion. Intenta de nuevo.'
+}
 
 type LoginState = {
   username: string
@@ -42,8 +58,8 @@ export default function LoginPage() {
     try {
       await login(state.username, state.password)
       navigate('/admin')
-    } catch {
-      dispatch({ type: 'set_error', value: 'Usuario o contrasena incorrectos' })
+    } catch (err) {
+      dispatch({ type: 'set_error', value: getLoginErrorMessage(err) })
     } finally {
       dispatch({ type: 'set_loading', value: false })
     }
