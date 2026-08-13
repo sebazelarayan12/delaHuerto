@@ -39,6 +39,6 @@ export default function Lightbox({ src, alt, onClose }: Props) {
         className="max-w-full max-h-[90dvh] rounded-2xl object-contain shadow-[0_8px_40px_rgba(0,0,0,0.5)]"
       />
     </div>,
-    document.body
+    document.querySelector('.menu-theme') ?? document.body
   )
 }
