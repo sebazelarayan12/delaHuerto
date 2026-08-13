@@ -26,7 +26,7 @@ export default function CategoriaSection({ categoria, items, perfil, onAgregar, 
   )
 
   return (
-    <section id={`cat-${categoria.id}`}>
+    <section id={`cat-${categoria.id}`} className="relative z-10">
       <div className="pt-[18px] px-4 pb-3 bg-cream border-b border-sand">
         <div className="font-display text-[22px] font-extrabold text-espresso leading-[1.2]">
           {categoria.nombre}
@@ -38,7 +38,7 @@ export default function CategoriaSection({ categoria, items, perfil, onAgregar, 
         </div>
       </div>
       <m.div
-        className="bg-ivory px-3 pt-2.5 pb-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5"
+        className="px-3 pt-2.5 pb-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"

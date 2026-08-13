@@ -48,7 +48,20 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         )}
       </div>
 
-      <div className="relative grid grid-cols-2 gap-2 pb-3.5">
+      {banner?.activo && (
+        <div className="relative -mx-4 px-4 py-2.5 flex items-start gap-3 bg-white/5 border-t border-b border-white/[0.07]">
+          <div className="w-0.5 self-stretch bg-gold rounded-full shrink-0 min-h-[36px]" />
+          <div className="flex flex-col gap-1">
+            <TypewriterText text={banner.titulo} className="font-display italic text-[12.5px] text-gold-light leading-snug" />
+            <div className="flex flex-col gap-px">
+              {banner.linea1 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea1}</div>}
+              {banner.linea2 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea2}</div>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="relative grid grid-cols-2 gap-2 pt-3.5 pb-3.5">
         <button
           type="button"
           onClick={() => onPerfilChange('cocinada')}
@@ -70,19 +83,6 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
           Congeladas
         </button>
       </div>
-
-      {banner?.activo && (
-        <div className="relative -mx-4 px-4 py-2.5 flex items-start gap-3 bg-white/5 border-t border-b border-white/[0.07]">
-          <div className="w-0.5 self-stretch bg-gold rounded-full shrink-0 min-h-[36px]" />
-          <div className="flex flex-col gap-1">
-            <TypewriterText text={banner.titulo} className="font-display italic text-[12.5px] text-gold-light leading-snug" />
-            <div className="flex flex-col gap-px">
-              {banner.linea1 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea1}</div>}
-              {banner.linea2 && <div className="text-[11px] font-semibold text-gold/80">{banner.linea2}</div>}
-            </div>
-          </div>
-        </div>
-      )}
 
       <nav className="relative -mx-4 px-4 py-3">
         <div className="flex gap-1.5 overflow-x-auto md:flex-wrap md:overflow-x-visible md:justify-center bg-sand rounded-2xl p-1.5 no-scrollbar">
