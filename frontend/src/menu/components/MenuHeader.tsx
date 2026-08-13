@@ -76,9 +76,6 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
                   transition={{ type: 'spring', stiffness: 500, damping: 35 }}
                 />
               )}
-              {activeCat === c.id && (
-                <span className="icon relative z-10 text-[15px] text-white">lunch_dining</span>
-              )}
               <span className={`relative z-10 ${activeCat === c.id ? 'text-white' : ''}`}>
                 {c.nombre}
               </span>
