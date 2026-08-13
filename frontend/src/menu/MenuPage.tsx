@@ -9,6 +9,7 @@ import CategoriaSection from './components/CategoriaSection'
 import Carrito from './components/Carrito'
 import FormularioPedido from './components/FormularioPedido'
 import MenuHeader from './components/MenuHeader'
+import MenuStickyBar from './components/MenuStickyBar'
 import CartFab from './components/CartFab'
 import WhatsAppFab from './components/WhatsAppFab'
 import ProductoCardSkeleton from './components/ProductoCardSkeleton'
@@ -96,12 +97,15 @@ export default function MenuPage() {
       <MenuHeader
         cantidadTotal={cantidadTotal}
         total={total}
+        banner={banner}
+        onOpenCarrito={() => setCarritoOpen(true)}
+      />
+
+      <MenuStickyBar
         activeCat={effectiveActiveCat}
         categorias={categorias ?? EMPTY_CATS}
-        banner={banner}
         perfil={perfil}
         onPerfilChange={setPerfil}
-        onOpenCarrito={() => setCarritoOpen(true)}
         onScrollToCategory={scrollToCategory}
       />
 
