@@ -1,4 +1,3 @@
-import * as m from 'motion/react-m'
 import LogoMark from '../../shared/components/LogoMark'
 import TypewriterText from './TypewriterText'
 import type { Banner } from '../hooks/useBanner'
@@ -6,18 +5,15 @@ import type { Banner } from '../hooks/useBanner'
 interface Props {
   cantidadTotal: number
   total: number
-  activeCat: number | null
-  categorias: { id: number; nombre: string }[]
   banner?: Banner | null
   onOpenCarrito: () => void
-  onScrollToCategory: (id: number) => void
 }
 
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
-export default function MenuHeader({ cantidadTotal, total, activeCat, categorias, banner, onOpenCarrito, onScrollToCategory }: Props) {
+export default function MenuHeader({ cantidadTotal, total, banner, onOpenCarrito }: Props) {
   return (
-    <header className="relative bg-gradient-to-br from-espresso to-header-end pt-5 px-4 sticky top-0 z-40">
+    <header className="relative bg-gradient-to-br from-espresso to-header-end pt-5 px-4">
       <div className="grain-overlay absolute inset-0 opacity-[0.04]" />
 
       <div className="relative flex items-center justify-between pb-4">
@@ -58,31 +54,6 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
           </div>
         </div>
       )}
-
-      <nav className="relative -mx-4 px-4 py-3">
-        <div className="flex gap-1.5 overflow-x-auto md:flex-wrap md:overflow-x-visible md:justify-center bg-sand rounded-2xl p-1.5 no-scrollbar">
-          {categorias.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => onScrollToCategory(c.id)}
-              className={`relative shrink-0 overflow-hidden px-4 py-2 rounded-xl text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-200 flex items-center justify-center gap-1.5 border ${
-                activeCat === c.id ? 'border-transparent' : 'bg-white border-sand-deep text-brown hover:text-espresso'
-              }`}
-            >
-              {activeCat === c.id && (
-                <m.div
-                  layoutId="activeNavPill"
-                  className="absolute inset-0 rounded-xl bg-terra shadow-[0_2px_10px_rgba(107,122,79,0.45)]"
-                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                />
-              )}
-              <span className={`relative z-10 ${activeCat === c.id ? 'text-white' : ''}`}>
-                {c.nombre}
-              </span>
-            </button>
-          ))}
-        </div>
-      </nav>
     </header>
   )
 }

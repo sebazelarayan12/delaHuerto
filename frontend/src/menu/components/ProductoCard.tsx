@@ -12,14 +12,17 @@ const cardVariants = {
 
 interface Props {
   producto: Producto
+  perfil: 'cocinada' | 'congelada'
   cantidad: number
   onAgregar: () => void
   onIncrementar: () => void
   onDecrementar: () => void
 }
 
-export default function ProductoCard({ producto, cantidad, onAgregar, onIncrementar, onDecrementar }: Props) {
-  const precio = parseFloat(producto.precio as unknown as string)
+export default function ProductoCard({ producto, perfil, cantidad, onAgregar, onIncrementar, onDecrementar }: Props) {
+  const precio = perfil === 'congelada' && producto.precioCongelada !== null
+    ? parseFloat(producto.precioCongelada)
+    : parseFloat(producto.precio as unknown as string)
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
   return (

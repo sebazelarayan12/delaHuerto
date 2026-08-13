@@ -18,6 +18,7 @@ const metadataCheckoutSchema = z.object({
         producto_id: z.coerce.number().int().positive(),
         cantidad: z.coerce.number().int().positive(),
         precio_unitario: z.coerce.number().nonnegative(),
+        modalidad: z.enum(['cocinada', 'congelada']).default('cocinada'),
       })
     )
     .min(1),
@@ -68,6 +69,7 @@ export class MercadoPagoWebhookService {
         productoId: item.producto_id,
         cantidad: item.cantidad,
         precioUnitario: item.precio_unitario,
+        modalidad: item.modalidad,
       }
     })
 

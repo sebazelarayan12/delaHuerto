@@ -60,8 +60,11 @@ export default function PedidoCard({ pedido, onMarcarPagado, onMarcarEntregado, 
         )}
         {pedido.items.map((item) => (
           <div key={item.id} className="flex justify-between gap-2 text-[13px] text-brown">
-            <span className="overflow-hidden text-ellipsis whitespace-nowrap">
+            <span className="overflow-hidden text-ellipsis whitespace-nowrap flex items-center gap-1.5">
               <strong className="text-espresso">{item.cantidad}x</strong> {item.producto.nombre}
+              <span className={`text-[9px] font-bold uppercase tracking-[0.06em] px-1.5 py-0.5 rounded-full shrink-0 ${item.modalidad === 'cocinada' ? 'bg-cocinada/15 text-cocinada' : 'bg-congelada/15 text-congelada'}`}>
+                {item.modalidad === 'cocinada' ? 'Cocinada' : 'Congelada'}
+              </span>
             </span>
             <span className="flex-shrink-0 text-muted">
               {fmt(parseFloat(item.precioUnitario) * item.cantidad)}

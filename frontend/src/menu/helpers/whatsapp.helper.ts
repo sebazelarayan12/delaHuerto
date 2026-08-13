@@ -27,7 +27,8 @@ export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido) {
   ]
 
   for (const item of items) {
-    lines.push(`• ${item.cantidad} docena${item.cantidad !== 1 ? 's' : ''} de ${item.nombre} — ${fmt(item.precio * item.cantidad)}`)
+    const modalidadLabel = item.modalidad === 'cocinada' ? 'Cocinada' : 'Congelada'
+    lines.push(`• ${item.cantidad} docena${item.cantidad !== 1 ? 's' : ''} de ${item.nombre} (${modalidadLabel}) — ${fmt(item.precio * item.cantidad)}`)
   }
 
   lines.push('')

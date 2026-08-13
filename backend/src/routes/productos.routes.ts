@@ -9,6 +9,7 @@ const productoSchema = z.object({
   descripcion: z.string().optional(),
   precio: z.coerce.number().positive(),
   precioUnidad: z.coerce.number().positive().optional(),
+  precioCongelada: z.coerce.number().positive().optional(),
   disponible: z.preprocess((v) => v === 'true' || v === true, z.boolean()).default(true),
   orden: z.coerce.number().default(0),
   stock: z.coerce.number().int().min(0).optional(),

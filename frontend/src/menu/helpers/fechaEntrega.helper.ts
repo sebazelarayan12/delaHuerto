@@ -30,6 +30,28 @@ export function getFechasDisponibles(deliveryDays: boolean[]): readonly Date[] {
   return available
 }
 
+export function getFechasDisponiblesPorModalidad(items: { modalidad: 'cocinada' | 'congelada' }[]): readonly Date[] {
+  const now = getNowAR()
+  const hayCocinada = items.some((i) => i.modalidad === 'cocinada')
+  const available: Date[] = []
+
+  for (let i = 0; i <= 60; i++) {
+    const candidate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i)
+    if (!hayCocinada) {
+      available.push(candidate)
+      continue
+    }
+    // Cocinadas: solo sabado (6) y domingo (0) del calendario JS -- sin importar la
+    // cantidad ni si hay tambien congeladas mezcladas en el mismo pedido.
+    const jsDay = candidate.getDay()
+    if (jsDay === 0 || jsDay === 6) {
+      available.push(candidate)
+    }
+  }
+
+  return available
+}
+
 export function formatFechaLarga(date: Date): string {
   const raw = date.toLocaleDateString('es-AR', {
     weekday: 'long', day: 'numeric', month: 'long',

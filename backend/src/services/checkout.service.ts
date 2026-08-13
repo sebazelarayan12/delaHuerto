@@ -6,6 +6,7 @@ import { HttpError, NotFoundError } from '../utils/errors.js'
 interface ItemCheckoutInput {
   productoId: number
   cantidad: number
+  modalidad: 'cocinada' | 'congelada'
 }
 
 interface CrearPreferenceInput {
@@ -26,12 +27,30 @@ export class CheckoutService {
     const productoIds = input.items.map((i) => i.productoId)
     const productos = await prisma.producto.findMany({ where: { id: { in: productoIds } } })
 
+    // Un mismo producto puede aparecer en dos lineas del carrito (una cocinada, una
+    // congelada) porque la identidad de linea ahora es (productoId, modalidad). Si se
+    // valida el stock por linea, cada una individualmente puede pasar aunque la suma
+    // supere el stock disponible -- hay que agregar por producto antes de validar.
+    const cantidadPorProducto = new Map<number, number>()
+    for (const item of input.items) {
+      cantidadPorProducto.set(item.productoId, (cantidadPorProducto.get(item.productoId) ?? 0) + item.cantidad)
+    }
+
     const mpItems = input.items.map((item) => {
       const producto = productos.find((p) => p.id === item.productoId)
       if (!producto) throw new NotFoundError(`Producto ${item.productoId} no encontrado`)
       if (!producto.disponible) throw new HttpError(409, `"${producto.nombre}" ya no esta disponible`)
-      if (producto.stock < item.cantidad) {
-        throw new HttpError(409, `Stock insuficiente para "${producto.nombre}": disponible ${producto.stock}, requerido ${item.cantidad}`)
+      const cantidadTotalProducto = cantidadPorProducto.get(item.productoId)!
+      if (producto.stock < cantidadTotalProducto) {
+        throw new HttpError(409, `Stock insuficiente para "${producto.nombre}": disponible ${producto.stock}, requerido ${cantidadTotalProducto}`)
+      }
+
+      // El precio depende de la modalidad elegida -- congelada usa precioCongelada, cocinada
+      // usa el precio existente (el campo "precio" siempre significo, implicitamente, precio
+      // cocinada -- no se renombro para no tocar cada lugar que ya lo lee).
+      const precioBase = item.modalidad === 'congelada' ? producto.precioCongelada : producto.precio
+      if (precioBase === null) {
+        throw new HttpError(409, `"${producto.nombre}" no tiene precio congelada configurado`)
       }
 
       return {
@@ -41,7 +60,7 @@ export class CheckoutService {
         picture_url: producto.fotoUrl ?? undefined,
         category_id: 'food',
         quantity: item.cantidad,
-        unit_price: Number(producto.precio),
+        unit_price: Number(precioBase),
         currency_id: 'ARS',
       }
     })
@@ -55,10 +74,11 @@ export class CheckoutService {
       direccion: input.direccion ?? null,
       notas: input.notas ?? null,
       fechaEntrega: input.fechaEntrega ?? null,
-      items: input.items.map((item) => ({
+      items: input.items.map((item, idx) => ({
         producto_id: item.productoId,
         cantidad: item.cantidad,
-        precio_unitario: mpItems.find((mi) => mi.id === String(item.productoId))!.unit_price,
+        precio_unitario: mpItems[idx].unit_price,
+        modalidad: item.modalidad,
       })),
     }
 

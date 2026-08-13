@@ -16,7 +16,7 @@ export async function crearPreferenceMercadoPago(items: ItemCarrito[], datos: Da
     direccion: datos.direccion,
     notas: datos.notas,
     fechaEntrega: datos.fechaEntrega,
-    items: items.map((item) => ({ productoId: item.productoId, cantidad: item.cantidad })),
+    items: items.map((item) => ({ productoId: item.productoId, cantidad: item.cantidad, modalidad: item.modalidad })),
   })
   return data.initPoint
 }

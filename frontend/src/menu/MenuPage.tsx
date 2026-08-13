@@ -9,6 +9,7 @@ import CategoriaSection from './components/CategoriaSection'
 import Carrito from './components/Carrito'
 import FormularioPedido from './components/FormularioPedido'
 import MenuHeader from './components/MenuHeader'
+import MenuStickyBar from './components/MenuStickyBar'
 import CartFab from './components/CartFab'
 import WhatsAppFab from './components/WhatsAppFab'
 import ProductoCardSkeleton from './components/ProductoCardSkeleton'
@@ -50,6 +51,7 @@ export default function MenuPage() {
   const [carritoOpen, setCarritoOpen] = useState(false)
   const [formularioOpen, setFormularioOpen] = useState(false)
   const [activeCat, setActiveCat] = useState<number | null>(null)
+  const [perfil, setPerfil] = useState<'cocinada' | 'congelada'>('cocinada')
 
   const effectiveActiveCat = activeCat ?? categorias?.[0]?.id ?? null
 
@@ -85,7 +87,7 @@ export default function MenuPage() {
 
   const handleAgregar = (productoId: number) => {
     const prod = productoMap.get(productoId)
-    if (prod) agregar(prod)
+    if (prod) agregar(prod, perfil)
   }
 
   return (
@@ -95,17 +97,22 @@ export default function MenuPage() {
       <MenuHeader
         cantidadTotal={cantidadTotal}
         total={total}
-        activeCat={effectiveActiveCat}
-        categorias={categorias ?? EMPTY_CATS}
         banner={banner}
         onOpenCarrito={() => setCarritoOpen(true)}
+      />
+
+      <MenuStickyBar
+        activeCat={effectiveActiveCat}
+        categorias={categorias ?? EMPTY_CATS}
+        perfil={perfil}
+        onPerfilChange={setPerfil}
         onScrollToCategory={scrollToCategory}
       />
 
       <div className="relative overflow-hidden px-4 pt-4 pb-3.5 bg-[#F7EFE2] border-b border-sand-deep">
         <div className="grain-overlay absolute inset-0 opacity-[0.06]" />
-        <div className="absolute -right-3 -top-3 size-[60px] rounded-full bg-terra/[0.07]" />
-        <div className="absolute right-4 -bottom-3 size-9 rounded-full bg-gold/10" />
+        <div className={`absolute -right-3 -top-3 size-[60px] rounded-full ${perfil === 'cocinada' ? 'bg-cocinada/[0.12]' : 'bg-congelada/[0.12]'}`} />
+        <div className={`absolute right-4 -bottom-3 size-9 rounded-full ${perfil === 'cocinada' ? 'bg-cocinada/10' : 'bg-congelada/10'}`} />
         <div className="font-artisan text-[24px] font-black text-espresso leading-[1.1] mb-1.5 relative z-10">
           Hechas con <span className="italic text-terra">amor</span>
         </div>
@@ -150,16 +157,24 @@ export default function MenuPage() {
           </div>
         )}
 
-        {categorias?.map((cat) => (
-          <CategoriaSection
-            key={cat.id}
-            categoria={cat}
-            items={items}
-            onAgregar={handleAgregar}
-            onIncrementar={incrementar}
-            onDecrementar={decrementar}
-          />
-        ))}
+        <div className="relative overflow-hidden">
+          <div className={`pointer-events-none absolute -left-16 top-10 size-64 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.14]' : 'bg-congelada/[0.14]'}`} />
+          <div className={`pointer-events-none absolute -right-20 top-[38%] size-72 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.12]' : 'bg-congelada/[0.12]'}`} />
+          <div className={`pointer-events-none absolute -left-14 top-[68%] size-60 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.12]' : 'bg-congelada/[0.12]'}`} />
+          <div className={`pointer-events-none absolute -right-10 bottom-0 size-56 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.10]' : 'bg-congelada/[0.10]'}`} />
+
+          {categorias?.map((cat) => (
+            <CategoriaSection
+              key={cat.id}
+              categoria={cat}
+              items={items}
+              perfil={perfil}
+              onAgregar={handleAgregar}
+              onIncrementar={incrementar}
+              onDecrementar={decrementar}
+            />
+          ))}
+        </div>
 
         <div className={`relative mt-auto pt-4 ${cantidadTotal > 0 ? 'pb-[88px]' : 'pb-4'} px-4 text-center bg-espresso overflow-hidden`}>
           <div className="diamond-pattern absolute inset-0 opacity-[0.06]" />

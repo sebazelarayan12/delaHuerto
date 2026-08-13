@@ -11,6 +11,7 @@ const itemPedidoSchema = z.object({
   productoId: z.number().int().positive(),
   cantidad: z.number().int().positive(),
   precioUnitario: z.number().positive(),
+  modalidad: z.enum(['cocinada', 'congelada']),
 })
 
 const createPedidoSchema = z.object({

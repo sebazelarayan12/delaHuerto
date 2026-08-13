@@ -89,7 +89,7 @@ export default function ProductosPage() {
   }
 
   const handleSave = async (
-    data: { categoriaId: number; nombre: string; descripcion?: string; precio: number; disponible: boolean; orden: number },
+    data: { categoriaId: number; nombre: string; descripcion?: string; precio: number; precioCongelada?: number; disponible: boolean; orden: number },
     foto: File | null
   ) => {
     const fd = new FormData()
@@ -97,6 +97,7 @@ export default function ProductosPage() {
     fd.append('nombre', data.nombre)
     if (data.descripcion) fd.append('descripcion', data.descripcion)
     fd.append('precio', String(data.precio))
+    if (data.precioCongelada !== undefined) fd.append('precioCongelada', String(data.precioCongelada))
     fd.append('disponible', String(data.disponible))
     fd.append('orden', String(data.orden))
     if (foto) fd.append('foto', foto)
@@ -228,7 +229,18 @@ export default function ProductosPage() {
                       </td>
                       <td className="px-4 py-3 text-sm font-bold text-espresso whitespace-nowrap">{prod.nombre}</td>
                       <td className="px-4 py-3 text-[13px] text-muted whitespace-nowrap">{prod.categoria.nombre}</td>
-                      <td className="px-4 py-3 text-sm font-bold text-terra whitespace-nowrap">{fmt(parseFloat(prod.precio as unknown as string))}</td>
+                      <td className="px-4 py-3 text-sm whitespace-nowrap">
+                        <div className="flex items-center gap-1.5">
+                          <span className="size-1.5 rounded-full bg-cocinada shrink-0" />
+                          <span className="font-bold text-espresso">{fmt(parseFloat(prod.precio as unknown as string))}</span>
+                        </div>
+                        {prod.precioCongelada && (
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="size-1.5 rounded-full bg-congelada shrink-0" />
+                            <span className="font-semibold text-muted text-xs">{fmt(parseFloat(prod.precioCongelada))}</span>
+                          </div>
+                        )}
+                      </td>
                       <td className="px-4 py-3">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${prod.disponible ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'}`}>
                           <span className="icon text-[13px]">{prod.disponible ? 'check_circle' : 'cancel'}</span>
