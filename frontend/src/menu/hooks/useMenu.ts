@@ -8,6 +8,7 @@ export interface Producto {
   descripcion: string | null
   precio: string
   precioUnidad: string | null
+  precioCongelada: string | null
   fotoUrl: string | null
   fotoPublicId: string | null
   disponible: boolean

@@ -50,6 +50,7 @@ export default function MenuPage() {
   const [carritoOpen, setCarritoOpen] = useState(false)
   const [formularioOpen, setFormularioOpen] = useState(false)
   const [activeCat, setActiveCat] = useState<number | null>(null)
+  const [perfil, setPerfil] = useState<'cocinada' | 'congelada'>('cocinada')
 
   const effectiveActiveCat = activeCat ?? categorias?.[0]?.id ?? null
 
@@ -85,7 +86,7 @@ export default function MenuPage() {
 
   const handleAgregar = (productoId: number) => {
     const prod = productoMap.get(productoId)
-    if (prod) agregar(prod)
+    if (prod) agregar(prod, perfil)
   }
 
   return (
@@ -98,14 +99,16 @@ export default function MenuPage() {
         activeCat={effectiveActiveCat}
         categorias={categorias ?? EMPTY_CATS}
         banner={banner}
+        perfil={perfil}
+        onPerfilChange={setPerfil}
         onOpenCarrito={() => setCarritoOpen(true)}
         onScrollToCategory={scrollToCategory}
       />
 
       <div className="relative overflow-hidden px-4 pt-4 pb-3.5 bg-[#F7EFE2] border-b border-sand-deep">
         <div className="grain-overlay absolute inset-0 opacity-[0.06]" />
-        <div className="absolute -right-3 -top-3 size-[60px] rounded-full bg-terra/[0.07]" />
-        <div className="absolute right-4 -bottom-3 size-9 rounded-full bg-gold/10" />
+        <div className={`absolute -right-3 -top-3 size-[60px] rounded-full ${perfil === 'cocinada' ? 'bg-cocinada/[0.12]' : 'bg-congelada/[0.12]'}`} />
+        <div className={`absolute right-4 -bottom-3 size-9 rounded-full ${perfil === 'cocinada' ? 'bg-cocinada/10' : 'bg-congelada/10'}`} />
         <div className="font-artisan text-[24px] font-black text-espresso leading-[1.1] mb-1.5 relative z-10">
           Hechas con <span className="italic text-terra">amor</span>
         </div>
@@ -155,6 +158,7 @@ export default function MenuPage() {
             key={cat.id}
             categoria={cat}
             items={items}
+            perfil={perfil}
             onAgregar={handleAgregar}
             onIncrementar={incrementar}
             onDecrementar={decrementar}

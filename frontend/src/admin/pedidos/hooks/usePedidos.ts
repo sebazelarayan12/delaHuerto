@@ -15,6 +15,7 @@ export interface ItemPedidoAdmin {
   productoId: number
   cantidad: number
   precioUnitario: string
+  modalidad: 'cocinada' | 'congelada'
   producto: ProductoResumen
 }
 
@@ -38,7 +39,7 @@ export interface CreatePedidoInput {
   direccion?: string
   notas?: string
   fechaEntrega: string
-  items: { productoId: number; cantidad: number; precioUnitario: number }[]
+  items: { productoId: number; cantidad: number; precioUnitario: number; modalidad: 'cocinada' | 'congelada' }[]
 }
 
 export function usePedidos() {

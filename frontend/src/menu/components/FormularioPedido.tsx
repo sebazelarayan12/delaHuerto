@@ -1,12 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { ItemCarrito } from '../hooks/useCarrito'
 import { enviarPedidoWhatsApp } from '../helpers/whatsapp.helper'
 import { crearPreferenceMercadoPago } from '../helpers/checkout.helper'
-import { getFechasDisponibles, formatFechaLarga, formatFechaCorta } from '../helpers/fechaEntrega.helper'
-import { useDeliveryDias } from '../../shared/hooks/useDeliveryDias'
+import { getFechasDisponiblesPorModalidad, formatFechaLarga, formatFechaCorta, isSameDay } from '../helpers/fechaEntrega.helper'
 import SelectorFechaEntrega from './SelectorFechaEntrega'
 
 const schema = z.object({
@@ -62,8 +61,17 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
   })
 
   const metodoPago = useWatch({ control, name: 'metodoPago' })
-  const { dias } = useDeliveryDias()
-  const fechasDisponibles = getFechasDisponibles(dias)
+  const fechasDisponibles = getFechasDisponiblesPorModalidad(items)
+  const hayCocinadaEnCarrito = items.some((i) => i.modalidad === 'cocinada')
+
+  useEffect(() => {
+    if (!fechaSeleccionada) return
+    const sigueDisponible = fechasDisponibles.some((f) => isSameDay(f, fechaSeleccionada))
+    if (!sigueDisponible) {
+      setFechaSeleccionada(null)
+      setValue('fechaEntrega', '', { shouldValidate: false })
+    }
+  }, [items])
 
   const onSubmit = async (data: FormData) => {
     const { metodoPago } = data
@@ -160,8 +168,13 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
             <div className={step === 1 ? 'flex-1 overflow-y-auto px-5 pt-5 pb-8 flex flex-col gap-5' : 'hidden'}>
               <div className="bg-sand rounded-[14px] px-3.5 py-3">
                 {items.map((item) => (
-                  <div key={item.productoId} className="flex justify-between text-[13px] text-brown mb-1">
-                    <span className="font-semibold">{item.nombre} × {item.cantidad}</span>
+                  <div key={`${item.productoId}-${item.modalidad}`} className="flex justify-between text-[13px] text-brown mb-1">
+                    <span className="font-semibold flex items-center gap-1.5">
+                      {item.nombre} × {item.cantidad}
+                      <span className={`text-[10px] font-bold uppercase tracking-[0.06em] px-1.5 py-0.5 rounded-full ${item.modalidad === 'cocinada' ? 'bg-cocinada/15 text-cocinada' : 'bg-congelada/15 text-congelada'}`}>
+                        {item.modalidad === 'cocinada' ? 'Cocinada' : 'Congelada'}
+                      </span>
+                    </span>
                     <span>{fmt(item.precio * item.cantidad)}</span>
                   </div>
                 ))}
@@ -240,6 +253,12 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
                     </>
                   )}
                   <input type="hidden" {...register('fechaEntrega')} />
+                  {hayCocinadaEnCarrito && (
+                    <p className="text-[12px] text-cocinada font-semibold mt-1.5 flex items-center gap-1">
+                      <span className="icon text-[14px]">info</span>
+                      Las empanadas cocinadas se entregan solo sabados y domingos — necesitan preparacion con anticipacion.
+                    </p>
+                  )}
                 </div>
               </Field>
               <Field label="Método de pago" error={errors.metodoPago?.message}>

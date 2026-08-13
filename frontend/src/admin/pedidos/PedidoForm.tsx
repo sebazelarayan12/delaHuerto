@@ -3,20 +3,23 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api/axios'
-import { useDeliveryDias } from '../../shared/hooks/useDeliveryDias'
 import type { ProductoAdmin } from '../productos/hooks/useProductos'
 import type { CreatePedidoInput } from './hooks/usePedidos'
-import {
-  toYMD,
-  getDeliveryDayWarning,
-  getEnabledDaysHint,
-} from './helpers/pedido.helpers'
+import { toYMD } from './helpers/pedido.helpers'
 
 const itemSchema = z.object({
   productoId: z.coerce.number().int().positive({ message: 'Seleccionar producto' }),
   cantidad: z.coerce.number().int().min(1, { message: 'Minimo 1' }),
   precioUnitario: z.coerce.number().positive({ message: 'Precio requerido' }),
+  modalidad: z.enum(['cocinada', 'congelada']),
 })
+
+function esFechaValidaPorModalidad(ymd: string, hayCocinada: boolean): boolean {
+  if (!ymd || !hayCocinada) return true
+  const [y, m, d] = ymd.split('-').map(Number)
+  const jsDay = new Date(y, m - 1, d).getDay()
+  return jsDay === 0 || jsDay === 6
+}
 
 const pedidoSchema = z.object({
   nombre: z.string().min(1, { message: 'Requerido' }),
@@ -36,7 +39,6 @@ interface Props {
 }
 
 export default function PedidoForm({ onClose, onSave, loading }: Props) {
-  const { dias: deliveryDays } = useDeliveryDias()
   const todayStr = toYMD(new Date())
 
   const { data: productos = [] } = useQuery<ProductoAdmin[]>({
@@ -52,7 +54,7 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
       direccion: '',
       notas: '',
       fechaEntrega: todayStr,
-      items: [{ productoId: 0, cantidad: 1, precioUnitario: 0 }],
+      items: [{ productoId: 0, cantidad: 1, precioUnitario: 0, modalidad: 'cocinada' }],
     },
   })
 
@@ -65,12 +67,15 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
     0
   )
 
-  const dateWarning = getDeliveryDayWarning(watchedFecha, deliveryDays)
-  const enabledHint = getEnabledDaysHint(deliveryDays)
+  const hayCocinada = watchedItems.some((i) => i.modalidad === 'cocinada')
+  const fechaInvalida = !esFechaValidaPorModalidad(watchedFecha, hayCocinada)
 
   const handleProductoChange = (index: number, productoId: number) => {
     const prod = productos.find((p) => p.id === productoId)
-    if (prod) form.setValue(`items.${index}.precioUnitario`, parseFloat(prod.precio))
+    if (!prod) return
+    const modalidad = form.getValues(`items.${index}.modalidad`)
+    const precio = modalidad === 'congelada' && prod.precioCongelada ? parseFloat(prod.precioCongelada) : parseFloat(prod.precio)
+    form.setValue(`items.${index}.precioUnitario`, precio)
   }
 
   const onSubmit = (data: PedidoFormData) => {
@@ -84,6 +89,7 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
         productoId: Number(i.productoId),
         cantidad: Number(i.cantidad),
         precioUnitario: Number(i.precioUnitario),
+        modalidad: i.modalidad,
       })),
     })
   }
@@ -173,18 +179,17 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
               min={todayStr}
               {...form.register('fechaEntrega')}
               className="px-[14px] py-3 border-[1.5px] rounded-[12px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra w-full"
-              style={{ borderColor: dateWarning ? '#dc2626' : undefined }}
+              style={{ borderColor: fechaInvalida ? '#dc2626' : undefined }}
             />
-            {dateWarning ? (
-              <div className="flex items-center gap-[6px] text-[12.5px] font-semibold mt-0.5" style={{ color: '#dc2626' }}>
-                <span className="icon" style={{ fontSize: 15 }}>error</span>
-                {dateWarning}
+            {hayCocinada && (
+              <div
+                className="flex items-center gap-[6px] text-[12.5px] font-semibold mt-0.5"
+                style={{ color: fechaInvalida ? '#dc2626' : '#9A7A66' }}
+              >
+                {fechaInvalida && <span className="icon" style={{ fontSize: 15 }}>error</span>}
+                Con cocinadas en el pedido, la entrega solo puede ser sabado o domingo.
               </div>
-            ) : enabledHint ? (
-              <div className="text-[12px] font-medium mt-0.5" style={{ color: '#9A7A66' }}>
-                Entregas disponibles: <strong style={{ color: '#7A4020' }}>{enabledHint}</strong>
-              </div>
-            ) : null}
+            )}
           </div>
 
           {/* Notas */}
@@ -210,7 +215,7 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
               </span>
               <button
                 type="button"
-                onClick={() => append({ productoId: 0, cantidad: 1, precioUnitario: 0 })}
+                onClick={() => append({ productoId: 0, cantidad: 1, precioUnitario: 0, modalidad: 'cocinada' })}
                 className="inline-flex items-center gap-1 text-xs font-semibold text-terra border-[1.5px] border-terra-light rounded-[10px] px-2.5 py-1 bg-white cursor-pointer transition-colors hover:bg-terra-light"
               >
                 <span className="icon" style={{ fontSize: 16 }}>add</span>
@@ -238,6 +243,17 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
                       {productos.map((p) => (
                         <option key={p.id} value={p.id}>{p.categoria.nombre} — {p.nombre}</option>
                       ))}
+                    </select>
+                    <select
+                      {...form.register(`items.${index}.modalidad`)}
+                      onChange={(e) => {
+                        form.setValue(`items.${index}.modalidad`, e.target.value as 'cocinada' | 'congelada')
+                        handleProductoChange(index, form.getValues(`items.${index}.productoId`))
+                      }}
+                      className="w-[110px] px-2 py-[9px] border-[1.5px] border-sand-deep rounded-[10px] font-sans text-[13px] text-espresso bg-white outline-none focus:border-terra shrink-0"
+                    >
+                      <option value="cocinada">Cocinada</option>
+                      <option value="congelada">Congelada</option>
                     </select>
                     <input
                       type="number"

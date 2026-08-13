@@ -10,8 +10,8 @@ interface Props {
   subtotal: number
   montoDescuento: number
   cantidadTotal: number
-  onIncrementar: (id: number) => void
-  onDecrementar: (id: number) => void
+  onIncrementar: (id: number, modalidad: 'cocinada' | 'congelada') => void
+  onDecrementar: (id: number, modalidad: 'cocinada' | 'congelada') => void
   onConfirmar: () => void
 }
 
@@ -55,10 +55,15 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
             <div className="px-2 py-1.5 flex flex-col gap-2">
               {items.map((item) => (
                 <div
-                  key={item.productoId}
+                  key={`${item.productoId}-${item.modalidad}`}
                   className="flex items-center gap-3 px-4 py-3 bg-white rounded-2xl shadow-[0_2px_8px_rgba(44,18,8,0.06)]"
                 >
                   <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className={`text-[10px] font-bold uppercase tracking-[0.06em] px-1.5 py-0.5 rounded-full ${item.modalidad === 'cocinada' ? 'bg-cocinada/15 text-cocinada' : 'bg-congelada/15 text-congelada'}`}>
+                        {item.modalidad === 'cocinada' ? 'Cocinada' : 'Congelada'}
+                      </span>
+                    </div>
                     <div className="text-sm font-bold text-espresso overflow-hidden text-ellipsis whitespace-nowrap">
                       {item.nombre}
                     </div>
@@ -68,7 +73,7 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
                   </div>
                   <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.3)]">
                     <button
-                      onClick={() => onDecrementar(item.productoId)}
+                      onClick={() => onDecrementar(item.productoId, item.modalidad)}
                       aria-label={`Reducir cantidad de ${item.nombre}`}
                       className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
                     >
@@ -78,7 +83,7 @@ export default function Carrito({ open, onClose, items, total, subtotal, montoDe
                       {item.cantidad}
                     </span>
                     <button
-                      onClick={() => onIncrementar(item.productoId)}
+                      onClick={() => onIncrementar(item.productoId, item.modalidad)}
                       aria-label={`Aumentar cantidad de ${item.nombre}`}
                       className="w-11 h-11 border-none bg-transparent text-white text-[18px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
                     >

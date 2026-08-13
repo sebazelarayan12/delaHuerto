@@ -8,6 +8,7 @@ const publicRoutes = new Hono()
 const itemCheckoutSchema = z.object({
   productoId: z.number().int().positive(),
   cantidad: z.number().int().positive(),
+  modalidad: z.enum(['cocinada', 'congelada']),
 })
 
 const crearPreferenceSchema = z.object({

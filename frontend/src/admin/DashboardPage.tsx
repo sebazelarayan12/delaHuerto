@@ -11,7 +11,10 @@ import VentaForm from './ventas/VentaForm'
 import { getDailyRevenue } from './shared/revenueHelpers'
 import { Sparkline } from '../shared/components/Sparkline'
 import { TopProductos } from './dashboard/TopProductos'
-import DeliveryDays from './dashboard/DeliveryDays'
+// DeliveryDays: panel reemplazado por la logica de modalidad cocinada/congelada
+// (cocinada = solo sab/dom, congelada = cualquier dia). Se deja el import comentado
+// y el componente/modelo/endpoint intactos por si se reactiva en el futuro.
+// import DeliveryDays from './dashboard/DeliveryDays'
 import NotificacionesConfig from './dashboard/NotificacionesConfig'
 import MercadoPagoConexion from './dashboard/MercadoPagoConexion'
 
@@ -163,7 +166,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <DeliveryDays />
           <NotificacionesConfig />
           <MercadoPagoConexion />
 

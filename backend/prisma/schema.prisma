@@ -48,6 +48,7 @@ model Producto {
   descripcion  String?
   precio       Decimal       @db.Decimal(10, 2)
   precioUnidad Decimal?      @db.Decimal(10, 2) @map("precio_unidad")
+  precioCongelada Decimal?   @db.Decimal(10, 2) @map("precio_congelada")
   fotoUrl      String?       @map("foto_url")
   fotoPublicId String?       @map("foto_public_id")
   disponible   Boolean       @default(true)
@@ -93,6 +94,11 @@ enum EstadoPago {
   pagado
 }
 
+enum Modalidad {
+  cocinada
+  congelada
+}
+
 model Pedido {
   id            Int           @id @default(autoincrement())
   estado        EstadoPedido  @default(pendiente)
@@ -115,25 +121,27 @@ model Pedido {
 }
 
 model ItemPedido {
-  id             Int      @id @default(autoincrement())
-  pedidoId       Int      @map("pedido_id")
-  pedido         Pedido   @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
-  productoId     Int      @map("producto_id")
-  producto       Producto @relation(fields: [productoId], references: [id])
+  id             Int       @id @default(autoincrement())
+  pedidoId       Int       @map("pedido_id")
+  pedido         Pedido    @relation(fields: [pedidoId], references: [id], onDelete: Cascade)
+  productoId     Int       @map("producto_id")
+  producto       Producto  @relation(fields: [productoId], references: [id])
   cantidad       Int
-  precioUnitario Decimal  @db.Decimal(10, 2) @map("precio_unitario")
+  precioUnitario Decimal   @db.Decimal(10, 2) @map("precio_unitario")
+  modalidad      Modalidad @default(cocinada)
 
   @@map("items_pedido")
 }
 
 model ItemVenta {
-  id             Int      @id @default(autoincrement())
-  ventaId        Int      @map("venta_id")
-  venta          Venta    @relation(fields: [ventaId], references: [id], onDelete: Cascade)
-  productoId     Int      @map("producto_id")
-  producto       Producto @relation(fields: [productoId], references: [id])
+  id             Int       @id @default(autoincrement())
+  ventaId        Int       @map("venta_id")
+  venta          Venta     @relation(fields: [ventaId], references: [id], onDelete: Cascade)
+  productoId     Int       @map("producto_id")
+  producto       Producto  @relation(fields: [productoId], references: [id])
   cantidad       Int
-  precioUnitario Decimal  @db.Decimal(10, 2) @map("precio_unitario")
+  precioUnitario Decimal   @db.Decimal(10, 2) @map("precio_unitario")
+  modalidad      Modalidad @default(cocinada)
 
   @@map("items_venta")
 }

@@ -5,6 +5,7 @@ interface ItemInput {
   productoId: number
   cantidad: number
   precioUnitario: number
+  modalidad: 'cocinada' | 'congelada'
 }
 
 interface CreatePedidoInput {
@@ -56,7 +57,7 @@ export class PedidosService {
       return prisma.pedido.create({
         data: {
           ...datosBase,
-          items: { create: data.items.map((i) => ({ productoId: i.productoId, cantidad: i.cantidad, precioUnitario: i.precioUnitario })) },
+          items: { create: data.items.map((i) => ({ productoId: i.productoId, cantidad: i.cantidad, precioUnitario: i.precioUnitario, modalidad: i.modalidad })) },
         },
         include: PEDIDO_INCLUDE,
       })
@@ -96,6 +97,7 @@ export class PedidosService {
           productoId: i.productoId,
           cantidad: i.cantidad,
           precioUnitario: i.precioUnitario,
+          modalidad: i.modalidad,
         })),
       })
 
@@ -104,7 +106,7 @@ export class PedidosService {
           ...datosBase,
           estado: 'por_entregar',
           ventaId: venta.id,
-          items: { create: data.items.map((i) => ({ productoId: i.productoId, cantidad: i.cantidad, precioUnitario: i.precioUnitario })) },
+          items: { create: data.items.map((i) => ({ productoId: i.productoId, cantidad: i.cantidad, precioUnitario: i.precioUnitario, modalidad: i.modalidad })) },
         },
         include: PEDIDO_INCLUDE,
       })
@@ -169,6 +171,7 @@ export class PedidosService {
             productoId: i.productoId,
             cantidad: i.cantidad,
             precioUnitario: i.precioUnitario,
+            modalidad: i.modalidad,
           })),
         })
 

@@ -12,6 +12,10 @@ const schema = z.object({
   nombre: z.string().min(1, 'El nombre es requerido'),
   descripcion: z.string().optional(),
   precio: z.coerce.number().positive('El precio debe ser mayor a 0'),
+  precioCongelada: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z.coerce.number().positive('El precio debe ser mayor a 0').optional()
+  ),
   disponible: z.boolean().default(true),
   orden: z.coerce.number().default(0),
 })
@@ -38,10 +42,11 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
           nombre: initial.nombre,
           descripcion: initial.descripcion ?? '',
           precio: parseFloat(initial.precio),
+          precioCongelada: initial.precioCongelada ? parseFloat(initial.precioCongelada) : undefined,
           disponible: initial.disponible,
           orden: initial.orden,
         }
-      : { nombre: '', orden: nextOrden, disponible: true, descripcion: '', precio: undefined },
+      : { nombre: '', orden: nextOrden, disponible: true, descripcion: '', precio: undefined, precioCongelada: undefined },
   })
 
   const disponible = watch('disponible')
@@ -96,10 +101,17 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
             />
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="prod-precio" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Precio</label>
-            <input id="prod-precio" type="number" step="0.01" placeholder="5500" {...register('precio')} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
-            {errors.precio && <span className="text-xs text-red-600 mt-1 block">{errors.precio.message}</span>}
+          <div className="mb-4 grid grid-cols-2 gap-3">
+            <div>
+              <label htmlFor="prod-precio" className="block text-xs font-bold uppercase tracking-[0.08em] text-cocinada mb-1.5">Precio cocinada</label>
+              <input id="prod-precio" type="number" step="0.01" placeholder="5500" {...register('precio')} className="w-full px-[13px] py-2.5 border-[1.5px] border-cocinada/40 rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-cocinada" />
+              {errors.precio && <span className="text-xs text-red-600 mt-1 block">{errors.precio.message}</span>}
+            </div>
+            <div>
+              <label htmlFor="prod-precio-congelada" className="block text-xs font-bold uppercase tracking-[0.08em] text-congelada mb-1.5">Precio congelada</label>
+              <input id="prod-precio-congelada" type="number" step="0.01" placeholder="4800 (opcional)" {...register('precioCongelada')} className="w-full px-[13px] py-2.5 border-[1.5px] border-congelada/40 rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-congelada" />
+              {errors.precioCongelada && <span className="text-xs text-red-600 mt-1 block">{errors.precioCongelada.message}</span>}
+            </div>
           </div>
 
           <input type="hidden" {...register('orden')} />
