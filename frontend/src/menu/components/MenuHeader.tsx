@@ -59,25 +59,29 @@ export default function MenuHeader({ cantidadTotal, total, activeCat, categorias
         </div>
       )}
 
-      <nav className="relative -mx-4 flex gap-2 overflow-x-auto md:flex-wrap md:overflow-x-visible md:justify-center py-3 px-4 no-scrollbar">
-        {categorias.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => onScrollToCategory(c.id)}
-            className="relative shrink-0 px-5 py-2 rounded-full text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-200 border border-transparent"
-          >
-            {activeCat === c.id && (
-              <m.div
-                layoutId="activeNavPill"
-                className="absolute inset-0 rounded-full bg-terra shadow-[0_2px_10px_rgba(196,82,42,0.45)]"
-                transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-              />
-            )}
-            <span className={`relative z-10 transition-colors duration-200 ${activeCat === c.id ? 'text-white' : 'text-white/70 hover:text-white'}`}>
-              {c.nombre}
-            </span>
-          </button>
-        ))}
+      <nav className="relative -mx-4 px-4 py-3">
+        <div className="flex gap-1.5 overflow-x-auto md:flex-wrap md:overflow-x-visible md:justify-center bg-sand rounded-2xl p-1.5 no-scrollbar">
+          {categorias.map((c) => (
+            <button
+              key={c.id}
+              onClick={() => onScrollToCategory(c.id)}
+              className={`relative shrink-0 overflow-hidden px-4 py-2 rounded-xl text-[13px] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-200 flex items-center justify-center gap-1.5 border ${
+                activeCat === c.id ? 'border-transparent' : 'bg-white border-sand-deep text-brown hover:text-espresso'
+              }`}
+            >
+              {activeCat === c.id && (
+                <m.div
+                  layoutId="activeNavPill"
+                  className="absolute inset-0 rounded-xl bg-terra shadow-[0_2px_10px_rgba(107,122,79,0.45)]"
+                  transition={{ type: 'spring', stiffness: 500, damping: 35 }}
+                />
+              )}
+              <span className={`relative z-10 ${activeCat === c.id ? 'text-white' : ''}`}>
+                {c.nombre}
+              </span>
+            </button>
+          ))}
+        </div>
       </nav>
     </header>
   )

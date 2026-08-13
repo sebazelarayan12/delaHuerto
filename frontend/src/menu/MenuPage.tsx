@@ -90,7 +90,7 @@ export default function MenuPage() {
 
   return (
     <LazyMotion features={domMax}>
-    <div className="w-full max-w-[430px] md:max-w-3xl lg:max-w-6xl min-h-screen bg-cream relative mx-auto flex flex-col">
+    <div className="menu-theme w-full max-w-[430px] md:max-w-3xl lg:max-w-6xl min-h-screen bg-cream relative mx-auto flex flex-col">
 
       <MenuHeader
         cantidadTotal={cantidadTotal}
