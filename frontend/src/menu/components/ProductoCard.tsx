@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import * as m from 'motion/react-m'
 import type { Producto } from '../hooks/useMenu'
 import Lightbox from './Lightbox'
@@ -24,19 +25,35 @@ const MOVE_CANCEL_PX = 12
 
 function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickAddButtonProps) {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null)
   const pressTimer = useRef<number | null>(null)
   const longPressFired = useRef(false)
   const pressStart = useRef<{ x: number; y: number } | null>(null)
-  const wrapRef = useRef<HTMLDivElement>(null)
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const popupRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!menuOpen) return
     const onOutside = (e: PointerEvent) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setMenuOpen(false)
+      const target = e.target as Node
+      if (btnRef.current?.contains(target)) return
+      if (popupRef.current?.contains(target)) return
+      setMenuOpen(false)
     }
+    const onScroll = () => setMenuOpen(false)
     document.addEventListener('pointerdown', onOutside)
-    return () => document.removeEventListener('pointerdown', onOutside)
+    window.addEventListener('scroll', onScroll, { capture: true, passive: true })
+    return () => {
+      document.removeEventListener('pointerdown', onOutside)
+      window.removeEventListener('scroll', onScroll, { capture: true })
+    }
   }, [menuOpen])
+
+  const openMenu = () => {
+    const rect = btnRef.current?.getBoundingClientRect()
+    if (rect) setMenuPos({ top: rect.top - 6, left: rect.right })
+    setMenuOpen(true)
+  }
 
   const startPress = (e: React.PointerEvent) => {
     if (openOnTap) return
@@ -44,7 +61,7 @@ function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickA
     pressStart.current = { x: e.clientX, y: e.clientY }
     pressTimer.current = window.setTimeout(() => {
       longPressFired.current = true
-      setMenuOpen(true)
+      openMenu()
     }, LONG_PRESS_MS)
   }
 
@@ -65,7 +82,7 @@ function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickA
 
   const handleClick = () => {
     if (openOnTap) {
-      setMenuOpen(true)
+      openMenu()
       return
     }
     if (longPressFired.current) {
@@ -81,9 +98,34 @@ function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickA
   }
 
   return (
-    <div ref={wrapRef} className="relative">
-      {menuOpen && (
-        <div className="absolute bottom-full right-0 mb-1.5 min-w-[124px] bg-espresso rounded-xl p-1 shadow-[0_10px_28px_rgba(0,0,0,0.28)] flex flex-col gap-0.5 z-10">
+    <>
+      <button
+        ref={btnRef}
+        onClick={handleClick}
+        onPointerDown={startPress}
+        onPointerMove={movePress}
+        onPointerUp={cancelPress}
+        onPointerCancel={cancelPress}
+        onContextMenu={(e) => e.preventDefault()}
+        aria-label={ariaLabel}
+        className={
+          compact
+            ? 'size-8 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none] shrink-0'
+            : 'size-8 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none]'
+        }
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+
+      {menuOpen && menuPos && createPortal(
+        <div
+          ref={popupRef}
+          style={{ position: 'fixed', top: menuPos.top, left: menuPos.left, transform: 'translate(-100%, -100%)' }}
+          className="min-w-[124px] bg-espresso rounded-xl p-1 shadow-[0_10px_28px_rgba(0,0,0,0.28)] flex flex-col gap-0.5 z-50"
+        >
           <button
             onClick={() => pick(12)}
             className="flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
@@ -106,28 +148,10 @@ function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickA
             <span className="text-gold">+1</span>
           </button>
           <div className="absolute -bottom-1 right-[11px] size-2 bg-espresso rotate-45" />
-        </div>
+        </div>,
+        document.querySelector('.menu-theme') ?? document.body
       )}
-      <button
-        onClick={handleClick}
-        onPointerDown={startPress}
-        onPointerMove={movePress}
-        onPointerUp={cancelPress}
-        onPointerCancel={cancelPress}
-        onContextMenu={(e) => e.preventDefault()}
-        aria-label={ariaLabel}
-        className={
-          compact
-            ? 'size-8 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none] shrink-0'
-            : 'size-8 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none]'
-        }
-      >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-          <line x1="12" y1="5" x2="12" y2="19" />
-          <line x1="5" y1="12" x2="19" y2="12" />
-        </svg>
-      </button>
-    </div>
+    </>
   )
 }
 
