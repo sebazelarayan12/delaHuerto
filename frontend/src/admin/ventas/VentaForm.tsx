@@ -121,7 +121,7 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
                       >
                         <option value={0}>Seleccionar producto</option>
                         {productos.map((p) => (
-                          <option key={p.id} value={p.id}>{p.nombre}</option>
+                          <option key={p.id} value={p.id}>{p.categoria.nombre} — {p.nombre}</option>
                         ))}
                       </select>
 
