@@ -9,7 +9,7 @@ export class StockService {
       select: {
         id: true,
         nombre: true,
-        precio: true,
+        precioCongelada: true,
         fotoUrl: true,
         disponible: true,
         stock: true,

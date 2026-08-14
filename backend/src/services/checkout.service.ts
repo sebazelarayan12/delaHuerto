@@ -45,12 +45,11 @@ export class CheckoutService {
         throw new HttpError(409, `Stock insuficiente para "${producto.nombre}": disponible ${producto.stock}, requerido ${cantidadTotalProducto}`)
       }
 
-      // El precio depende de la modalidad elegida -- congelada usa precioCongelada, cocinada
-      // usa el precio existente (el campo "precio" siempre significo, implicitamente, precio
-      // cocinada -- no se renombro para no tocar cada lugar que ya lo lee).
-      const precioBase = item.modalidad === 'congelada' ? producto.precioCongelada : producto.precio
+      // El precio depende de la modalidad elegida -- congelada es el precio base/obligatorio
+      // del producto (precioCongelada), cocinada es la variante opcional (precioCocinada).
+      const precioBase = item.modalidad === 'cocinada' ? producto.precioCocinada : producto.precioCongelada
       if (precioBase === null) {
-        throw new HttpError(409, `"${producto.nombre}" no tiene precio congelada configurado`)
+        throw new HttpError(409, `"${producto.nombre}" no tiene precio cocinada configurado`)
       }
 
       return {
