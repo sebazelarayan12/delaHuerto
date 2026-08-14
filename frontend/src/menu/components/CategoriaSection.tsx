@@ -40,7 +40,7 @@ export default function CategoriaSection({ categoria, items, perfil, onAgregar, 
       </div>
       <m.div
         key={perfil}
-        className="px-3 pt-2.5 pb-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5"
+        className="px-3 pt-2.5 pb-3 grid grid-cols-2 lg:grid-cols-3 gap-2.5"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"

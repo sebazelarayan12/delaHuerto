@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import * as m from 'motion/react-m'
 import type { Producto } from '../hooks/useMenu'
 import Lightbox from './Lightbox'
@@ -8,6 +8,109 @@ const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 const cardVariants = {
   hidden: { opacity: 0, y: 16 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const } },
+}
+
+const LONG_PRESS_MS = 450
+
+interface QuickAddButtonProps {
+  compact: boolean
+  ariaLabel: string
+  onTap: () => void
+  onPick: (cantidad: number) => void
+}
+
+function QuickAddButton({ compact, ariaLabel, onTap, onPick }: QuickAddButtonProps) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const pressTimer = useRef<number | null>(null)
+  const longPressFired = useRef(false)
+  const wrapRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onOutside = (e: PointerEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) setMenuOpen(false)
+    }
+    document.addEventListener('pointerdown', onOutside)
+    return () => document.removeEventListener('pointerdown', onOutside)
+  }, [menuOpen])
+
+  const startPress = () => {
+    longPressFired.current = false
+    pressTimer.current = window.setTimeout(() => {
+      longPressFired.current = true
+      setMenuOpen(true)
+    }, LONG_PRESS_MS)
+  }
+
+  const cancelPress = () => {
+    if (pressTimer.current !== null) {
+      clearTimeout(pressTimer.current)
+      pressTimer.current = null
+    }
+  }
+
+  const handleClick = () => {
+    if (longPressFired.current) {
+      longPressFired.current = false
+      return
+    }
+    onTap()
+  }
+
+  const pick = (cantidad: number) => {
+    onPick(cantidad)
+    setMenuOpen(false)
+  }
+
+  return (
+    <div ref={wrapRef} className="relative">
+      {menuOpen && (
+        <div className="absolute bottom-full right-0 mb-2 min-w-[132px] bg-espresso rounded-xl p-1 shadow-[0_10px_28px_rgba(0,0,0,0.28)] flex flex-col gap-0.5 z-10">
+          <button
+            onClick={() => pick(12)}
+            className="flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[12px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+          >
+            <span>Docena</span>
+            <span className="text-gold">+12</span>
+          </button>
+          <button
+            onClick={() => pick(6)}
+            className="flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[12px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+          >
+            <span>Media doc.</span>
+            <span className="text-gold">+6</span>
+          </button>
+          <button
+            onClick={() => pick(1)}
+            className="flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[12px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+          >
+            <span>Unidad</span>
+            <span className="text-gold">+1</span>
+          </button>
+          <div className="absolute -bottom-1 right-[13px] size-2 bg-espresso rotate-45" />
+        </div>
+      )}
+      <button
+        onClick={handleClick}
+        onPointerDown={startPress}
+        onPointerUp={cancelPress}
+        onPointerLeave={cancelPress}
+        onPointerCancel={cancelPress}
+        onContextMenu={(e) => e.preventDefault()}
+        aria-label={ariaLabel}
+        className={
+          compact
+            ? 'size-11 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation'
+            : 'size-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation'
+        }
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+    </div>
+  )
 }
 
 interface Props {
@@ -29,9 +132,9 @@ export default function ProductoCard({ producto, perfil, cantidad, onAgregar, on
   return (
     <m.div
       variants={cardVariants}
-      className="flex gap-3 p-3.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(196,82,42,0.14)]"
+      className="flex flex-col rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(196,82,42,0.14)] overflow-hidden"
     >
-      <div className="w-[88px] h-[88px] md:w-[110px] md:h-[110px] shrink-0 rounded-2xl overflow-hidden bg-sand">
+      <div className="w-full h-[130px] shrink-0 bg-sand">
         {producto.fotoUrl ? (
           <button
             onClick={() => setLightboxOpen(true)}
@@ -56,87 +159,49 @@ export default function ProductoCard({ producto, perfil, cantidad, onAgregar, on
         <Lightbox src={producto.fotoUrl} alt={producto.nombre} onClose={() => setLightboxOpen(false)} />
       )}
 
-      <div className="flex-1 min-w-0 flex flex-col gap-1">
-        <div className="text-[15px] md:text-[16px] font-bold text-espresso leading-snug whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal">
+      <div className="flex-1 min-w-0 flex flex-col gap-1 p-3">
+        <div className="text-[14px] font-bold text-espresso leading-snug line-clamp-2">
           {producto.nombre}
         </div>
         {producto.descripcion && (
-          <div className="text-[13px] text-brown leading-relaxed line-clamp-2 md:line-clamp-3">
+          <div className="text-[12px] text-brown leading-relaxed line-clamp-2">
             {producto.descripcion}
           </div>
         )}
-        <div className="mt-auto flex items-center justify-between pt-1.5">
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-terra-light border border-terra/20 text-[13px] font-extrabold text-terra tabular-nums">
+        <div className="mt-auto flex items-center justify-between pt-1.5 gap-2">
+          <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-terra-light border border-terra/20 text-[12px] font-extrabold text-terra tabular-nums shrink-0">
             {fmt(precio)}
           </div>
 
           {!producto.disponible ? (
-            <div className="bg-sand text-muted px-3 py-1.5 rounded-full text-xs font-bold">
+            <div className="bg-sand text-muted px-3 py-1.5 rounded-full text-xs font-bold shrink-0">
               Sin stock
             </div>
           ) : cantidad === 0 ? (
-            <div className="flex flex-col items-end gap-1.5">
-              <button
-                onClick={onAgregar}
-                aria-label={`Agregar ${producto.nombre}`}
-                className="size-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer"
-              >
-                <span className="icon text-[20px]">add</span>
-              </button>
-              <div className="flex gap-1.5">
-                <button
-                  onClick={() => onAgregarCantidad(6)}
-                  aria-label={`Agregar media docena de ${producto.nombre}`}
-                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
-                >
-                  +6
-                </button>
-                <button
-                  onClick={() => onAgregarCantidad(12)}
-                  aria-label={`Agregar docena de ${producto.nombre}`}
-                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
-                >
-                  +12
-                </button>
-              </div>
-            </div>
+            <QuickAddButton
+              compact={false}
+              ariaLabel={`Agregar ${producto.nombre}`}
+              onTap={onAgregar}
+              onPick={onAgregarCantidad}
+            />
           ) : (
-            <div className="flex flex-col items-end gap-1.5">
-              <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.35)]">
-                <button
-                  onClick={onDecrementar}
-                  aria-label="Reducir cantidad"
-                  className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
-                >
-                  −
-                </button>
-                <span className="min-w-[28px] text-center text-white text-[15px] font-bold tabular-nums">
-                  {cantidad}
-                </span>
-                <button
-                  onClick={onIncrementar}
-                  aria-label="Aumentar cantidad"
-                  className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
-                >
-                  +
-                </button>
-              </div>
-              <div className="flex gap-1.5">
-                <button
-                  onClick={() => onAgregarCantidad(6)}
-                  aria-label={`Agregar media docena mas de ${producto.nombre}`}
-                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
-                >
-                  +6
-                </button>
-                <button
-                  onClick={() => onAgregarCantidad(12)}
-                  aria-label={`Agregar docena mas de ${producto.nombre}`}
-                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
-                >
-                  +12
-                </button>
-              </div>
+            <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.35)] shrink-0">
+              <button
+                onClick={onDecrementar}
+                aria-label="Reducir cantidad"
+                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+              >
+                −
+              </button>
+              <span className="min-w-[28px] text-center text-white text-[15px] font-bold tabular-nums">
+                {cantidad}
+              </span>
+              <QuickAddButton
+                compact={true}
+                ariaLabel="Aumentar cantidad"
+                onTap={onIncrementar}
+                onPick={onAgregarCantidad}
+              />
             </div>
           )}
         </div>
