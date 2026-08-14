@@ -6,9 +6,9 @@ export interface ProductoAdmin {
   categoriaId: number
   nombre: string
   descripcion: string | null
-  precio: string
+  precioCongelada: string
   precioUnidad: string | null
-  precioCongelada: string | null
+  precioCocinada: string | null
   fotoUrl: string | null
   fotoPublicId: string | null
   disponible: boolean
