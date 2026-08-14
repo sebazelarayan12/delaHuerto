@@ -163,10 +163,10 @@ export default function MenuPage() {
         )}
 
         <div className="relative overflow-hidden">
-          <div className={`pointer-events-none absolute -left-16 top-10 size-64 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.14]' : 'bg-congelada/[0.14]'}`} />
-          <div className={`pointer-events-none absolute -right-20 top-[38%] size-72 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.12]' : 'bg-congelada/[0.12]'}`} />
-          <div className={`pointer-events-none absolute -left-14 top-[68%] size-60 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.12]' : 'bg-congelada/[0.12]'}`} />
-          <div className={`pointer-events-none absolute -right-10 bottom-0 size-56 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.10]' : 'bg-congelada/[0.10]'}`} />
+          <div className={`pointer-events-none absolute -left-16 top-10 size-64 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.22]' : 'bg-congelada/[0.22]'}`} />
+          <div className={`pointer-events-none absolute -right-20 top-[38%] size-72 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.20]' : 'bg-congelada/[0.20]'}`} />
+          <div className={`pointer-events-none absolute -left-14 top-[68%] size-60 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.19]' : 'bg-congelada/[0.19]'}`} />
+          <div className={`pointer-events-none absolute -right-10 bottom-0 size-56 rounded-full blur-3xl ${perfil === 'cocinada' ? 'bg-cocinada/[0.17]' : 'bg-congelada/[0.17]'}`} />
 
           {categorias?.map((cat) => (
             <CategoriaSection
