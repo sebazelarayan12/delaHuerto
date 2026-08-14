@@ -19,7 +19,9 @@ function esMismoItem(item: ItemCarrito, productoId: number, modalidad: Modalidad
 }
 
 function precioPorModalidad(producto: Producto, modalidad: Modalidad): number {
-  const raw = modalidad === 'congelada' ? producto.precioCongelada : producto.precio
+  const raw = modalidad === 'cocinada' && producto.precioCocinada !== null
+    ? producto.precioCocinada
+    : producto.precioCongelada
   return raw !== null ? parseFloat(raw) : 0
 }
 

@@ -20,9 +20,9 @@ interface Props {
 }
 
 export default function ProductoCard({ producto, perfil, cantidad, onAgregar, onIncrementar, onDecrementar }: Props) {
-  const precio = perfil === 'congelada' && producto.precioCongelada !== null
-    ? parseFloat(producto.precioCongelada)
-    : parseFloat(producto.precio as unknown as string)
+  const precio = perfil === 'cocinada' && producto.precioCocinada !== null
+    ? parseFloat(producto.precioCocinada)
+    : parseFloat(producto.precioCongelada as unknown as string)
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
   return (

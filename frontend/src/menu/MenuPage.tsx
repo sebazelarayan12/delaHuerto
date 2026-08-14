@@ -51,7 +51,7 @@ export default function MenuPage() {
   const [carritoOpen, setCarritoOpen] = useState(false)
   const [formularioOpen, setFormularioOpen] = useState(false)
   const [activeCat, setActiveCat] = useState<number | null>(null)
-  const [perfil, setPerfil] = useState<'cocinada' | 'congelada'>('cocinada')
+  const [perfil, setPerfil] = useState<'cocinada' | 'congelada'>('congelada')
 
   const effectiveActiveCat = activeCat ?? categorias?.[0]?.id ?? null
 
