@@ -7,6 +7,7 @@ interface ProductoResumen {
   id: number
   nombre: string
   fotoUrl: string | null
+  categoria: { nombre: string }
 }
 
 export interface ItemVentaAdmin {

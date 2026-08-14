@@ -99,7 +99,7 @@ export default function VentasPage() {
         v.items.map((i) => [
           fmtFecha(v.fecha),
           v.id,
-          i.producto.nombre,
+          `${i.producto.categoria.nombre} - ${i.producto.nombre}`,
           i.cantidad,
           parseFloat(i.precioUnitario).toFixed(2),
           (i.cantidad * parseFloat(i.precioUnitario)).toFixed(2),
@@ -254,7 +254,7 @@ function VentaRow({ venta, onCancelar }: { venta: VentaAdmin; onCancelar: () => 
           <div className="bg-sand/40 rounded-xl overflow-hidden">
             {venta.items.map((item) => (
               <div key={item.id} className="flex items-center gap-3 px-4 py-2.5 border-b border-sand last:border-0">
-                <div className="flex-1 text-sm text-espresso font-semibold">{item.producto.nombre}</div>
+                <div className="flex-1 text-sm text-espresso font-semibold">{item.producto.categoria.nombre} - {item.producto.nombre}</div>
                 <div className="text-xs text-muted">x{item.cantidad}</div>
                 <div className="text-xs text-muted">{fmt(item.precioUnitario)} c/u</div>
                 <div className="text-sm font-bold text-brown">
