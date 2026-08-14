@@ -26,7 +26,7 @@ export class VentasService {
       include: {
         items: {
           include: {
-            producto: { select: { id: true, nombre: true, fotoUrl: true } },
+            producto: { select: { id: true, nombre: true, fotoUrl: true, categoria: { select: { nombre: true } } } },
           },
         },
       },
@@ -85,7 +85,7 @@ export class VentasService {
         include: {
           items: {
             include: {
-              producto: { select: { id: true, nombre: true, fotoUrl: true } },
+              producto: { select: { id: true, nombre: true, fotoUrl: true, categoria: { select: { nombre: true } } } },
             },
           },
         },
