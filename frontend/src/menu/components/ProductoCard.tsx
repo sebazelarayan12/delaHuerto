@@ -17,9 +17,10 @@ interface Props {
   onAgregar: () => void
   onIncrementar: () => void
   onDecrementar: () => void
+  onAgregarCantidad: (cantidad: number) => void
 }
 
-export default function ProductoCard({ producto, perfil, cantidad, onAgregar, onIncrementar, onDecrementar }: Props) {
+export default function ProductoCard({ producto, perfil, cantidad, onAgregar, onIncrementar, onDecrementar, onAgregarCantidad }: Props) {
   const precio = perfil === 'cocinada' && producto.precioCocinada !== null
     ? parseFloat(producto.precioCocinada)
     : parseFloat(producto.precioCongelada as unknown as string)
@@ -74,32 +75,68 @@ export default function ProductoCard({ producto, perfil, cantidad, onAgregar, on
               Sin stock
             </div>
           ) : cantidad === 0 ? (
-            <button
-              onClick={onAgregar}
-              aria-label={`Agregar ${producto.nombre}`}
-              className="size-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer"
-            >
-              <span className="icon text-[20px]">add</span>
-            </button>
+            <div className="flex flex-col items-end gap-1.5">
+              <button
+                onClick={onAgregar}
+                aria-label={`Agregar ${producto.nombre}`}
+                className="size-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer"
+              >
+                <span className="icon text-[20px]">add</span>
+              </button>
+              <div className="flex gap-1.5">
+                <button
+                  onClick={() => onAgregarCantidad(6)}
+                  aria-label={`Agregar media docena de ${producto.nombre}`}
+                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
+                >
+                  +6
+                </button>
+                <button
+                  onClick={() => onAgregarCantidad(12)}
+                  aria-label={`Agregar docena de ${producto.nombre}`}
+                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
+                >
+                  +12
+                </button>
+              </div>
+            </div>
           ) : (
-            <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.35)]">
-              <button
-                onClick={onDecrementar}
-                aria-label="Reducir cantidad"
-                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
-              >
-                −
-              </button>
-              <span className="min-w-[28px] text-center text-white text-[15px] font-bold tabular-nums">
-                {cantidad}
-              </span>
-              <button
-                onClick={onIncrementar}
-                aria-label="Aumentar cantidad"
-                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
-              >
-                +
-              </button>
+            <div className="flex flex-col items-end gap-1.5">
+              <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.35)]">
+                <button
+                  onClick={onDecrementar}
+                  aria-label="Reducir cantidad"
+                  className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                >
+                  −
+                </button>
+                <span className="min-w-[28px] text-center text-white text-[15px] font-bold tabular-nums">
+                  {cantidad}
+                </span>
+                <button
+                  onClick={onIncrementar}
+                  aria-label="Aumentar cantidad"
+                  className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                >
+                  +
+                </button>
+              </div>
+              <div className="flex gap-1.5">
+                <button
+                  onClick={() => onAgregarCantidad(6)}
+                  aria-label={`Agregar media docena mas de ${producto.nombre}`}
+                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
+                >
+                  +6
+                </button>
+                <button
+                  onClick={() => onAgregarCantidad(12)}
+                  aria-label={`Agregar docena mas de ${producto.nombre}`}
+                  className="px-2.5 py-1 rounded-full border-[1.5px] border-sand-deep bg-cream text-[11px] font-bold text-brown cursor-pointer transition-colors hover:bg-sand active:scale-95"
+                >
+                  +12
+                </button>
+              </div>
             </div>
           )}
         </div>
