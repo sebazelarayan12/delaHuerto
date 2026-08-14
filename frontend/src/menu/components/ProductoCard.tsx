@@ -14,12 +14,13 @@ const LONG_PRESS_MS = 450
 
 interface QuickAddButtonProps {
   compact: boolean
+  openOnTap: boolean
   ariaLabel: string
   onTap: () => void
   onPick: (cantidad: number) => void
 }
 
-function QuickAddButton({ compact, ariaLabel, onTap, onPick }: QuickAddButtonProps) {
+function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickAddButtonProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const pressTimer = useRef<number | null>(null)
   const longPressFired = useRef(false)
@@ -35,6 +36,7 @@ function QuickAddButton({ compact, ariaLabel, onTap, onPick }: QuickAddButtonPro
   }, [menuOpen])
 
   const startPress = () => {
+    if (openOnTap) return
     longPressFired.current = false
     pressTimer.current = window.setTimeout(() => {
       longPressFired.current = true
@@ -50,6 +52,10 @@ function QuickAddButton({ compact, ariaLabel, onTap, onPick }: QuickAddButtonPro
   }
 
   const handleClick = () => {
+    if (openOnTap) {
+      setMenuOpen(true)
+      return
+    }
     if (longPressFired.current) {
       longPressFired.current = false
       return
@@ -65,29 +71,29 @@ function QuickAddButton({ compact, ariaLabel, onTap, onPick }: QuickAddButtonPro
   return (
     <div ref={wrapRef} className="relative">
       {menuOpen && (
-        <div className="absolute bottom-full right-0 mb-2 min-w-[132px] bg-espresso rounded-xl p-1 shadow-[0_10px_28px_rgba(0,0,0,0.28)] flex flex-col gap-0.5 z-10">
+        <div className="absolute bottom-full right-0 mb-1.5 min-w-[124px] bg-espresso rounded-xl p-1 shadow-[0_10px_28px_rgba(0,0,0,0.28)] flex flex-col gap-0.5 z-10">
           <button
             onClick={() => pick(12)}
-            className="flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[12px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+            className="flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
           >
             <span>Docena</span>
             <span className="text-gold">+12</span>
           </button>
           <button
             onClick={() => pick(6)}
-            className="flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[12px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+            className="flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
           >
             <span>Media doc.</span>
             <span className="text-gold">+6</span>
           </button>
           <button
             onClick={() => pick(1)}
-            className="flex items-center justify-between gap-3 px-2.5 py-1.5 rounded-lg text-[12px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+            className="flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
           >
             <span>Unidad</span>
             <span className="text-gold">+1</span>
           </button>
-          <div className="absolute -bottom-1 right-[13px] size-2 bg-espresso rotate-45" />
+          <div className="absolute -bottom-1 right-[11px] size-2 bg-espresso rotate-45" />
         </div>
       )}
       <button
@@ -100,11 +106,11 @@ function QuickAddButton({ compact, ariaLabel, onTap, onPick }: QuickAddButtonPro
         aria-label={ariaLabel}
         className={
           compact
-            ? 'size-11 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation'
-            : 'size-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation'
+            ? 'size-8 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation shrink-0'
+            : 'size-8 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation'
         }
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
           <line x1="12" y1="5" x2="12" y2="19" />
           <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
@@ -168,36 +174,38 @@ export default function ProductoCard({ producto, perfil, cantidad, onAgregar, on
             {producto.descripcion}
           </div>
         )}
-        <div className="mt-auto flex items-center justify-between pt-1.5 gap-2">
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-terra-light border border-terra/20 text-[12px] font-extrabold text-terra tabular-nums shrink-0">
+        <div className="mt-auto flex items-center justify-between pt-1.5 gap-1.5">
+          <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-terra-light border border-terra/20 text-[11px] font-extrabold text-terra tabular-nums shrink-0">
             {fmt(precio)}
           </div>
 
           {!producto.disponible ? (
-            <div className="bg-sand text-muted px-3 py-1.5 rounded-full text-xs font-bold shrink-0">
+            <div className="bg-sand text-muted px-2 py-1 rounded-full text-[10px] font-bold shrink-0">
               Sin stock
             </div>
           ) : cantidad === 0 ? (
             <QuickAddButton
               compact={false}
+              openOnTap={true}
               ariaLabel={`Agregar ${producto.nombre}`}
               onTap={onAgregar}
               onPick={onAgregarCantidad}
             />
           ) : (
-            <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.35)] shrink-0">
+            <div className="flex items-center bg-terra rounded-full overflow-hidden h-8 shadow-[0_2px_8px_rgba(196,82,42,0.35)] shrink-0">
               <button
                 onClick={onDecrementar}
                 aria-label="Reducir cantidad"
-                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                className="size-8 border-none bg-transparent text-white text-[15px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100 shrink-0"
               >
                 −
               </button>
-              <span className="min-w-[28px] text-center text-white text-[15px] font-bold tabular-nums">
+              <span className="min-w-[18px] text-center text-white text-[12px] font-bold tabular-nums">
                 {cantidad}
               </span>
               <QuickAddButton
                 compact={true}
+                openOnTap={false}
                 ariaLabel="Aumentar cantidad"
                 onTap={onIncrementar}
                 onPick={onAgregarCantidad}
