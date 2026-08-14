@@ -20,10 +20,13 @@ interface QuickAddButtonProps {
   onPick: (cantidad: number) => void
 }
 
+const MOVE_CANCEL_PX = 12
+
 function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickAddButtonProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const pressTimer = useRef<number | null>(null)
   const longPressFired = useRef(false)
+  const pressStart = useRef<{ x: number; y: number } | null>(null)
   const wrapRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -35,13 +38,21 @@ function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickA
     return () => document.removeEventListener('pointerdown', onOutside)
   }, [menuOpen])
 
-  const startPress = () => {
+  const startPress = (e: React.PointerEvent) => {
     if (openOnTap) return
     longPressFired.current = false
+    pressStart.current = { x: e.clientX, y: e.clientY }
     pressTimer.current = window.setTimeout(() => {
       longPressFired.current = true
       setMenuOpen(true)
     }, LONG_PRESS_MS)
+  }
+
+  const movePress = (e: React.PointerEvent) => {
+    if (pressTimer.current === null || !pressStart.current) return
+    const dx = e.clientX - pressStart.current.x
+    const dy = e.clientY - pressStart.current.y
+    if (Math.hypot(dx, dy) > MOVE_CANCEL_PX) cancelPress()
   }
 
   const cancelPress = () => {
@@ -49,6 +60,7 @@ function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickA
       clearTimeout(pressTimer.current)
       pressTimer.current = null
     }
+    pressStart.current = null
   }
 
   const handleClick = () => {
@@ -99,15 +111,15 @@ function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickA
       <button
         onClick={handleClick}
         onPointerDown={startPress}
+        onPointerMove={movePress}
         onPointerUp={cancelPress}
-        onPointerLeave={cancelPress}
         onPointerCancel={cancelPress}
         onContextMenu={(e) => e.preventDefault()}
         aria-label={ariaLabel}
         className={
           compact
-            ? 'size-8 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation shrink-0'
-            : 'size-8 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation'
+            ? 'size-8 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none] shrink-0'
+            : 'size-8 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none]'
         }
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
