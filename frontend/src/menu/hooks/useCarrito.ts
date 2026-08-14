@@ -39,14 +39,16 @@ export function useCarrito() {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items))
   }, [items])
 
-  const agregar = (producto: Producto, modalidad: Modalidad) => {
+  const agregarCantidad = (producto: Producto, modalidad: Modalidad, cantidad: number) => {
     const precio = precioPorModalidad(producto, modalidad)
     setItems((prev) => {
       const existing = prev.find((i) => esMismoItem(i, producto.id, modalidad))
-      if (existing) return prev.map((i) => esMismoItem(i, producto.id, modalidad) ? { ...i, cantidad: i.cantidad + 1 } : i)
-      return [...prev, { productoId: producto.id, categoriaId: producto.categoriaId, nombre: producto.nombre, precio, cantidad: 1, modalidad }]
+      if (existing) return prev.map((i) => esMismoItem(i, producto.id, modalidad) ? { ...i, cantidad: i.cantidad + cantidad } : i)
+      return [...prev, { productoId: producto.id, categoriaId: producto.categoriaId, nombre: producto.nombre, precio, cantidad, modalidad }]
     })
   }
+
+  const agregar = (producto: Producto, modalidad: Modalidad) => agregarCantidad(producto, modalidad, 1)
 
   const incrementar = (productoId: number, modalidad: Modalidad) => {
     setItems((prev) => prev.map((i) => esMismoItem(i, productoId, modalidad) ? { ...i, cantidad: i.cantidad + 1 } : i))
@@ -68,5 +70,5 @@ export function useCarrito() {
   const subtotal = items.reduce((sum, i) => sum + i.precio * i.cantidad, 0)
   const cantidadTotal = items.reduce((sum, i) => sum + i.cantidad, 0)
 
-  return { items, agregar, incrementar, decrementar, eliminar, vaciar, subtotal, cantidadTotal }
+  return { items, agregar, agregarCantidad, incrementar, decrementar, eliminar, vaciar, subtotal, cantidadTotal }
 }

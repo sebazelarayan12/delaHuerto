@@ -19,7 +19,7 @@ const EMPTY_CATS: { id: number; nombre: string }[] = []
 export default function MenuPage() {
   const { data: categorias, isLoading, isError, refetch } = useMenu()
   const { data: banner } = useBanner()
-  const { items, agregar, incrementar, decrementar, subtotal, cantidadTotal, vaciar } = useCarrito()
+  const { items, agregar, agregarCantidad, incrementar, decrementar, subtotal, cantidadTotal, vaciar } = useCarrito()
 
   const { montoDescuento, total } = useMemo(() => {
     if (!categorias || !items.length) return { montoDescuento: 0, total: subtotal }
@@ -88,6 +88,11 @@ export default function MenuPage() {
   const handleAgregar = (productoId: number) => {
     const prod = productoMap.get(productoId)
     if (prod) agregar(prod, perfil)
+  }
+
+  const handleAgregarCantidad = (productoId: number, cantidad: number) => {
+    const prod = productoMap.get(productoId)
+    if (prod) agregarCantidad(prod, perfil, cantidad)
   }
 
   return (
@@ -172,6 +177,7 @@ export default function MenuPage() {
               onAgregar={handleAgregar}
               onIncrementar={incrementar}
               onDecrementar={decrementar}
+              onAgregarCantidad={handleAgregarCantidad}
             />
           ))}
         </div>

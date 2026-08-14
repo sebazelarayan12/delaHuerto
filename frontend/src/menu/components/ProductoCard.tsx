@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import * as m from 'motion/react-m'
 import type { Producto } from '../hooks/useMenu'
 import Lightbox from './Lightbox'
@@ -10,6 +11,150 @@ const cardVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const } },
 }
 
+const LONG_PRESS_MS = 450
+
+interface QuickAddButtonProps {
+  compact: boolean
+  openOnTap: boolean
+  ariaLabel: string
+  onTap: () => void
+  onPick: (cantidad: number) => void
+}
+
+const MOVE_CANCEL_PX = 12
+
+function QuickAddButton({ compact, openOnTap, ariaLabel, onTap, onPick }: QuickAddButtonProps) {
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [menuPos, setMenuPos] = useState<{ top: number; left: number } | null>(null)
+  const pressTimer = useRef<number | null>(null)
+  const longPressFired = useRef(false)
+  const pressStart = useRef<{ x: number; y: number } | null>(null)
+  const btnRef = useRef<HTMLButtonElement>(null)
+  const popupRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!menuOpen) return
+    const onOutside = (e: PointerEvent) => {
+      const target = e.target as Node
+      if (btnRef.current?.contains(target)) return
+      if (popupRef.current?.contains(target)) return
+      setMenuOpen(false)
+    }
+    const onScroll = () => setMenuOpen(false)
+    document.addEventListener('pointerdown', onOutside)
+    window.addEventListener('scroll', onScroll, { capture: true, passive: true })
+    return () => {
+      document.removeEventListener('pointerdown', onOutside)
+      window.removeEventListener('scroll', onScroll, { capture: true })
+    }
+  }, [menuOpen])
+
+  const openMenu = () => {
+    const rect = btnRef.current?.getBoundingClientRect()
+    if (rect) setMenuPos({ top: rect.top - 6, left: rect.right })
+    setMenuOpen(true)
+  }
+
+  const startPress = (e: React.PointerEvent) => {
+    if (openOnTap) return
+    longPressFired.current = false
+    pressStart.current = { x: e.clientX, y: e.clientY }
+    pressTimer.current = window.setTimeout(() => {
+      longPressFired.current = true
+      openMenu()
+    }, LONG_PRESS_MS)
+  }
+
+  const movePress = (e: React.PointerEvent) => {
+    if (pressTimer.current === null || !pressStart.current) return
+    const dx = e.clientX - pressStart.current.x
+    const dy = e.clientY - pressStart.current.y
+    if (Math.hypot(dx, dy) > MOVE_CANCEL_PX) cancelPress()
+  }
+
+  const cancelPress = () => {
+    if (pressTimer.current !== null) {
+      clearTimeout(pressTimer.current)
+      pressTimer.current = null
+    }
+    pressStart.current = null
+  }
+
+  const handleClick = () => {
+    if (openOnTap) {
+      openMenu()
+      return
+    }
+    if (longPressFired.current) {
+      longPressFired.current = false
+      return
+    }
+    onTap()
+  }
+
+  const pick = (cantidad: number) => {
+    onPick(cantidad)
+    setMenuOpen(false)
+  }
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        onClick={handleClick}
+        onPointerDown={startPress}
+        onPointerMove={movePress}
+        onPointerUp={cancelPress}
+        onPointerCancel={cancelPress}
+        onContextMenu={(e) => e.preventDefault()}
+        aria-label={ariaLabel}
+        className={
+          compact
+            ? 'size-8 border-none bg-transparent text-white flex items-center justify-center active:scale-90 transition-transform duration-100 cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none] shrink-0'
+            : 'size-8 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer select-none touch-manipulation [-webkit-touch-callout:none]'
+        }
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
+      </button>
+
+      {menuOpen && menuPos && createPortal(
+        <div
+          ref={popupRef}
+          style={{ position: 'fixed', top: menuPos.top, left: menuPos.left, transform: 'translate(-100%, -100%)' }}
+          className="min-w-[124px] bg-espresso rounded-xl p-1 shadow-[0_10px_28px_rgba(0,0,0,0.28)] flex flex-col gap-0.5 z-50"
+        >
+          <button
+            onClick={() => pick(12)}
+            className="flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+          >
+            <span>Docena</span>
+            <span className="text-gold">+12</span>
+          </button>
+          <button
+            onClick={() => pick(6)}
+            className="flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+          >
+            <span>Media doc.</span>
+            <span className="text-gold">+6</span>
+          </button>
+          <button
+            onClick={() => pick(1)}
+            className="flex items-center justify-between gap-2.5 px-2.5 py-1.5 rounded-lg text-[11.5px] font-bold text-gold-light border-none bg-transparent cursor-pointer transition-colors hover:bg-white/10"
+          >
+            <span>Unidad</span>
+            <span className="text-gold">+1</span>
+          </button>
+          <div className="absolute -bottom-1 right-[11px] size-2 bg-espresso rotate-45" />
+        </div>,
+        document.querySelector('.menu-theme') ?? document.body
+      )}
+    </>
+  )
+}
+
 interface Props {
   producto: Producto
   perfil: 'cocinada' | 'congelada'
@@ -17,9 +162,10 @@ interface Props {
   onAgregar: () => void
   onIncrementar: () => void
   onDecrementar: () => void
+  onAgregarCantidad: (cantidad: number) => void
 }
 
-export default function ProductoCard({ producto, perfil, cantidad, onAgregar, onIncrementar, onDecrementar }: Props) {
+export default function ProductoCard({ producto, perfil, cantidad, onAgregar, onIncrementar, onDecrementar, onAgregarCantidad }: Props) {
   const precio = perfil === 'cocinada' && producto.precioCocinada !== null
     ? parseFloat(producto.precioCocinada)
     : parseFloat(producto.precioCongelada as unknown as string)
@@ -28,9 +174,9 @@ export default function ProductoCard({ producto, perfil, cantidad, onAgregar, on
   return (
     <m.div
       variants={cardVariants}
-      className="flex gap-3 p-3.5 rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(196,82,42,0.14)]"
+      className="flex flex-col rounded-2xl bg-white shadow-[0_2px_10px_rgba(44,18,8,0.07)] transition-shadow duration-300 hover:shadow-[0_4px_18px_rgba(196,82,42,0.14)] overflow-hidden"
     >
-      <div className="w-[88px] h-[88px] md:w-[110px] md:h-[110px] shrink-0 rounded-2xl overflow-hidden bg-sand">
+      <div className="w-full h-[130px] shrink-0 bg-sand">
         {producto.fotoUrl ? (
           <button
             onClick={() => setLightboxOpen(true)}
@@ -55,51 +201,51 @@ export default function ProductoCard({ producto, perfil, cantidad, onAgregar, on
         <Lightbox src={producto.fotoUrl} alt={producto.nombre} onClose={() => setLightboxOpen(false)} />
       )}
 
-      <div className="flex-1 min-w-0 flex flex-col gap-1">
-        <div className="text-[15px] md:text-[16px] font-bold text-espresso leading-snug whitespace-nowrap overflow-hidden text-ellipsis md:whitespace-normal">
+      <div className="flex-1 min-w-0 flex flex-col gap-1 p-3">
+        <div className="text-[14px] font-bold text-espresso leading-snug line-clamp-2">
           {producto.nombre}
         </div>
         {producto.descripcion && (
-          <div className="text-[13px] text-brown leading-relaxed line-clamp-2 md:line-clamp-3">
+          <div className="text-[12px] text-brown leading-relaxed line-clamp-2">
             {producto.descripcion}
           </div>
         )}
-        <div className="mt-auto flex items-center justify-between pt-1.5">
-          <div className="inline-flex items-center px-2.5 py-1 rounded-full bg-terra-light border border-terra/20 text-[13px] font-extrabold text-terra tabular-nums">
+        <div className="mt-auto flex items-center justify-between pt-1.5 gap-1.5">
+          <div className="inline-flex items-center px-2 py-0.5 rounded-full bg-terra-light border border-terra/20 text-[11px] font-extrabold text-terra tabular-nums shrink-0">
             {fmt(precio)}
           </div>
 
           {!producto.disponible ? (
-            <div className="bg-sand text-muted px-3 py-1.5 rounded-full text-xs font-bold">
+            <div className="bg-sand text-muted px-2 py-1 rounded-full text-[10px] font-bold shrink-0">
               Sin stock
             </div>
           ) : cantidad === 0 ? (
-            <button
-              onClick={onAgregar}
-              aria-label={`Agregar ${producto.nombre}`}
-              className="size-11 rounded-full bg-terra text-white flex items-center justify-center shadow-[0_3px_10px_rgba(196,82,42,0.4)] shrink-0 transition-all duration-150 hover:bg-terra-dark active:scale-90 border-none cursor-pointer"
-            >
-              <span className="icon text-[20px]">add</span>
-            </button>
+            <QuickAddButton
+              compact={false}
+              openOnTap={true}
+              ariaLabel={`Agregar ${producto.nombre}`}
+              onTap={onAgregar}
+              onPick={onAgregarCantidad}
+            />
           ) : (
-            <div className="flex items-center bg-terra rounded-full overflow-hidden h-11 shadow-[0_2px_8px_rgba(196,82,42,0.35)]">
+            <div className="flex items-center bg-terra rounded-full overflow-hidden h-8 shadow-[0_2px_8px_rgba(196,82,42,0.35)] shrink-0">
               <button
                 onClick={onDecrementar}
                 aria-label="Reducir cantidad"
-                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
+                className="size-8 border-none bg-transparent text-white text-[15px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100 shrink-0"
               >
                 −
               </button>
-              <span className="min-w-[28px] text-center text-white text-[15px] font-bold tabular-nums">
+              <span className="min-w-[18px] text-center text-white text-[12px] font-bold tabular-nums">
                 {cantidad}
               </span>
-              <button
-                onClick={onIncrementar}
-                aria-label="Aumentar cantidad"
-                className="size-11 border-none bg-transparent text-white text-[20px] font-bold cursor-pointer flex items-center justify-center active:scale-90 transition-transform duration-100"
-              >
-                +
-              </button>
+              <QuickAddButton
+                compact={true}
+                openOnTap={false}
+                ariaLabel="Aumentar cantidad"
+                onTap={onIncrementar}
+                onPick={onAgregarCantidad}
+              />
             </div>
           )}
         </div>

@@ -23,7 +23,7 @@ export class ProductosService {
     disponible: boolean
     orden: number
   }, file: File | null) {
-    const dup = await prisma.producto.findFirst({ where: { orden: data.orden, categoriaId: data.categoriaId } })
+    const dup = await prisma.producto.findFirst({ where: { orden: data.orden, categoriaId: data.categoriaId, eliminado: false } })
     if (dup) throw new ConflictError(`Ya existe un producto con el orden ${data.orden} en esa categoría`)
 
     let fotoUrl: string | undefined
@@ -59,7 +59,7 @@ export class ProductosService {
     stock?: number
   }, file: File | null) {
     if (data.orden !== undefined && data.categoriaId !== undefined) {
-      const dup = await prisma.producto.findFirst({ where: { orden: data.orden, categoriaId: data.categoriaId, NOT: { id } } })
+      const dup = await prisma.producto.findFirst({ where: { orden: data.orden, categoriaId: data.categoriaId, eliminado: false, NOT: { id } } })
       if (dup) throw new ConflictError(`Ya existe un producto con el orden ${data.orden} en esa categoría`)
     }
 

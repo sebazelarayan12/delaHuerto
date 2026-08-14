@@ -10,6 +10,7 @@ interface Props {
   onAgregar: (productoId: number) => void
   onIncrementar: (productoId: number, modalidad: 'cocinada' | 'congelada') => void
   onDecrementar: (productoId: number, modalidad: 'cocinada' | 'congelada') => void
+  onAgregarCantidad: (productoId: number, cantidad: number) => void
 }
 
 const containerVariants = {
@@ -17,7 +18,7 @@ const containerVariants = {
   visible: { transition: { staggerChildren: 0.06, delayChildren: 0.05 } },
 }
 
-export default function CategoriaSection({ categoria, items, perfil, onAgregar, onIncrementar, onDecrementar }: Props) {
+export default function CategoriaSection({ categoria, items, perfil, onAgregar, onIncrementar, onDecrementar, onAgregarCantidad }: Props) {
   const getCantidad = (productoId: number, modalidad: 'cocinada' | 'congelada') =>
     items.find((i) => i.productoId === productoId && i.modalidad === modalidad)?.cantidad ?? 0
 
@@ -39,7 +40,7 @@ export default function CategoriaSection({ categoria, items, perfil, onAgregar, 
       </div>
       <m.div
         key={perfil}
-        className="px-3 pt-2.5 pb-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2.5"
+        className="px-3 pt-2.5 pb-3 grid grid-cols-2 lg:grid-cols-3 gap-2.5"
         variants={containerVariants}
         initial="hidden"
         whileInView="visible"
@@ -60,6 +61,7 @@ export default function CategoriaSection({ categoria, items, perfil, onAgregar, 
             onAgregar={() => onAgregar(p.id)}
             onIncrementar={() => onIncrementar(p.id, perfil)}
             onDecrementar={() => onDecrementar(p.id, perfil)}
+            onAgregarCantidad={(cantidad) => onAgregarCantidad(p.id, cantidad)}
           />
         ))}
       </m.div>
