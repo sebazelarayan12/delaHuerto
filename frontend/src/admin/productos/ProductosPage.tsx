@@ -89,15 +89,15 @@ export default function ProductosPage() {
   }
 
   const handleSave = async (
-    data: { categoriaId: number; nombre: string; descripcion?: string; precio: number; precioCongelada?: number; disponible: boolean; orden: number },
+    data: { categoriaId: number; nombre: string; descripcion?: string; precioCongelada: number; precioCocinada?: number; disponible: boolean; orden: number },
     foto: File | null
   ) => {
     const fd = new FormData()
     fd.append('categoriaId', String(data.categoriaId))
     fd.append('nombre', data.nombre)
     if (data.descripcion) fd.append('descripcion', data.descripcion)
-    fd.append('precio', String(data.precio))
-    if (data.precioCongelada !== undefined) fd.append('precioCongelada', String(data.precioCongelada))
+    fd.append('precioCongelada', String(data.precioCongelada))
+    if (data.precioCocinada !== undefined) fd.append('precioCocinada', String(data.precioCocinada))
     fd.append('disponible', String(data.disponible))
     fd.append('orden', String(data.orden))
     if (foto) fd.append('foto', foto)
@@ -231,13 +231,13 @@ export default function ProductosPage() {
                       <td className="px-4 py-3 text-[13px] text-muted whitespace-nowrap">{prod.categoria.nombre}</td>
                       <td className="px-4 py-3 text-sm whitespace-nowrap">
                         <div className="flex items-center gap-1.5">
-                          <span className="size-1.5 rounded-full bg-cocinada shrink-0" />
-                          <span className="font-bold text-espresso">{fmt(parseFloat(prod.precio as unknown as string))}</span>
+                          <span className="size-1.5 rounded-full bg-congelada shrink-0" />
+                          <span className="font-bold text-espresso">{fmt(parseFloat(prod.precioCongelada as unknown as string))}</span>
                         </div>
-                        {prod.precioCongelada && (
+                        {prod.precioCocinada && (
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="size-1.5 rounded-full bg-congelada shrink-0" />
-                            <span className="font-semibold text-muted text-xs">{fmt(parseFloat(prod.precioCongelada))}</span>
+                            <span className="size-1.5 rounded-full bg-cocinada shrink-0" />
+                            <span className="font-semibold text-muted text-xs">{fmt(parseFloat(prod.precioCocinada))}</span>
                           </div>
                         )}
                       </td>

@@ -52,7 +52,10 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
 
   const handleProductoChange = (index: number, productoId: number) => {
     const prod = productos.find((p) => p.id === productoId)
-    if (prod) form.setValue(`items.${index}.precioUnitario`, parseFloat(prod.precio))
+    if (prod) {
+      const precio = prod.precioCocinada ? parseFloat(prod.precioCocinada) : parseFloat(prod.precioCongelada)
+      form.setValue(`items.${index}.precioUnitario`, precio)
+    }
   }
 
   const onSubmit = (data: VentaFormData) => {

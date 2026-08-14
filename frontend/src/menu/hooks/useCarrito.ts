@@ -12,14 +12,16 @@ export interface ItemCarrito {
   modalidad: Modalidad
 }
 
-const CART_STORAGE_KEY = 'empanadas_carrito_v3'
+const CART_STORAGE_KEY = 'empanadas_carrito_v4'
 
 function esMismoItem(item: ItemCarrito, productoId: number, modalidad: Modalidad): boolean {
   return item.productoId === productoId && item.modalidad === modalidad
 }
 
 function precioPorModalidad(producto: Producto, modalidad: Modalidad): number {
-  const raw = modalidad === 'congelada' ? producto.precioCongelada : producto.precio
+  const raw = modalidad === 'cocinada' && producto.precioCocinada !== null
+    ? producto.precioCocinada
+    : producto.precioCongelada
   return raw !== null ? parseFloat(raw) : 0
 }
 

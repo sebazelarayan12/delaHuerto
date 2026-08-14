@@ -17,8 +17,9 @@ export class ProductosService {
     categoriaId: number
     nombre: string
     descripcion?: string
-    precio: number
+    precioCongelada: number
     precioUnidad?: number
+    precioCocinada?: number
     disponible: boolean
     orden: number
   }, file: File | null) {
@@ -50,8 +51,9 @@ export class ProductosService {
     categoriaId?: number
     nombre?: string
     descripcion?: string
-    precio?: number
+    precioCongelada?: number
     precioUnidad?: number
+    precioCocinada?: number
     disponible?: boolean
     orden?: number
     stock?: number

@@ -74,7 +74,7 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
     const prod = productos.find((p) => p.id === productoId)
     if (!prod) return
     const modalidad = form.getValues(`items.${index}.modalidad`)
-    const precio = modalidad === 'congelada' && prod.precioCongelada ? parseFloat(prod.precioCongelada) : parseFloat(prod.precio)
+    const precio = modalidad === 'cocinada' && prod.precioCocinada ? parseFloat(prod.precioCocinada) : parseFloat(prod.precioCongelada)
     form.setValue(`items.${index}.precioUnitario`, precio)
   }
 

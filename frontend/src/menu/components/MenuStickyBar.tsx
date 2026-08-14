@@ -16,16 +16,6 @@ export default function MenuStickyBar({ activeCat, categorias, perfil, onPerfilC
       <div className="relative grid grid-cols-2 gap-2 pt-3.5 pb-3.5">
         <button
           type="button"
-          onClick={() => onPerfilChange('cocinada')}
-          className={`flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold cursor-pointer transition-all duration-200 border ${
-            perfil === 'cocinada' ? 'bg-cocinada text-white border-transparent shadow-[0_3px_12px_rgba(232,146,90,0.4)]' : 'bg-white/10 text-white/70 border-white/15 hover:bg-white/15'
-          }`}
-        >
-          <span className="icon text-[18px]">local_fire_department</span>
-          Cocinadas
-        </button>
-        <button
-          type="button"
           onClick={() => onPerfilChange('congelada')}
           className={`flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold cursor-pointer transition-all duration-200 border ${
             perfil === 'congelada' ? 'bg-congelada text-white border-transparent shadow-[0_3px_12px_rgba(111,175,214,0.4)]' : 'bg-white/10 text-white/70 border-white/15 hover:bg-white/15'
@@ -33,6 +23,16 @@ export default function MenuStickyBar({ activeCat, categorias, perfil, onPerfilC
         >
           <span className="icon text-[18px]">ac_unit</span>
           Congeladas
+        </button>
+        <button
+          type="button"
+          onClick={() => onPerfilChange('cocinada')}
+          className={`flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold cursor-pointer transition-all duration-200 border ${
+            perfil === 'cocinada' ? 'bg-cocinada text-white border-transparent shadow-[0_3px_12px_rgba(232,146,90,0.4)]' : 'bg-white/10 text-white/70 border-white/15 hover:bg-white/15'
+          }`}
+        >
+          <span className="icon text-[18px]">local_fire_department</span>
+          Cocinadas
         </button>
       </div>
 

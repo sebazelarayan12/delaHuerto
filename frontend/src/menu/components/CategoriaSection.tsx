@@ -22,7 +22,7 @@ export default function CategoriaSection({ categoria, items, perfil, onAgregar, 
     items.find((i) => i.productoId === productoId && i.modalidad === modalidad)?.cantidad ?? 0
 
   const productosFiltrados = categoria.productos.filter(
-    (p) => perfil === 'cocinada' || p.precioCongelada !== null
+    (p) => perfil === 'congelada' || p.precioCocinada !== null
   )
 
   return (

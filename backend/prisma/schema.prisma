@@ -46,9 +46,9 @@ model Producto {
   categoria    Categoria     @relation(fields: [categoriaId], references: [id])
   nombre       String
   descripcion  String?
-  precio       Decimal       @db.Decimal(10, 2)
+  precioCongelada Decimal   @db.Decimal(10, 2) @map("precio_congelada")
   precioUnidad Decimal?      @db.Decimal(10, 2) @map("precio_unidad")
-  precioCongelada Decimal?   @db.Decimal(10, 2) @map("precio_congelada")
+  precioCocinada  Decimal?  @db.Decimal(10, 2) @map("precio_cocinada")
   fotoUrl      String?       @map("foto_url")
   fotoPublicId String?       @map("foto_public_id")
   disponible   Boolean       @default(true)

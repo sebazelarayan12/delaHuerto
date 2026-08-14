@@ -4,7 +4,7 @@ import { api } from '../../../api/axios'
 export interface ProductoConStock {
   id: number
   nombre: string
-  precio: string
+  precioCongelada: string
   fotoUrl: string | null
   disponible: boolean
   stock: number
