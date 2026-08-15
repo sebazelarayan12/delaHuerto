@@ -96,7 +96,7 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
       return
     }
     setDupError(false)
-    enviarPedidoWhatsApp(items, { ...data, metodoPago })
+    enviarPedidoWhatsApp(items, { ...data, metodoPago }, { subtotal, montoDescuento, total })
     registrarPedido(data.telefono)
     setSent(true)
     onSuccess()
