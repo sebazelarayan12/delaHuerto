@@ -10,16 +10,16 @@ interface DatosPedido {
   readonly fechaEntrega: string
 }
 
+interface TotalesPedido {
+  readonly subtotal: number
+  readonly montoDescuento: number
+  readonly total: number
+}
+
 const fmt = (n: number) => '$' + n.toLocaleString('es-AR')
 
-export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido) {
-  const subtotalLocal = items.reduce((s, i) => s + i.precio * i.cantidad, 0)
-  const cantidadTotal = items.reduce((s, i) => s + i.cantidad, 0)
-  let porc = 0
-  if (cantidadTotal >= 10) porc = 0.25
-  else if (cantidadTotal >= 5) porc = 0.05
-  const desc = subtotalLocal * porc
-  const total = subtotalLocal - desc
+export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido, totales: TotalesPedido) {
+  const { subtotal, montoDescuento, total } = totales
   const lines: string[] = [
     '🥟 *Pedido de Empanadas*',
     '',
@@ -28,13 +28,13 @@ export function enviarPedidoWhatsApp(items: ItemCarrito[], datos: DatosPedido) {
 
   for (const item of items) {
     const modalidadLabel = item.modalidad === 'cocinada' ? 'Cocinada' : 'Congelada'
-    lines.push(`• ${item.cantidad} docena${item.cantidad !== 1 ? 's' : ''} de ${item.nombre} (${modalidadLabel}) — ${fmt(item.precio * item.cantidad)}`)
+    lines.push(`• ${item.cantidad} unidad${item.cantidad !== 1 ? 'es' : ''} de ${item.nombre} (${modalidadLabel}) — ${fmt(item.precio * item.cantidad)}`)
   }
 
   lines.push('')
-  if (desc > 0) {
-    lines.push(`Subtotal: ${fmt(subtotalLocal)}`)
-    lines.push(`Descuento (${porc * 100}%): -${fmt(desc)}`)
+  if (montoDescuento > 0) {
+    lines.push(`Subtotal: ${fmt(subtotal)}`)
+    lines.push(`Descuento: -${fmt(montoDescuento)}`)
   }
   lines.push(`💰 *Total: ${fmt(total)}*`)
   lines.push('')
