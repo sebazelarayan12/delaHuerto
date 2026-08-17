@@ -263,7 +263,8 @@ export default function FormularioPedido({ open, onClose, onSuccess, items, tota
               </Field>
               <Field label="Método de pago" error={errors.metodoPago?.message}>
                 <div className="flex flex-col gap-2.5">
-                  <RadioPill id="mp" value="mercadopago" label="Mercado Pago" icon="account_balance_wallet" register={register} name="metodoPago" checked={metodoPago === 'mercadopago'} variant="mercadopago" />
+                  {/* Mercado Pago cobra comision por pago -- boton oculto temporalmente, logica intacta para reactivar */}
+                  {/* <RadioPill id="mp" value="mercadopago" label="Mercado Pago" icon="account_balance_wallet" register={register} name="metodoPago" checked={metodoPago === 'mercadopago'} variant="mercadopago" /> */}
                   <div className="flex gap-2.5">
                     <RadioPill id="ef" value="efectivo" label="Efectivo" icon="payments" register={register} name="metodoPago" checked={metodoPago === 'efectivo'} />
                     <RadioPill id="tr" value="transferencia" label="Transferencia" icon="account_balance" register={register} name="metodoPago" checked={metodoPago === 'transferencia'} />
