@@ -1,7 +1,8 @@
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { CategoriaEgresoAdmin } from './hooks/useCategoriasEgreso'
+import NumberField from '../../shared/components/NumberField'
 
 const schema = z.object({
   categoriaId: z.coerce.number().int().positive({ message: 'Seleccionar categoria' }),
@@ -22,7 +23,7 @@ interface Props {
 
 export default function EgresoForm({ open, onClose, onSave, categorias, loading }: Props) {
   const hoy = new Date().toISOString().split('T')[0]
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: { categoriaId: 0, monto: 0, descripcion: '', fecha: hoy },
   })
@@ -64,12 +65,12 @@ export default function EgresoForm({ open, onClose, onSave, categorias, loading 
 
           <div>
             <label htmlFor="eg-monto" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">Monto</label>
-            <input
-              id="eg-monto"
-              type="number"
-              step="0.01"
-              {...register('monto')}
-              className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+            <Controller
+              control={control}
+              name="monto"
+              render={({ field }) => (
+                <NumberField id="eg-monto" value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
+              )}
             />
             {errors.monto && <span className="text-xs text-red-600 mt-1 block">{errors.monto.message}</span>}
           </div>

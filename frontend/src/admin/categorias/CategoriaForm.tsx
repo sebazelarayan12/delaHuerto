@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { CategoriaAdmin, DescuentoTier } from './hooks/useCategorias'
 import Toggle from '../../shared/components/Toggle'
+import NumberField from '../../shared/components/NumberField'
 
 const schema = z.object({
   nombre: z.string().min(1, 'El nombre es requerido'),
@@ -53,8 +54,8 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading,
     setTierErrors((prev) => prev.filter((_, i) => i !== idx))
   }
 
-  const updateTier = (idx: number, field: keyof TierForm, value: string) => {
-    setTiers((prev) => prev.map((t, i) => i === idx ? { ...t, [field]: value === '' ? '' : Number(value) } : t))
+  const updateTier = (idx: number, field: keyof TierForm, value: number | undefined) => {
+    setTiers((prev) => prev.map((t, i) => i === idx ? { ...t, [field]: value === undefined ? '' : value } : t))
   }
 
   const validateTiers = (): { cantidadMinima: number; porcentaje: number }[] | null => {
@@ -147,25 +148,20 @@ export default function CategoriaForm({ open, onClose, onSave, initial, loading,
                 {tiers.map((tier, idx) => (
                   <div key={tier.id} className="flex items-center gap-2">
                     <div className="flex-1">
-                      <input
-                        type="number"
-                        min="1"
+                      <NumberField
                         placeholder="Cantidad min."
-                        value={tier.cantidadMinima}
-                        onChange={(e) => updateTier(idx, 'cantidadMinima', e.target.value)}
+                        value={tier.cantidadMinima === '' ? undefined : tier.cantidadMinima}
+                        onValueChange={(v) => updateTier(idx, 'cantidadMinima', v)}
                         className="w-full px-3 py-2 border-[1.5px] border-sand-deep rounded-lg font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
                       />
                     </div>
                     <div className="flex-1">
                       <div className="relative">
-                        <input
-                          type="number"
-                          min="1"
-                          max="100"
-                          step="0.1"
+                        <NumberField
                           placeholder="Descuento %"
-                          value={tier.porcentaje}
-                          onChange={(e) => updateTier(idx, 'porcentaje', e.target.value)}
+                          value={tier.porcentaje === '' ? undefined : tier.porcentaje}
+                          onValueChange={(v) => updateTier(idx, 'porcentaje', v)}
+                          decimalScale={1}
                           className="w-full px-3 py-2 pr-7 border-[1.5px] border-sand-deep rounded-lg font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
                         />
                         <span className="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-muted font-semibold">%</span>
