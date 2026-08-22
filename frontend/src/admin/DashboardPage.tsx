@@ -8,7 +8,7 @@ import type { Categoria } from '../menu/hooks/useMenu'
 import { useVentas } from './ventas/hooks/useVentas'
 import type { ItemVentaInput } from './ventas/hooks/useVentas'
 import VentaForm from './ventas/VentaForm'
-import { getDailyRevenue } from './shared/revenueHelpers'
+import { useDashboardResumen } from './dashboard/hooks/useDashboardResumen'
 import { Sparkline } from '../shared/components/Sparkline'
 import { TopProductos } from './dashboard/TopProductos'
 // DeliveryDays: panel reemplazado por la logica de modalidad cocinada/congelada
@@ -69,13 +69,14 @@ export default function DashboardPage() {
   const activeProds = prods.filter((p) => p.disponible).length
   const unavailableProds = prods.filter((p) => !p.disponible)
 
-  const ahora = new Date()
-  const hoyInicio = new Date(ahora); hoyInicio.setHours(0, 0, 0, 0)
-  const revenueHoy = todas
-    .filter((v) => new Date(v.fecha) >= hoyInicio)
-    .reduce((s, v) => s + parseFloat(v.total), 0)
+  const { data: resumen } = useDashboardResumen()
 
-  const sparklineHoy = useMemo(() => getDailyRevenue(todas, 14), [todas])
+  const revenueHoy = resumen?.revenue.hoy ?? 0
+  const egresosMes = resumen?.egresos.mes ?? 0
+  const netoMes = resumen?.neto.mes ?? 0
+  const sparklineHoy = resumen?.dailySeries.ventas ?? []
+  const sparklineEgresos = resumen?.dailySeries.egresos ?? []
+  const sparklineNeto = resumen?.dailySeries.neto ?? []
 
   const [formOpen, setFormOpen] = useState(false)
   const handleRegistrar = (items: ItemVentaInput[], notas?: string, fecha?: string) => {
@@ -92,6 +93,8 @@ export default function DashboardPage() {
     { label: 'Categorias activas', value: activeCats, icon: 'category', barClass: 'bg-gold', textClass: 'text-gold', sparkline: null, color: '' },
     { label: 'Total productos', value: prods.length, icon: 'grid_view', barClass: 'bg-brown', textClass: 'text-brown', sparkline: null, color: '' },
     { label: 'Ventas hoy', value: fmt(revenueHoy), icon: 'payments', barClass: 'bg-[#5A8A5A]', textClass: 'text-[#5A8A5A]', sparkline: sparklineHoy, color: '#5A8A5A' },
+    { label: 'Egresos del mes', value: fmt(egresosMes), icon: 'trending_down', barClass: 'bg-[#C4522A]', textClass: 'text-[#C4522A]', sparkline: sparklineEgresos, color: '#C4522A' },
+    { label: 'Ganancia neta del mes', value: fmt(netoMes), icon: 'account_balance_wallet', barClass: netoMes >= 0 ? 'bg-[#5A8A5A]' : 'bg-red-600', textClass: netoMes >= 0 ? 'text-[#5A8A5A]' : 'text-red-600', sparkline: sparklineNeto, color: netoMes >= 0 ? '#5A8A5A' : '#DC2626' },
   ]
 
   return (
@@ -118,7 +121,7 @@ export default function DashboardPage() {
         </div>
 
         <div className="px-4 lg:px-8 py-6 lg:py-7">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 mb-6">
             {KPIS.map((k) => (
               <div
                 key={k.label}
