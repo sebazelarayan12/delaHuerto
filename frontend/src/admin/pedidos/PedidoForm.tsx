@@ -1,4 +1,4 @@
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
@@ -6,6 +6,7 @@ import { api } from '../../api/axios'
 import type { ProductoAdmin } from '../productos/hooks/useProductos'
 import type { CreatePedidoInput } from './hooks/usePedidos'
 import { toYMD } from './helpers/pedido.helpers'
+import NumberField from '../../shared/components/NumberField'
 
 const itemSchema = z.object({
   productoId: z.coerce.number().int().positive({ message: 'Seleccionar producto' }),
@@ -255,19 +256,19 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
                       <option value="cocinada">Cocinada</option>
                       <option value="congelada">Congelada</option>
                     </select>
-                    <input
-                      type="number"
-                      min="1"
-                      title="Cantidad"
-                      {...form.register(`items.${index}.cantidad`)}
-                      className="w-[60px] px-2 py-[9px] border-[1.5px] border-sand-deep rounded-[10px] font-sans text-[13px] text-espresso bg-white outline-none focus:border-terra text-center shrink-0"
+                    <Controller
+                      control={form.control}
+                      name={`items.${index}.cantidad`}
+                      render={({ field }) => (
+                        <NumberField title="Cantidad" value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} className="w-[60px] px-2 py-[9px] border-[1.5px] border-sand-deep rounded-[10px] font-sans text-[13px] text-espresso bg-white outline-none focus:border-terra text-center shrink-0" />
+                      )}
                     />
-                    <input
-                      type="number"
-                      min="0"
-                      title="Precio unitario"
-                      {...form.register(`items.${index}.precioUnitario`)}
-                      className="w-[90px] px-2 py-[9px] border-[1.5px] border-sand-deep rounded-[10px] font-sans text-[13px] text-espresso bg-white outline-none focus:border-terra text-right shrink-0"
+                    <Controller
+                      control={form.control}
+                      name={`items.${index}.precioUnitario`}
+                      render={({ field }) => (
+                        <NumberField title="Precio unitario" value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} className="w-[90px] px-2 py-[9px] border-[1.5px] border-sand-deep rounded-[10px] font-sans text-[13px] text-espresso bg-white outline-none focus:border-terra text-right shrink-0" />
+                      )}
                     />
                     {fields.length > 1 && (
                       <button

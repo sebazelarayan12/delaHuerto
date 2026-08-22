@@ -1,10 +1,11 @@
-import { useForm, useFieldArray } from 'react-hook-form'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api/axios'
 import type { ProductoAdmin } from '../productos/hooks/useProductos'
 import type { ItemVentaInput } from './hooks/useVentas'
+import NumberField from '../../shared/components/NumberField'
 
 const itemSchema = z.object({
   productoId: z.coerce.number().int().positive({ message: 'Seleccionar producto' }),
@@ -125,23 +126,22 @@ export default function VentaForm({ onClose, onSave, loading }: Props) {
                         ))}
                       </select>
 
-                      <input
-                        type="number"
-                        min="1"
-                        placeholder="Cant."
-                        {...form.register(`items.${index}.cantidad`)}
-                        className="w-full sm:w-20 px-3 py-2 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra text-center"
+                      <Controller
+                        control={form.control}
+                        name={`items.${index}.cantidad`}
+                        render={({ field }) => (
+                          <NumberField placeholder="Cant." value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} className="w-full sm:w-20 px-3 py-2 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra text-center" />
+                        )}
                       />
 
                       <div className="relative w-full sm:w-28">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted font-semibold">$</span>
-                        <input
-                          type="number"
-                          min="0"
-                          step="0.01"
-                          placeholder="Precio"
-                          {...form.register(`items.${index}.precioUnitario`)}
-                          className="w-full pl-6 pr-3 py-2 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+                        <Controller
+                          control={form.control}
+                          name={`items.${index}.precioUnitario`}
+                          render={({ field }) => (
+                            <NumberField placeholder="Precio" value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} className="w-full pl-6 pr-3 py-2 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
+                          )}
                         />
                       </div>
 

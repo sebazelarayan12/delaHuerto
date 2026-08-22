@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import AdminLayout from '../AdminLayout'
 import { useStock, useHistorialStock, getStockStatus, STOCK_STATUS } from './hooks/useStock'
 import type { ProductoConStock } from './hooks/useStock'
+import NumberField from '../../shared/components/NumberField'
 
 const ajusteSchema = z.object({
   cantidad: z.coerce.number().int().refine((n) => n !== 0, { message: 'No puede ser 0' }),
@@ -37,7 +38,7 @@ function AjusteModal({ producto, onClose, onSave, loading }: AjusteModalProps) {
   const [historialOpen, setHistorialOpen] = useState(false)
   const historial = useHistorialStock(historialOpen ? producto.id : 0)
 
-  const { register, handleSubmit, formState: { errors } } = useForm<AjusteForm>({
+  const { register, handleSubmit, control, formState: { errors } } = useForm<AjusteForm>({
     resolver: zodResolver(ajusteSchema),
     defaultValues: { cantidad: undefined, motivo: '' },
   })
@@ -80,12 +81,12 @@ function AjusteModal({ producto, onClose, onSave, loading }: AjusteModalProps) {
               <label htmlFor="ajuste-cantidad" className="block text-xs font-bold uppercase tracking-[0.08em] text-brown mb-1.5">
                 Cantidad (+ para agregar, − para descontar)
               </label>
-              <input
-                id="ajuste-cantidad"
-                type="number"
-                placeholder="Ej: 50 o -10"
-                {...register('cantidad')}
-                className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra"
+              <Controller
+                control={control}
+                name="cantidad"
+                render={({ field }) => (
+                  <NumberField id="ajuste-cantidad" placeholder="Ej: 50 o -10" value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} allowNegative className="w-full px-[13px] py-2.5 border-[1.5px] border-sand-deep rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-terra" />
+                )}
               />
               {errors.cantidad && <span className="text-xs text-red-600 mt-1 block">{errors.cantidad.message}</span>}
             </div>

@@ -1,11 +1,12 @@
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import type { CategoriaAdmin } from '../categorias/hooks/useCategorias'
 import type { ProductoAdmin } from './hooks/useProductos'
 import ImageUpload from '../../shared/components/ImageUpload'
 import Toggle from '../../shared/components/Toggle'
+import NumberField from '../../shared/components/NumberField'
 
 const schema = z.object({
   categoriaId: z.coerce.number().min(1, 'Selecciona una categoria'),
@@ -34,7 +35,7 @@ interface Props {
 
 export default function ProductoForm({ open, onClose, onSave, initial, categorias, loading, nextOrden = 0 }: Props) {
   const [foto, setFoto] = useState<File | null>(null)
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: initial
       ? {
@@ -104,12 +105,24 @@ export default function ProductoForm({ open, onClose, onSave, initial, categoria
           <div className="mb-4 grid grid-cols-2 gap-3">
             <div>
               <label htmlFor="prod-precio-congelada" className="block text-xs font-bold uppercase tracking-[0.08em] text-congelada mb-1.5">Precio congelada</label>
-              <input id="prod-precio-congelada" type="number" step="0.01" placeholder="5500" {...register('precioCongelada')} className="w-full px-[13px] py-2.5 border-[1.5px] border-congelada/40 rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-congelada" />
+              <Controller
+                control={control}
+                name="precioCongelada"
+                render={({ field }) => (
+                  <NumberField id="prod-precio-congelada" placeholder="5.500" value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} className="w-full px-[13px] py-2.5 border-[1.5px] border-congelada/40 rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-congelada" />
+                )}
+              />
               {errors.precioCongelada && <span className="text-xs text-red-600 mt-1 block">{errors.precioCongelada.message}</span>}
             </div>
             <div>
               <label htmlFor="prod-precio-cocinada" className="block text-xs font-bold uppercase tracking-[0.08em] text-cocinada mb-1.5">Precio cocinada</label>
-              <input id="prod-precio-cocinada" type="number" step="0.01" placeholder="4800 (opcional)" {...register('precioCocinada')} className="w-full px-[13px] py-2.5 border-[1.5px] border-cocinada/40 rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-cocinada" />
+              <Controller
+                control={control}
+                name="precioCocinada"
+                render={({ field }) => (
+                  <NumberField id="prod-precio-cocinada" placeholder="4.800 (opcional)" value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} className="w-full px-[13px] py-2.5 border-[1.5px] border-cocinada/40 rounded-[10px] font-sans text-sm text-espresso bg-cream outline-none focus:border-cocinada" />
+                )}
+              />
               {errors.precioCocinada && <span className="text-xs text-red-600 mt-1 block">{errors.precioCocinada.message}</span>}
             </div>
           </div>
