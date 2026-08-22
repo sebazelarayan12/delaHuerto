@@ -195,3 +195,27 @@ model MercadoPagoConnection {
 
   @@map("mercado_pago_connections")
 }
+
+model CategoriaEgreso {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  activa    Boolean  @default(true)
+  eliminado Boolean  @default(false)
+  egresos   Egreso[]
+  creadaEn  DateTime @default(now()) @map("creada_en")
+
+  @@map("categorias_egreso")
+}
+
+model Egreso {
+  id          Int             @id @default(autoincrement())
+  categoriaId Int             @map("categoria_id")
+  categoria   CategoriaEgreso @relation(fields: [categoriaId], references: [id])
+  monto       Decimal         @db.Decimal(10, 2)
+  descripcion String?
+  fecha       DateTime        @default(now())
+  eliminado   Boolean         @default(false)
+  creadoEn    DateTime        @default(now()) @map("creado_en")
+
+  @@map("egresos")
+}

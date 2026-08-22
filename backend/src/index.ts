@@ -12,6 +12,8 @@ import { bannerPublicRoutes, bannerAdminRoutes } from './routes/banner.routes.js
 import { stockAdminRoutes } from './routes/stock.routes.js'
 import { ventasAdminRoutes } from './routes/ventas.routes.js'
 import { dashboardAdminRoutes } from './routes/dashboard.routes.js'
+import { categoriasEgresoAdminRoutes } from './routes/categorias-egreso.routes.js'
+import { egresosAdminRoutes } from './routes/egresos.routes.js'
 import { pedidosAdminRoutes } from './routes/pedidos.routes.js'
 import { notificationsAdminRoutes } from './routes/notifications.routes.js'
 import { deliveryDiasPublicRoutes, deliveryDiasAdminRoutes } from './routes/delivery-dias.routes.js'
@@ -50,6 +52,8 @@ app.route('/api/admin/banner', bannerAdminRoutes)
 app.route('/api/admin/stock', stockAdminRoutes)
 app.route('/api/admin/ventas', ventasAdminRoutes)
 app.route('/api/admin/dashboard', dashboardAdminRoutes)
+app.route('/api/admin/categorias-egreso', categoriasEgresoAdminRoutes)
+app.route('/api/admin/egresos', egresosAdminRoutes)
 app.route('/api/admin/pedidos', pedidosAdminRoutes)
 app.route('/api/admin/notifications', notificationsAdminRoutes)
 app.route('/api/delivery-dias', deliveryDiasPublicRoutes)

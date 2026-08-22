@@ -8,6 +8,7 @@ import ProductosPage from './admin/productos/ProductosPage'
 import BannerPage from './admin/banner/BannerPage'
 import StockPage from './admin/stock/StockPage'
 import VentasPage from './admin/ventas/VentasPage'
+import EgresosPage from './admin/egresos/EgresosPage'
 import PedidosPage from './admin/pedidos/PedidosPage'
 import PedidoResultadoPage from './menu/pages/PedidoResultadoPage'
 import ProtectedRoute from './shared/components/ProtectedRoute'
@@ -70,6 +71,14 @@ export default function App() {
           element={
             <ProtectedRoute>
               <VentasPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/egresos"
+          element={
+            <ProtectedRoute>
+              <EgresosPage />
             </ProtectedRoute>
           }
         />

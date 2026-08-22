@@ -12,6 +12,7 @@ const NAV = [
   { path: '/admin/productos', label: 'Productos', icon: 'inventory_2' },
   { path: '/admin/stock', label: 'Stock', icon: 'warehouse' },
   { path: '/admin/ventas', label: 'Ventas', icon: 'point_of_sale' },
+  { path: '/admin/egresos', label: 'Egresos', icon: 'trending_down' },
   { path: '/admin/banner', label: 'Banner', icon: 'campaign' },
 ]
 
