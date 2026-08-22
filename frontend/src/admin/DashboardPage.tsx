@@ -72,8 +72,8 @@ export default function DashboardPage() {
   const { data: resumen } = useDashboardResumen()
 
   const revenueHoy = resumen?.revenue.hoy ?? 0
-  const egresosHoy = resumen?.egresos.hoy ?? 0
-  const netoHoy = resumen?.neto.hoy ?? 0
+  const egresosMes = resumen?.egresos.mes ?? 0
+  const netoMes = resumen?.neto.mes ?? 0
   const sparklineHoy = resumen?.dailySeries.ventas ?? []
   const sparklineEgresos = resumen?.dailySeries.egresos ?? []
   const sparklineNeto = resumen?.dailySeries.neto ?? []
@@ -93,8 +93,8 @@ export default function DashboardPage() {
     { label: 'Categorias activas', value: activeCats, icon: 'category', barClass: 'bg-gold', textClass: 'text-gold', sparkline: null, color: '' },
     { label: 'Total productos', value: prods.length, icon: 'grid_view', barClass: 'bg-brown', textClass: 'text-brown', sparkline: null, color: '' },
     { label: 'Ventas hoy', value: fmt(revenueHoy), icon: 'payments', barClass: 'bg-[#5A8A5A]', textClass: 'text-[#5A8A5A]', sparkline: sparklineHoy, color: '#5A8A5A' },
-    { label: 'Egresos hoy', value: fmt(egresosHoy), icon: 'trending_down', barClass: 'bg-[#C4522A]', textClass: 'text-[#C4522A]', sparkline: sparklineEgresos, color: '#C4522A' },
-    { label: 'Ganancia neta hoy', value: fmt(netoHoy), icon: 'account_balance_wallet', barClass: netoHoy >= 0 ? 'bg-[#5A8A5A]' : 'bg-red-600', textClass: netoHoy >= 0 ? 'text-[#5A8A5A]' : 'text-red-600', sparkline: sparklineNeto, color: netoHoy >= 0 ? '#5A8A5A' : '#DC2626' },
+    { label: 'Egresos del mes', value: fmt(egresosMes), icon: 'trending_down', barClass: 'bg-[#C4522A]', textClass: 'text-[#C4522A]', sparkline: sparklineEgresos, color: '#C4522A' },
+    { label: 'Ganancia neta del mes', value: fmt(netoMes), icon: 'account_balance_wallet', barClass: netoMes >= 0 ? 'bg-[#5A8A5A]' : 'bg-red-600', textClass: netoMes >= 0 ? 'text-[#5A8A5A]' : 'text-red-600', sparkline: sparklineNeto, color: netoMes >= 0 ? '#5A8A5A' : '#DC2626' },
   ]
 
   return (
