@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api/axios'
 import type { ProductoAdmin } from '../productos/hooks/useProductos'
-import type { CreatePedidoInput } from './hooks/usePedidos'
+import type { CreatePedidoInput, PedidoAdmin } from './hooks/usePedidos'
 import { toYMD } from './helpers/pedido.helpers'
 import NumberField from '../../shared/components/NumberField'
 
@@ -37,9 +37,10 @@ interface Props {
   onClose: () => void
   onSave: (data: CreatePedidoInput) => void
   loading: boolean
+  initial?: PedidoAdmin | null
 }
 
-export default function PedidoForm({ onClose, onSave, loading }: Props) {
+export default function PedidoForm({ onClose, onSave, loading, initial }: Props) {
   const todayStr = toYMD(new Date())
 
   const { data: productos = [] } = useQuery<ProductoAdmin[]>({
@@ -49,14 +50,28 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
 
   const form = useForm<PedidoFormData>({
     resolver: zodResolver(pedidoSchema),
-    defaultValues: {
-      nombre: '',
-      telefono: '',
-      direccion: '',
-      notas: '',
-      fechaEntrega: todayStr,
-      items: [{ productoId: 0, cantidad: 1, precioUnitario: 0, modalidad: 'cocinada' }],
-    },
+    defaultValues: initial
+      ? {
+          nombre: initial.nombre,
+          telefono: initial.telefono ?? '',
+          direccion: initial.direccion ?? '',
+          notas: initial.notas ?? '',
+          fechaEntrega: initial.fechaEntrega.split('T')[0],
+          items: initial.items.map((i) => ({
+            productoId: i.productoId,
+            cantidad: i.cantidad,
+            precioUnitario: parseFloat(i.precioUnitario),
+            modalidad: i.modalidad,
+          })),
+        }
+      : {
+          nombre: '',
+          telefono: '',
+          direccion: '',
+          notas: '',
+          fechaEntrega: todayStr,
+          items: [{ productoId: 0, cantidad: 1, precioUnitario: 0, modalidad: 'cocinada' }],
+        },
   })
 
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'items' })
@@ -108,7 +123,7 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
         {/* Header */}
         <div className="py-[22px] px-[26px] border-b border-sand flex items-center justify-between shrink-0">
           <span className="font-display text-[22px] font-extrabold text-espresso">
-            Nuevo pedido
+            {initial ? 'Editar pedido' : 'Nuevo pedido'}
           </span>
           <button
             onClick={onClose}
@@ -322,7 +337,7 @@ export default function PedidoForm({ onClose, onSave, loading }: Props) {
             style={{ background: loading ? '#E2CFB5' : '#C4522A' }}
           >
             <span className="icon icon-fill" style={{ fontSize: 18 }}>save</span>
-            Crear pedido
+            {initial ? 'Guardar cambios' : 'Crear pedido'}
           </button>
         </div>
       </div>

@@ -204,4 +204,33 @@ export class PedidosService {
   static async findByMpPaymentId(mpPaymentId: string) {
     return prisma.pedido.findUnique({ where: { mpPaymentId } })
   }
+
+  static async updatePedido(id: number, data: CreatePedidoInput) {
+    const pedido = await prisma.pedido.findUnique({ where: { id } })
+    if (!pedido) throw new NotFoundError('Pedido no encontrado')
+    if (pedido.estado !== 'pendiente') {
+      throw new HttpError(400, 'Solo se pueden editar pedidos pendientes de pago')
+    }
+
+    const total = data.items.reduce((acc, i) => acc + i.precioUnitario * i.cantidad, 0)
+    const fechaEntregaParseada = data.fechaEntrega ? new Date(data.fechaEntrega) : null
+    const fechaEntrega = fechaEntregaParseada && !isNaN(fechaEntregaParseada.getTime()) ? fechaEntregaParseada : new Date()
+
+    return prisma.$transaction(async (tx) => {
+      await tx.itemPedido.deleteMany({ where: { pedidoId: id } })
+      return tx.pedido.update({
+        where: { id },
+        data: {
+          nombre: data.nombre,
+          telefono: data.telefono ?? null,
+          direccion: data.direccion ?? null,
+          notas: data.notas ?? null,
+          fechaEntrega,
+          total,
+          items: { create: data.items.map((i) => ({ productoId: i.productoId, cantidad: i.cantidad, precioUnitario: i.precioUnitario, modalidad: i.modalidad })) },
+        },
+        include: PEDIDO_INCLUDE,
+      })
+    })
+  }
 }

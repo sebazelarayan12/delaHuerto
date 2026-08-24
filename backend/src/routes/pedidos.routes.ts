@@ -39,6 +39,14 @@ admin.post('/', zValidator('json', createPedidoSchema), async (c) => {
   return c.json(pedido, 201)
 })
 
+admin.put('/:id', zValidator('json', createPedidoSchema), async (c) => {
+  const id = parseInt(c.req.param('id'))
+  const data = c.req.valid('json')
+  console.log(`[PUT] /api/admin/pedidos/${id} - editar pedido`)
+  const pedido = await PedidosService.updatePedido(id, data)
+  return c.json(pedido)
+})
+
 admin.patch('/:id/estado', zValidator('json', cambiarEstadoSchema), async (c) => {
   const id = parseInt(c.req.param('id'))
   const { estado } = c.req.valid('json')

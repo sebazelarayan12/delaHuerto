@@ -32,7 +32,8 @@ export default function PedidosPage() {
   const [formOpen, setFormOpen] = useState(false)
   const [filtroActivos, setFiltroActivos] = useState<FiltroActivos>('todos')
 
-  const { query, crearPedido, cambiarEstado, eliminarPedido } = usePedidos()
+  const { query, crearPedido, editarPedido, cambiarEstado, eliminarPedido } = usePedidos()
+  const [editando, setEditando] = useState<PedidoAdmin | null>(null)
   const pedidos = query.data ?? []
 
   const activos = pedidos
@@ -83,8 +84,19 @@ export default function PedidosPage() {
     return () => { document.title = 'Huerto Admin' }
   }, [activeCount])
 
-  const handleCrear = (data: CreatePedidoInput) => {
-    crearPedido.mutate(data, { onSuccess: () => setFormOpen(false) })
+  const handleGuardar = (data: CreatePedidoInput) => {
+    if (editando) {
+      editarPedido.mutate({ id: editando.id, ...data }, {
+        onSuccess: () => { setFormOpen(false); setEditando(null) },
+      })
+    } else {
+      crearPedido.mutate(data, { onSuccess: () => setFormOpen(false) })
+    }
+  }
+
+  const handleEditar = (pedido: PedidoAdmin) => {
+    setEditando(pedido)
+    setFormOpen(true)
   }
 
   const handleMarcarPagado = (id: number) => {
@@ -122,7 +134,7 @@ export default function PedidosPage() {
           </p>
         </div>
         <button
-          onClick={() => setFormOpen(true)}
+          onClick={() => { setEditando(null); setFormOpen(true) }}
           className="inline-flex items-center gap-2 bg-terra text-white px-4 py-2.5 rounded-[12px] border-none font-sans text-sm font-bold cursor-pointer transition-colors hover:bg-terra-dark self-start sm:self-auto shrink-0"
           style={{ boxShadow: '0 3px 12px rgba(196,82,42,0.3)' }}
         >
@@ -219,6 +231,7 @@ export default function PedidosPage() {
                   onMarcarPagado={handleMarcarPagado}
                   onMarcarEntregado={handleMarcarEntregado}
                   onCancelar={handleCancelar}
+                  onEditar={handleEditar}
                 />
               ))}
             </div>
@@ -234,9 +247,11 @@ export default function PedidosPage() {
 
       {formOpen && (
         <PedidoForm
-          onClose={() => setFormOpen(false)}
-          onSave={handleCrear}
-          loading={crearPedido.isPending}
+          key={editando?.id ?? 'new'}
+          initial={editando}
+          onClose={() => { setFormOpen(false); setEditando(null) }}
+          onSave={handleGuardar}
+          loading={editando ? editarPedido.isPending : crearPedido.isPending}
         />
       )}
     </AdminLayout>
