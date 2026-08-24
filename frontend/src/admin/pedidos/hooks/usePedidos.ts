@@ -66,6 +66,19 @@ export function usePedidos() {
     },
   })
 
+  const editarPedido = useMutation({
+    mutationFn: ({ id, ...data }: { id: number } & CreatePedidoInput) =>
+      api.put<PedidoAdmin>(`/api/admin/pedidos/${id}`, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['pedidos', 'admin'] })
+      toast.success('Pedido actualizado')
+    },
+    onError: (error) => {
+      const msg = (error as AxiosError<{ error: string }>).response?.data?.error ?? 'Error al actualizar el pedido'
+      toast.error(msg)
+    },
+  })
+
   const cambiarEstado = useMutation({
     mutationFn: ({ id, estado }: { id: number; estado: 'por_entregar' | 'entregado' | 'cancelado' }) =>
       api.patch<PedidoAdmin>(`/api/admin/pedidos/${id}/estado`, { estado }),
@@ -95,5 +108,5 @@ export function usePedidos() {
     },
   })
 
-  return { query, crearPedido, cambiarEstado, eliminarPedido }
+  return { query, crearPedido, editarPedido, cambiarEstado, eliminarPedido }
 }

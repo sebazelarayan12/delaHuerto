@@ -9,9 +9,10 @@ interface Props {
   onMarcarPagado: (id: number) => void
   onMarcarEntregado: (id: number) => void
   onCancelar: (id: number) => void
+  onEditar: (pedido: PedidoAdmin) => void
 }
 
-export default function PedidoCard({ pedido, onMarcarPagado, onMarcarEntregado, onCancelar }: Props) {
+export default function PedidoCard({ pedido, onMarcarPagado, onMarcarEntregado, onCancelar, onEditar }: Props) {
   const meta = ESTADO_META[pedido.estado]
   const deliveryYmd = pedido.fechaEntrega ? pedido.fechaEntrega.split('T')[0] : ''
 
@@ -88,13 +89,20 @@ export default function PedidoCard({ pedido, onMarcarPagado, onMarcarEntregado, 
       )}
 
       {/* Footer: fecha + acciones */}
-      <div className="flex justify-between items-center gap-2 mt-1 flex-wrap">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mt-1">
         <span className="text-[11.5px] font-semibold text-muted">
           {fmtPedidoDate(pedido.creadoEn)}
         </span>
-        <div className="flex gap-2 flex-shrink-0">
+        <div className="flex flex-wrap gap-2">
           {pedido.estado === 'pendiente' && (
             <>
+              <button
+                className="inline-flex items-center gap-1 bg-[#FFFDF9] text-brown border-[1.5px] border-sand-deep px-[14px] py-2 rounded-[10px] font-sans text-[13px] font-bold cursor-pointer transition-colors hover:bg-sand"
+                onClick={() => onEditar(pedido)}
+              >
+                <span className="icon" style={{ fontSize: 16 }}>edit</span>
+                Editar
+              </button>
               <button
                 className="inline-flex items-center gap-1 bg-[#FFFDF9] text-terra border-[1.5px] border-terra-light px-[14px] py-2 rounded-[10px] font-sans text-[13px] font-bold cursor-pointer transition-colors hover:bg-terra-light"
                 onClick={() => onCancelar(pedido.id)}
