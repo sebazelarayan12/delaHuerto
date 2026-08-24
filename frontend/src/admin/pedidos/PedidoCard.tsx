@@ -89,11 +89,11 @@ export default function PedidoCard({ pedido, onMarcarPagado, onMarcarEntregado, 
       )}
 
       {/* Footer: fecha + acciones */}
-      <div className="flex justify-between items-center gap-2 mt-1 flex-wrap">
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mt-1">
         <span className="text-[11.5px] font-semibold text-muted">
           {fmtPedidoDate(pedido.creadoEn)}
         </span>
-        <div className="flex gap-2 flex-shrink-0">
+        <div className="flex flex-wrap gap-2">
           {pedido.estado === 'pendiente' && (
             <>
               <button
